@@ -1,0 +1,81 @@
+body {
+  margin: 0px;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100vh;
+}
+#controls {
+  position: relative;
+  padding: 10px;
+  height: 1.2em;
+  background-color: #eee;
+  border-bottom: 2px solid #aaa;
+}
+#controls a {
+  text-decoration: none;
+  cursor: pointer;
+}
+#controls * {
+  font-weight: 400;
+}
+#controls h1 {
+  margin: 0;
+  font-weight: 500;
+  font-size: 1.1em;
+}
+#controls h1 a {
+  color: #444;
+}
+#controls h1 a:hover {
+  color: #000;
+}
+#toggle-dev-tools {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: inline-block;
+  padding: 0.2em 0.5em;
+  font-size: 1em;
+}
+#toggle-dev-tools:hover {
+  background: #4ba6ff;
+  color: #fff;
+}
+#main {
+  padding: 10px;
+  flex-grow: 1;
+  overflow: scroll;
+}
+body.task-list #main h2,
+body.task-list #main h5 {
+  font-weight: 400;
+  margin: 0;
+}
+body.task-list #main>div {
+  margin-top: 1.5em;
+  position: relative;
+  background: #eee;
+  padding: 10px;
+}
+body.task-list #main>div h5 {
+  position: absolute;
+  top: -1.2em;
+  color: #aaa;
+}
+body.task-list #main * {
+  font-weight: 300;
+}
+body.task-list ul {
+  list-style: none;
+  padding-left: 0;
+}
+body.task-list li a {
+  text-decoration: none;
+  display: block;
+  padding: 0.1em 0.5em;
+}
+body.task-list li a:hover {
+  background-color: #4ba6ff;
+  color: #fff;
+}

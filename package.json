@@ -1,0 +1,16 @@
+{
+  "name": "pdf-printer",
+  "version": "1.0.0",
+  "description": "Printing figures to files",
+  "main": "index.coffee",
+  "author": "Daven Quinn",
+  "license": "ISC",
+  "bin": {
+    "pdf-printer": "cli.js"
+  },
+  "dependencies": {
+    "bluebird": "^3.4.6",
+    "coffee-script": "^1.11.1",
+    "electron-reload": "^1.0.3"
+  }
+}

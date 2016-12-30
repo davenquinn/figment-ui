@@ -1,0 +1,21 @@
+<html>
+  <head>
+    <title>PDFPrinter testing environment</title>
+    <link rel='stylesheet' href='style.css'>
+  </head>
+  <body>
+    <div id='controls'>
+      <h1>Figure List</h1>
+      <a id='toggle-dev-tools'>Toggle DevTools</a>
+    </div>
+    <div id='main'></div>
+    <script>
+      // Require helpers and then main script
+      // ... this could be abstracted for greater
+      // ... control of extension modules
+      require("coffee-script/register")
+      require("../_helpers/stylus-css-modules")
+      require("./index")
+    </script>
+  </body>
+</html>
