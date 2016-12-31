@@ -12,5 +12,8 @@
     "bluebird": "^3.4.6",
     "coffee-script": "^1.11.1",
     "electron-reload": "^1.0.3"
+  },
+  "peerDependencies": {
+    "electron": "*"
   }
 }
