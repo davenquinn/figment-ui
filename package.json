@@ -12,5 +12,8 @@
     "bluebird": "^3.4.6",
     "coffee-script": "^1.12.2",
     "electron-reload": "^1.0.3"
+  },
+  "devDependencies": {
+    "d3": "^4.4.0"
   }
 }

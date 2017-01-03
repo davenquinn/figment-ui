@@ -53,17 +53,31 @@ print = (el, fn, callback)->
 
 # Initialize renderer
 class Printer
-  constructor: ->
+  constructor: (@options)->
     ###
     Setup a rendering object
     ###
     console.log "Started renderer"
+
+    @options.buildDir ?= ''
     @tasks = []
 
-  task: (fn, func)->
+  task: (fn, funcOrString)->
     ###
     Add a task
     ###
+
+    # Check if we've got a function or string
+    if typeof funcOrString == 'function'
+      func = funcOrString
+    else
+      # Require relative to parent module
+      func = module.parent.require funcOrString
+
+    # Apply build directory
+    if not path.isAbsolute(fn)
+      fn = path.join(@options.buildDir,fn)
+
     h = createHash('md5')
           .update(fn)
           .digest('hex')
