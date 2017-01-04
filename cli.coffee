@@ -1,5 +1,6 @@
 # Headless mode for figure generation
 path = require 'path'
+fs = require 'fs'
 min = require 'minimist'
 Promise = require 'bluebird'
 {BrowserWindow, app, ipcMain} = require 'electron'
@@ -40,6 +41,17 @@ createWindow = ->
 
   ipcMain.on 'toggle-dev-tools', ->
     win.toggleDevTools()
+
+  ipcMain.on 'print-pdf', (event, opts, filename)->
+    console.log "Printing to pdf"
+    dir = path.dirname filename
+    if not fs.existsSync(dir)
+      fs.mkdirSync dir
+
+    win.webContents.printToPDF {}, (e,d)=>
+      console.log "Printed"
+      fs.writeFileSync filename, d
+      event.returnValue = 'finished'
 
   win.on 'closed', ->
     win = null

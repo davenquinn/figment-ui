@@ -1,3 +1,4 @@
 #!/bin/bash
 
+echo "Simple spec"
 ./cli.js $@ -- test/example-spec.coffee

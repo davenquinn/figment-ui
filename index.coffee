@@ -1,6 +1,6 @@
 Promise = require 'bluebird'
 fs = require 'fs'
-{remote} = require 'electron'
+{remote, ipcRenderer} = require 'electron'
 {createHash} = require 'crypto'
 path = require 'path'
 
@@ -35,21 +35,14 @@ print = (el, fn, callback)->
     printBackground: true
     marginsType: 1
     pageSize:
-      width: v.right/72
-      height: v.bottom/72
-  opts.landscape = opts.pageSize.width > opts.pageSize.height
+      width: v.right/96
+      height: v.bottom/96
+  console.log opts
+  #opts.landscape = opts.pageSize.width > opts.pageSize.height
 
-  printToPDF = Promise.promisify c.printToPDF
-  writeFile = Promise.promisify fs.writeFile
-
-  printToPDF opts
-    .tap ->
-      dir = path.dirname fn
-      if !fs.existsSync(dir)
-        fs.mkdirSync dir
-    .then (d)->
-      writeFile fn, d
-    .then callback
+  _ = ipcRenderer.sendSync 'print-pdf', opts, fn
+  console.log _
+  callback()
 
 # Initialize renderer
 class Printer
