@@ -1,4 +1,7 @@
 #!/bin/bash
 
+echo "Removing previous test output"
+rm -rf test/output
+
 echo "Simple spec"
 ./cli.js $@ -- test/example-spec.coffee

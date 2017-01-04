@@ -23,26 +23,31 @@ runTask = (task)->
   runFunction
     .then printDataset
 
-print = (el, fn, callback)->
+pixelsToMicrons = (px)->
+  Math.ceil(px/96*25400)
+
+print = (el, filename, callback)->
   ###
   Print the webview to the callback
   ###
   c = remote.getCurrentWebContents()
-  console.log "Printing to #{fn}"
+  console.log "Printing to #{filename}"
   v = el.getBoundingClientRect()
 
   opts =
     printBackground: true
     marginsType: 1
     pageSize:
-      width: v.right/96
-      height: v.bottom/96
-  console.log opts
-  #opts.landscape = opts.pageSize.width > opts.pageSize.height
+      height: pixelsToMicrons v.height
+      width: pixelsToMicrons v.width
 
-  _ = ipcRenderer.sendSync 'print-pdf', opts, fn
-  console.log _
-  callback()
+  dir = path.dirname filename
+  if not fs.existsSync(dir)
+    fs.mkdirSync dir
+
+  c.printToPDF opts, (e,d)=>
+    fs.writeFileSync filename, d
+    callback()
 
 # Initialize renderer
 class Printer
