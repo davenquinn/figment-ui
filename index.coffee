@@ -4,24 +4,25 @@ fs = require 'fs'
 {createHash} = require 'crypto'
 path = require 'path'
 
-runTask = (task)->
-  ###
-  Run a single printing task from a task spec
-  ###
-  runFunction = new Promise (resolve, reject)->
-    el = document.body
-    el.innerHTML = ""
-    el.style.margin = 0
-    task.function el, resolve
-  printDataset = new Promise (resolve, reject)->
-    # Could add error handling with reject
-    el = document.querySelector 'body>*'
+generateFigure = (task)->
+  el = document.body
+  el.innerHTML = ""
+  el.style.margin = 0
+  console.log "Starting task #{task.outfile}"
+  new Promise (resolve, reject)->
+    task.function el, (err)->
+      if err?
+        reject()
+      else
+        resolve(task)
+
+printFigureArea = (task)->
+  el = document.querySelector 'body>*'
+  new Promise (resolve, reject)->
+    ## Could add error handling with reject
     print el, task.outfile, ->
       console.log "Finished task"
       resolve()
-
-  runFunction
-    .then printDataset
 
 pixelsToMicrons = (px)->
   Math.ceil(px/96*25400)
@@ -69,8 +70,12 @@ class Printer
     if typeof funcOrString == 'function'
       func = funcOrString
     else
-      # Require relative to parent module
-      func = module.parent.require funcOrString
+      # Require relative to parent module,
+      # but do it later so errors can be accurately
+      # traced
+      func = (el, cb)->
+        f = module.parent.require funcOrString
+        f(el, cb)
 
     # Apply build directory
     if not path.isAbsolute(fn)
@@ -89,8 +94,17 @@ class Printer
   run: ->
     # Progress through list of figures, print
     # each one to file
+    __runTask = (t)->
+      generateFigure(t)
+        .then printFigureArea
+        .catch (e)->
+          try
+            console.log e.stack
+          catch
+            console.log "Unhandled error: #{e}"
+
     Promise
-      .map @tasks, runTask, concurrency: 1
+      .map @tasks, __runTask, concurrency: 1
 
 module.exports =
   Printer: Printer
