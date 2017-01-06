@@ -2,6 +2,12 @@
 path = require 'path'
 d3 = require 'd3'
 
+try
+  require '../_helpers/stylus-css-modules'
+catch e
+  console.log "Couldn't import helper for stylus css modules,
+               stylus and css-modules-require-hook should be installed"
+
 createMainPage = null
 
 body = d3.select 'body'

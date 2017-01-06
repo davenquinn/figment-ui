@@ -1,4 +1,4 @@
-{Printer} = require 'pdf-printer'
+{Printer} = require '..'
 
 printer = new Printer buildDir: "#{__dirname}/output"
 

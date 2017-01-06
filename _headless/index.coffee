@@ -8,6 +8,12 @@ console.error = c.error
 console.warn = c.warn
 process.exit = remote.app.quit
 
+try
+  require '../_helpers/stylus-css-modules'
+catch e
+  console.log "Couldn't import stylus css modules"
+  console.log e.trace
+
 # redirect errors to stderr
 window.addEventListener 'error', (e) ->
   e.preventDefault()
