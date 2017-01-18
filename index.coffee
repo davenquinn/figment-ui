@@ -61,6 +61,23 @@ class Printer
     @options.buildDir ?= ''
     @tasks = []
 
+    @options.helpers ?= ['stylus-css-modules-global']
+    @__setupHelpers()
+
+  __setupHelpers: ->
+    # Apply list of helpers
+    # either by getting from registry
+    # or by passing a function
+    _helpers = require './_helpers'
+    for helper in @options.helpers
+      console.log "Setting up helper #{helper}"
+      try
+        helper()
+      catch e
+        throw e unless e instanceof TypeError
+        console.log _helpers
+        _helpers[helper]()
+
   task: (fn, funcOrString)->
     ###
     Add a task
