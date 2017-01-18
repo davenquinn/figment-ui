@@ -1,6 +1,12 @@
 # pdf-printer
 
-A package for printing figures to PDF files.
+A package for building static data visualizations and
+printing them to PDF files. It is designed to make the
+DOM, its SVG extensions, and the universe of awesome
+tools that have been designed for it (e.g. `d3`) a first-class graphics environment for creating high
+quali
+
+## Debug mode
 
 ## Compile-time helpers
 
@@ -17,8 +23,16 @@ by passing a function to the list of `helpers` options.
 #### API
 
 ```coffeescript
-Printer
+p = Printer
   helpers: [
     'stylus-css-modules-global' # The current default
     require 'handlebars-require-hook' # a random function
   ]
+
+p.task 'test.pdf', './test-figure'
+p.task 'test2.pdf', (el,callback)->
+  d3.select el
+    .append 'text'
+    .text 'This is a basic figure'
+  callback()
+```
