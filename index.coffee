@@ -61,7 +61,7 @@ class Printer
     @options.buildDir ?= ''
     @tasks = []
 
-    @options.helpers ?= ['stylus-css-modules-global']
+    @options.helpers ?= ['css','stylus']
     @__setupHelpers()
 
   __setupHelpers: ->
@@ -75,7 +75,6 @@ class Printer
         helper()
       catch e
         throw e unless e instanceof TypeError
-        console.log _helpers
         _helpers[helper]()
 
   task: (fn, funcOrString)->
