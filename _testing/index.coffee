@@ -1,6 +1,6 @@
 {remote, ipcRenderer} = require 'electron'
 path = require 'path'
-d3 = require 'd3'
+d3 = require 'd3-selection'
 
 try
   require '../_helpers/stylus-css-modules'
