@@ -9,6 +9,7 @@ catch e
                stylus and css-modules-require-hook should be installed"
 
 createMainPage = null
+isMainPage = null
 
 body = d3.select 'body'
 main = d3.select '#main'
@@ -16,6 +17,24 @@ title = d3.select '#controls>h1'
 d3.select '#toggle-dev-tools'
   .on 'click', ->
     ipcRenderer.send 'toggle-dev-tools'
+
+zoom = 1
+updateZoom = ->
+  zoom = 1 if isMainPage
+  main
+    .datum zoom: zoom
+    .style 'zoom', (d)->d.zoom
+
+ipcRenderer
+  .on 'zoom-reset', ->
+    zoom = 1
+    updateZoom()
+  .on 'zoom-in', ->
+    zoom *= 1.25
+    updateZoom()
+  .on 'zoom-out',->
+    zoom /= 1.25
+    updateZoom()
 
 sharedStart = (array) ->
   # From

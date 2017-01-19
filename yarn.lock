@@ -262,6 +262,10 @@ ecc-jsbn@~0.1.1:
   dependencies:
     jsbn "~0.1.0"
 
+electron-localshortcut@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/electron-localshortcut/-/electron-localshortcut-1.0.0.tgz#e9c1ba267c75376e1b254af206b9ff856360a67a"
+
 electron-reload@^1.0.3:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/electron-reload/-/electron-reload-1.1.0.tgz#be9e69e01076b5cd09d1ab2fb7d51c0e76737269"

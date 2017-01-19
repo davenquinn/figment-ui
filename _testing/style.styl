@@ -9,6 +9,7 @@ body
   position: relative
   padding: 10px
   height: 1.2em
+  min-height: 1.2em
   font-family: "Helvetica Neue", Helvetica, sans-serif;
   a
     text-decoration: none
@@ -39,9 +40,12 @@ body
     color: white
 
 #main
+  box-sizing: border-box
   padding: 10px
   flex-grow: 1
   overflow: scroll
+  margin: 0 auto
+  width: 100%
 
 body.task-list
   font-family: "Helvetica Neue", Helvetica, sans-serif;

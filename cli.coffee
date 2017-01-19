@@ -4,6 +4,7 @@ fs = require 'fs'
 min = require 'minimist'
 Promise = require 'bluebird'
 {BrowserWindow, app, ipcMain} = require 'electron'
+shortcuts = require './shortcuts'
 
 argv = min process.argv.slice(2)
 # Specify --debug to show BrowserWindow
@@ -38,7 +39,7 @@ createWindow = ->
   else
     url = "file://#{__dirname}/_headless/index.html"
   win.loadURL url
-
+  shortcuts(win)
   ipcMain.on 'toggle-dev-tools', ->
     win.toggleDevTools()
 
