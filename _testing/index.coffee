@@ -1,6 +1,7 @@
 {remote, ipcRenderer} = require 'electron'
 path = require 'path'
 d3 = require 'd3'
+Promise = require 'bluebird'
 
 try
   require '../_helpers/stylus-css-modules'
@@ -37,12 +38,13 @@ itemSelected = (d)->
     .append 'a'
     .attr 'href','#'
     .text '◀︎ Back to list'
-    .on 'click', createMainPage
+    .on 'click', loadEntryPoint(createMainPage)
 
   main.html ""
   d.function main.node()
 
 renderSpecList = (d)->
+  # Render spec list from runner
   el = d3.select @
 
   # Find shared starting substring
@@ -69,14 +71,7 @@ renderSpecList = (d)->
       .text (d)->d.outfile.slice(prefix.length)
       .on 'click', itemSelected
 
-specs = remote.getGlobal 'specs'
-
-runners = specs.map (d)->
-  o = require d
-  o.name = d
-  return o
-
-createMainPage = ->
+createMainPage = (runners)->
   # Create a list of tasks
   body.attr 'class','task-list'
 
@@ -93,7 +88,7 @@ createMainPage = ->
     .attr 'class', 'runner'
     .each renderSpecList
 
-render = ->
+runBasedOnHash = (runners)->
   if location.hash.length > 1
     console.log "Attempting to navigate to #{location.hash}"
     # Check if we can grab a dataset
@@ -105,7 +100,21 @@ render = ->
         return
 
   # If no hash then create main page
-  createMainPage()
+  createMainPage(runners)
 
-render()
+getSpecs = (d)->
+  res = require(d)
+  Promise.resolve res
+    .then (v)->
+      v.name = d
+      v
+
+loadEntryPoint = (fn)-> ->
+  specs = remote.getGlobal 'specs'
+  Promise.map specs, getSpecs
+    .then createMainPage
+
+
+fn = loadEntryPoint(runBasedOnHash)
+fn()
 

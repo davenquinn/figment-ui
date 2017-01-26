@@ -24,6 +24,7 @@ opts = {show: show}
 # Each argument should be a javascript or coffeescript
 # file exporting a renderer object
 dn = process.cwd()
+
 global.specs = argv._.map (d)->path.join(dn,d)
 
 createWindow = ->
