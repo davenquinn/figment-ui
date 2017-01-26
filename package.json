@@ -11,12 +11,17 @@
   "dependencies": {
     "bluebird": "^3.4.6",
     "coffee-script": "^1.12.2",
+    "d3-selection": "^1.0.3",
+    "electron-localshortcut": "^1.0.0",
     "electron-reload": "^1.0.3",
-    "loglevel": "^1.4.1"
+    "loglevel": "^1.4.1",
+    "stylus": "^0.54.5"
   },
   "devDependencies": {
     "chai": "^3.5.0",
-    "d3": "^4.4.0",
     "mocha": "^3.2.0"
+  },
+  "peerDependencies": {
+    "stylus": "*"
   }
 }

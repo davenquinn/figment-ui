@@ -1,3 +1,5 @@
+{appendStyle} = require './util'
+
 get = (module)->
   # Try to require an optional module
   try
@@ -21,8 +23,5 @@ module.exports = (mode='local')->
       stylus(css)
         .set('filename', filename)
         .render()
-    processCss: (css)->
-      style = document.createElement('style')
-      style.type = 'text/css'
-      style.innerHTML = css
-      document.head.appendChild(style)
+    processCss: appendStyle
+

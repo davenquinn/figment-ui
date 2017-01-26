@@ -4,6 +4,7 @@ fs = require 'fs'
 min = require 'minimist'
 Promise = require 'bluebird'
 {BrowserWindow, app, ipcMain} = require 'electron'
+shortcuts = require './shortcuts'
 
 argv = min process.argv.slice(2)
 # Specify --debug to show BrowserWindow
@@ -15,17 +16,16 @@ show = argv.show or debug
 # Set directory to reload if not given
 if debug
   argv.reload ?= process.cwd()
-  console.log "Reloading from directory #{argv.reload}"
-  require('electron-reload')(argv.reload)
+  r = path.resolve argv.reload
+  console.log "Reloading from directory #{r}"
+  require('electron-reload')(r)
 
 opts = {show: show}
 
 # Create list of task-runner files to import
 # Each argument should be a javascript or coffeescript
 # file exporting a renderer object
-dn = process.cwd()
-
-global.specs = argv._.map (d)->path.join(dn,d)
+global.specs = argv._.map (d)->path.resolve(d)
 
 createWindow = ->
 
@@ -39,7 +39,7 @@ createWindow = ->
   else
     url = "file://#{__dirname}/_headless/index.html"
   win.loadURL url
-
+  shortcuts(win)
   ipcMain.on 'toggle-dev-tools', ->
     win.toggleDevTools()
 

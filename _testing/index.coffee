@@ -1,7 +1,7 @@
 {remote, ipcRenderer} = require 'electron'
 path = require 'path'
-d3 = require 'd3'
 Promise = require 'bluebird'
+d3 = require 'd3-selection'
 
 try
   require '../_helpers/stylus-css-modules'
@@ -10,6 +10,7 @@ catch e
                stylus and css-modules-require-hook should be installed"
 
 createMainPage = null
+isMainPage = null
 
 body = d3.select 'body'
 main = d3.select '#main'
@@ -17,6 +18,13 @@ title = d3.select '#controls>h1'
 d3.select '#toggle-dev-tools'
   .on 'click', ->
     ipcRenderer.send 'toggle-dev-tools'
+
+setZoom = (zoom)->
+  main
+    .datum zoom: zoom
+    .style 'zoom', (d)->d.zoom
+ipcRenderer.on 'zoom', (event, zoom)->
+  setZoom zoom
 
 sharedStart = (array) ->
   # From
@@ -89,6 +97,8 @@ createMainPage = (runners)->
     .each renderSpecList
 
 runBasedOnHash = (runners)->
+  z = remote.getGlobal('zoom')
+  setZoom z
   if location.hash.length > 1
     console.log "Attempting to navigate to #{location.hash}"
     # Check if we can grab a dataset
