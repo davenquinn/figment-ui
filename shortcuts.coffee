@@ -1,4 +1,7 @@
 {register} = require 'electron-localshortcut'
+{ipcMain} = require 'electron'
+
+global.zoom = 1
 
 module.exports = (win)->
   zoomShortcuts =
@@ -7,8 +10,11 @@ module.exports = (win)->
     '0': 'zoom-reset'
 
   register win, "CommandOrControl+-", =>
-    win.webContents.send 'zoom-out'
+    global.zoom /= 1.25
+    win.webContents.send 'zoom', zoom
   register win, "CommandOrControl+=", =>
-    win.webContents.send 'zoom-in'
+    global.zoom *= 1.25
+    win.webContents.send 'zoom', zoom
   register win, "CommandOrControl+0", =>
-    win.webContents.send 'zoom-reset'
+    global.zoom = 1
+    win.webContents.send 'zoom', zoom

@@ -18,23 +18,12 @@ d3.select '#toggle-dev-tools'
   .on 'click', ->
     ipcRenderer.send 'toggle-dev-tools'
 
-zoom = 1
-updateZoom = ->
-  zoom = 1 if isMainPage
+setZoom = (zoom)->
   main
     .datum zoom: zoom
     .style 'zoom', (d)->d.zoom
-
-ipcRenderer
-  .on 'zoom-reset', ->
-    zoom = 1
-    updateZoom()
-  .on 'zoom-in', ->
-    zoom *= 1.25
-    updateZoom()
-  .on 'zoom-out',->
-    zoom /= 1.25
-    updateZoom()
+ipcRenderer.on 'zoom', (event, zoom)->
+  setZoom zoom
 
 sharedStart = (array) ->
   # From
@@ -113,6 +102,9 @@ createMainPage = ->
     .each renderSpecList
 
 render = ->
+    z = remote.getGlobal('zoom')
+    setZoom z
+
   if location.hash.length > 1
     console.log "Attempting to navigate to #{location.hash}"
     # Check if we can grab a dataset
