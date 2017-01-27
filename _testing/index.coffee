@@ -122,8 +122,7 @@ getSpecs = (d)->
 loadEntryPoint = (fn)-> ->
   specs = remote.getGlobal 'specs'
   Promise.map specs, getSpecs
-    .then createMainPage
-
+    .then fn
 
 fn = loadEntryPoint(runBasedOnHash)
 fn()
