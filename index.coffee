@@ -3,6 +3,7 @@ fs = require 'fs'
 {remote, ipcRenderer} = require 'electron'
 {createHash} = require 'crypto'
 path = require 'path'
+d3 = require 'd3-selection'
 
 generateFigure = (task)->
   el = document.body
@@ -16,8 +17,14 @@ generateFigure = (task)->
       else
         resolve(task)
 
+dpi = 1200
 printFigureArea = (task)->
-  el = document.querySelector 'body>*'
+  el = document.querySelector 'body>*:first-child'
+
+  d3.select 'body'
+    .datum zoom: dpi/96
+    .style 'zoom', (d)->d.zoom
+
   new Promise (resolve, reject)->
     ## Could add error handling with reject
     print el, task.outfile, ->
@@ -25,7 +32,7 @@ printFigureArea = (task)->
       resolve()
 
 pixelsToMicrons = (px)->
-  Math.ceil(px/96*25400)
+  Math.ceil(px/96*dpi/96*25400)
 
 print = (el, filename, callback)->
   ###
