@@ -22,7 +22,8 @@ specs = remote.getGlobal 'specs'
 runTask = (spec)->
   "Running tasks from #{spec}"
   taskRunner = require spec
-  taskRunner.run()
+  Promise.resolve taskRunner
+    .then (t) -> t.run()
 
 Promise.map specs, runTask, concurrency: 1
   .then finish
