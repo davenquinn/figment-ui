@@ -4,6 +4,15 @@ fs = require 'fs'
 {createHash} = require 'crypto'
 path = require 'path'
 
+options = remote.getGlobal 'options' or {}
+
+waitForUserInput = (data)->
+  w = options.waitForUser or false
+  return Promise.resolve(data) unless w
+  new Promise (resolve, reject)->
+    ipcRenderer.on 'done-waiting', ->resolve(data)
+    ipcRenderer.send 'wait-for-input'
+
 generateFigure = (task)->
   el = document.body
   el.innerHTML = ""
@@ -56,6 +65,7 @@ class Printer
     ###
     Setup a rendering object
     ###
+    @cliOptions = {}
     console.log "Started renderer"
 
     @options.buildDir ?= ''
@@ -112,6 +122,7 @@ class Printer
     # each one to file
     __runTask = (t)->
       generateFigure(t)
+        .then waitForUserInput
         .then printFigureArea
         .catch (e)->
           try

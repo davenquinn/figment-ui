@@ -1,6 +1,7 @@
 {remote, ipcRenderer} = require 'electron'
 path = require 'path'
 Promise = require 'bluebird'
+readline = require 'readline'
 
 c = remote.getGlobal('console')
 console.log = c.log
