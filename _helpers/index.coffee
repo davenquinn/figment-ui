@@ -15,4 +15,6 @@ module.exports =
       content = readFileSync filename, 'utf8'
       stylus content
         .set 'filename', filename
-        .render (e,css)->appendStyle(css)
+        .render (e,css)->
+          throw "Error on stylus compilation" unless css?
+          appendStyle(css) if css?
