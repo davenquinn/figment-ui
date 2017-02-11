@@ -7,11 +7,14 @@ path = require 'path'
 options = remote.getGlobal 'options' or {}
 
 waitForUserInput = (data)->
-  w = options.waitForUser or false
-  return Promise.resolve(data) unless w
   new Promise (resolve, reject)->
-    ipcRenderer.on 'done-waiting', ->resolve(data)
+    ipcRenderer.once 'done-waiting', ->resolve(data)
     ipcRenderer.send 'wait-for-input'
+
+sleep = (data)->
+  new Promise (resolve, reject)->
+    fn = ->resolve(data)
+    setTimeout fn, 1000
 
 generateFigure = (task)->
   el = document.body
@@ -26,7 +29,7 @@ generateFigure = (task)->
         resolve(task)
 
 printFigureArea = (task)->
-  el = document.querySelector 'body>*'
+  el = document.querySelector 'body>*:first-child'
   new Promise (resolve, reject)->
     ## Could add error handling with reject
     print el, task.outfile, ->
@@ -34,7 +37,8 @@ printFigureArea = (task)->
       resolve()
 
 pixelsToMicrons = (px)->
-  Math.ceil(px/96*25400)
+  factor = 25400.0/96.0
+  Math.ceil(px*factor)
 
 print = (el, filename, callback)->
   ###
@@ -121,9 +125,13 @@ class Printer
     # Progress through list of figures, print
     # each one to file
     __runTask = (t)->
-      generateFigure(t)
-        .then waitForUserInput
-        .then printFigureArea
+      p = generateFigure(t)
+
+      if options.waitForUser
+        p = p.then waitForUserInput
+
+      p.then sleep
+       .then printFigureArea
         .catch (e)->
           try
             console.log e.stack
