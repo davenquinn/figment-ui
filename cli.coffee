@@ -30,6 +30,7 @@ global.specs = argv._.map (d)->path.resolve(d)
 global.options = {
   # Wait between rendering items
   waitForUser: show
+  dpi: parseInt(argv.dpi) or 300
 }
 
 ### Setup IPC ###
