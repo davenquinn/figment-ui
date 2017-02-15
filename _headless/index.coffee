@@ -2,6 +2,9 @@
 path = require 'path'
 Promise = require 'bluebird'
 
+{Printer} = require("../index.coffee")
+window.Printer = Printer
+
 c = remote.getGlobal('console')
 console.log = c.log
 console.error = c.error

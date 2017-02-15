@@ -17,7 +17,7 @@ generateFigure = (task)->
       else
         resolve(task)
 
-dpi = 1200
+dpi = 2000
 printFigureArea = (task)->
   el = document.querySelector 'body>*:first-child'
 
@@ -97,7 +97,8 @@ class Printer
       # but do it later so errors can be accurately
       # traced
       func = (el, cb)->
-        f = module.parent.require funcOrString
+        fn = path.join process.cwd(), funcOrString
+        f = require fn
         f(el, cb)
 
     # Apply build directory
