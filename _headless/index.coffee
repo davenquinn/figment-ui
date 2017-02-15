@@ -1,6 +1,7 @@
 {remote, ipcRenderer} = require 'electron'
 path = require 'path'
 Promise = require 'bluebird'
+readline = require 'readline'
 
 {Printer} = require("../index.coffee")
 window.Printer = Printer
@@ -25,7 +26,8 @@ specs = remote.getGlobal 'specs'
 runTask = (spec)->
   "Running tasks from #{spec}"
   taskRunner = require spec
-  taskRunner.run()
+  Promise.resolve taskRunner
+    .then (t) -> t.run()
 
 Promise.map specs, runTask, concurrency: 1
   .then finish

@@ -5,6 +5,7 @@ min = require 'minimist'
 Promise = require 'bluebird'
 {BrowserWindow, app, ipcMain} = require 'electron'
 shortcuts = require './shortcuts'
+readline = require 'readline'
 
 argv = min process.argv.slice(2)
 # Specify --debug to show BrowserWindow
@@ -26,6 +27,16 @@ opts = {show: show}
 # Each argument should be a javascript or coffeescript
 # file exporting a renderer object
 global.specs = argv._.map (d)->path.resolve(d)
+global.options = {
+  # Wait between rendering items
+  waitForUser: show
+}
+
+### Setup IPC ###
+
+rl = readline.createInterface
+  input: process.stdin,
+  output: process.stdout
 
 createWindow = ->
 
@@ -42,6 +53,10 @@ createWindow = ->
   shortcuts(win)
   ipcMain.on 'toggle-dev-tools', ->
     win.toggleDevTools()
+
+  ipcMain.on 'wait-for-input', (event)->
+    rl.question 'Press enter to continue', (ans)->
+      event.sender.send('done-waiting')
 
   win.on 'closed', ->
     win = null

@@ -5,6 +5,18 @@ fs = require 'fs'
 path = require 'path'
 d3 = require 'd3-selection'
 
+options = remote.getGlobal 'options' or {}
+
+waitForUserInput = (data)->
+  new Promise (resolve, reject)->
+    ipcRenderer.once 'done-waiting', ->resolve(data)
+    ipcRenderer.send 'wait-for-input'
+
+sleep = (data)->
+  new Promise (resolve, reject)->
+    fn = ->resolve(data)
+    setTimeout fn, 1000
+
 generateFigure = (task)->
   el = document.body
   el.innerHTML = ""
@@ -63,6 +75,7 @@ class Printer
     ###
     Setup a rendering object
     ###
+    @cliOptions = {}
     console.log "Started renderer"
 
     @options.buildDir ?= ''
@@ -119,8 +132,13 @@ class Printer
     # Progress through list of figures, print
     # each one to file
     __runTask = (t)->
-      generateFigure(t)
-        .then printFigureArea
+      p = generateFigure(t)
+
+      if options.waitForUser
+        p = p.then waitForUserInput
+
+      p.then sleep
+       .then printFigureArea
         .catch (e)->
           try
             console.log e.stack
