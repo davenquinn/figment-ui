@@ -23,51 +23,55 @@ generateFigure = (task)->
   el.style.margin = 0
   console.log "Starting task #{task.outfile}"
   new Promise (resolve, reject)->
+    # Turn off logging from inside function
+    ocl = console.log
+    console.log = ->
     task.function el, (err)->
+      console.log = ocl
       if err?
         reject()
       else
         resolve(task)
 
+setZoom = (z)->
+  d3.select 'body'
+    .datum zoom: z
+    .style 'zoom', (d)->d.zoom
+
 dpi = 2000
+pixelsToMicrons = (px)->
+  Math.ceil((px*dpi)/96*25400)
+
 printFigureArea = (task)->
   el = document.querySelector 'body>*:first-child'
 
-  d3.select 'body'
-    .datum zoom: dpi/96
-    .style 'zoom', (d)->d.zoom
+  setZoom(dpi/96)
 
   new Promise (resolve, reject)->
-    ## Could add error handling with reject
-    print el, task.outfile, ->
+    ###
+    Print the webview to the callback
+    ###
+    c = remote.getCurrentWebContents()
+    console.log "Printing to #{task.outfile}"
+    v = el.getBoundingClientRect()
+
+    opts =
+      printBackground: true
+      marginsType: 1
+      pageSize:
+        height: pixelsToMicrons v.height
+        width: pixelsToMicrons v.width
+    console.log opts
+
+    dir = path.dirname task.outfile
+    if not fs.existsSync(dir)
+      fs.mkdirSync dir
+
+    c.printToPDF opts, (e,d)=>
+      fs.writeFileSync task.outfile, d
       console.log "Finished task"
+      setZoom(1)
       resolve()
-
-pixelsToMicrons = (px)->
-  Math.ceil(px/96*dpi/96*25400)
-
-print = (el, filename, callback)->
-  ###
-  Print the webview to the callback
-  ###
-  c = remote.getCurrentWebContents()
-  console.log "Printing to #{filename}"
-  v = el.getBoundingClientRect()
-
-  opts =
-    printBackground: true
-    marginsType: 1
-    pageSize:
-      height: pixelsToMicrons v.height
-      width: pixelsToMicrons v.width
-
-  dir = path.dirname filename
-  if not fs.existsSync(dir)
-    fs.mkdirSync dir
-
-  c.printToPDF opts, (e,d)=>
-    fs.writeFileSync filename, d
-    callback()
 
 # Initialize renderer
 class Printer
@@ -97,10 +101,11 @@ class Printer
         throw e unless e instanceof TypeError
         _helpers[helper]()
 
-  task: (fn, funcOrString)->
+  task: (fn, funcOrString, opts={})->
     ###
     Add a task
     ###
+    opts.dpi ?= 300
 
     # Check if we've got a function or string
     if typeof funcOrString == 'function'
@@ -126,6 +131,7 @@ class Printer
       outfile: fn
       function: func
       hash: h
+      opts: opts
     return @
 
   run: ->
@@ -137,8 +143,7 @@ class Printer
       if options.waitForUser
         p = p.then waitForUserInput
 
-      p.then sleep
-       .then printFigureArea
+      p.then printFigureArea
         .catch (e)->
           try
             console.log e.stack
