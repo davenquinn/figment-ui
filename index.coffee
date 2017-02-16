@@ -6,6 +6,7 @@ path = require 'path'
 d3 = require 'd3-selection'
 
 options = remote.getGlobal 'options' or {}
+options.dpi ?= 300
 
 waitForUserInput = (data)->
   new Promise (resolve, reject)->
@@ -38,14 +39,15 @@ setZoom = (z)->
     .datum zoom: z
     .style 'zoom', (d)->d.zoom
 
-dpi = 2000
 pixelsToMicrons = (px)->
-  Math.ceil((px*dpi)/96*25400)
+  Math.ceil(px/96*options.dpi/96*25400)
 
 printFigureArea = (task)->
-  el = document.querySelector 'body>*:first-child'
+  opts = task.opts or {}
+  opts.selector ?= 'body>*:first-child'
+  el = document.querySelector opts.selector
 
-  setZoom(dpi/96)
+  setZoom(options.dpi/96)
 
   new Promise (resolve, reject)->
     ###
@@ -54,6 +56,8 @@ printFigureArea = (task)->
     c = remote.getCurrentWebContents()
     console.log "Printing to #{task.outfile}"
     v = el.getBoundingClientRect()
+    d3.select(el).html()
+    console.log v
 
     opts =
       printBackground: true
@@ -61,13 +65,13 @@ printFigureArea = (task)->
       pageSize:
         height: pixelsToMicrons v.height
         width: pixelsToMicrons v.width
-    console.log opts
 
     dir = path.dirname task.outfile
     if not fs.existsSync(dir)
       fs.mkdirSync dir
 
     c.printToPDF opts, (e,d)=>
+      throw e if e?
       fs.writeFileSync task.outfile, d
       console.log "Finished task"
       setZoom(1)
