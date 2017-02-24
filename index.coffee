@@ -25,10 +25,10 @@ generateFigure = (task)->
   console.log "Starting task #{task.outfile}"
   new Promise (resolve, reject)->
     # Turn off logging from inside function
-    ocl = console.log
-    console.log = ->
+    #ocl = console.log
+    #console.log = ->
     task.function el, (err)->
-      console.log = ocl
+      #console.log = ocl
       if err?
         reject()
       else
@@ -79,7 +79,7 @@ printFigureArea = (task)->
 
 # Initialize renderer
 class Printer
-  constructor: (@options)->
+  constructor: (@options={})->
     ###
     Setup a rendering object
     ###

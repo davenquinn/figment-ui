@@ -3,10 +3,46 @@
 A package for building static data visualizations and
 printing them to PDF files. It is designed to make the
 DOM, its SVG extensions, and the universe of awesome
-tools that have been designed for it (e.g. `d3`) a first-class graphics environment for creating high
-quali
+tools that have been designed for it (e.g. `d3`),
+a first-class graphics environment for creating high
+quality figures.
 
-## Debug mode
+## CLI usage
+
+A simple UNIXy CLI is available by default:
+
+```
+> pdf-printer [opts] [--] <script> <out.pdf>
+```
+
+The `<script>` argument is a Javascript (or coffeescript)
+file that exports a function
+that takes arguments `el` and `callback`, e.g.
+
+```js
+import d3 from "d3"
+
+export function createFigure(el, cb){
+  d3.select(el)
+    .append("div")
+    .text("Significant results detected");
+  cb();
+}
+```
+
+### Options
+
+`--debug`: Show a debug mode in which files are reloaded
+on change from the root directory
+
+`--show`: Show figures before printing (wait for user input
+before proceeding.
+
+`--reload <dir>`: Set a directory to reload from (for testing)
+
+`--spec-mode`: Reload from a specification file (using the
+API below) instead of file parameters at the CLI. The
+calling signature then becomes `pdf-printer --spec-mode -- <specfile>`.
 
 ## Compile-time helpers
 
@@ -18,9 +54,12 @@ easier.
 Several hooks come prepackaged, but you can add your own
 by passing a function to the list of `helpers` options.
 
-#### Prepackaged hooks
+### Prepackaged hooks
 
-#### API
+Hooks for `stylus-css-modules` (both global- and local-by-default)
+are included as is a helper for bare `stylus` and `css`.
+
+## API
 
 ```coffeescript
 p = Printer

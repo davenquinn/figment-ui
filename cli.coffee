@@ -7,10 +7,11 @@ Promise = require 'bluebird'
 shortcuts = require './shortcuts'
 readline = require 'readline'
 
-argv = min process.argv.slice(2)
+argv = min process.argv.slice(2), boolean: ['debug', 'spec-mode']
 # Specify --debug to show BrowserWindow
 #   and open devtools
-debug = argv.debug?
+# Specify --spec to load from a spec
+debug = argv.debug
 # Option just to show browser window (primarily for
 # debugging taskflow of this module)
 show = argv.show or debug
@@ -23,10 +24,16 @@ if debug
 
 opts = {show: show}
 
-# Create list of task-runner files to import
-# Each argument should be a javascript or coffeescript
-# file exporting a renderer object
-global.specs = argv._.map (d)->path.resolve(d)
+args = argv._
+global.args = args
+global.specMode = argv['spec-mode']
+
+if argv['spec-mode']
+  # Create list of task-runner files to import
+  # Each argument should be a javascript or coffeescript
+  # file exporting a renderer object
+  global.specs = args.map (d)->path.resolve(d)
+
 global.options = {
   # Wait between rendering items
   waitForUser: show
@@ -46,7 +53,7 @@ createWindow = ->
          else "Creating headless renderer"
 
   win = new BrowserWindow opts
-  if debug
+  if debug and argv['spec-mode']
     url = "file://#{__dirname}/_testing/index.html"
   else
     url = "file://#{__dirname}/_headless/index.html"

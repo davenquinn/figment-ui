@@ -27,8 +27,15 @@ runTask = (spec)->
   "Running tasks from #{spec}"
   taskRunner = require spec
   Promise.resolve taskRunner
-    .then (t) -> t.run()
+    .then (t)->t.run()
 
-Promise.map specs, runTask, concurrency: 1
-  .then finish
-
+specMode = remote.getGlobal 'specMode'
+if specMode
+  console.log "Running from spec"
+  p = Promise.map specs, runTask, concurrency: 1
+else
+  [infile, outfile] = remote.getGlobal 'args'
+  taskRunner = new Printer
+  taskRunner.task outfile, infile
+  p = taskRunner.run()
+p.then finish
