@@ -39,8 +39,7 @@ if argv['spec-mode']
   # file exporting a renderer object
   options.specs = args.map (d)->path.resolve(d)
 else
-  options.infile = argv._[0]
-  options.outfile = argv._[1]
+  [options.infile, options.outfile] = args
 
 ### Setup IPC ###
 

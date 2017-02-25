@@ -16,6 +16,7 @@ catch e
 
 createMainPage = null
 isMainPage = null
+tasks = []
 
 body = d3.select 'body'
 main = d3.select '#main'
@@ -47,14 +48,17 @@ itemSelected = (d)->
   location.hash = "##{d.hash}"
   body.attr 'class','figure'
 
-  title
-    .html ""
-    .append 'a'
-    .attr 'href','#'
-    .text '◀︎ Back to list'
-    .on 'click', loadEntryPoint(createMainPage)
+  t = title.html ""
+  if tasks.length > 1
+    t.append 'a'
+      .attr 'href','#'
+      .text '◀︎ Back to list'
+      .on 'click', loadEntryPoint(createMainPage)
+  else
+    t.text "PDF Printer"
 
   main.html ""
+  ### Run the function ###
   d.function main.node(), ->
 
 renderSpecList = (d)->
@@ -106,17 +110,20 @@ runBasedOnHash = (runners)->
   z = remote.getGlobal('zoom')
   setZoom z
 
+  _ = runners.map (d)->d.tasks
+  tasks = Array::concat.apply [], _
+
   # We've only got one possibility,
   # so we don't need hashes!
-  if runners.length == 1
-    itemSelected runners[0]
+  # We could probably represent this much more cleanly
+  if tasks.length == 1
+    console.log "Rendering single task"
+    itemSelected tasks[0]
     return
 
   if location.hash.length > 1
     console.log "Attempting to navigate to #{location.hash}"
     # Check if we can grab a dataset
-    _ = runners.map (d)->d.tasks
-    tasks = Array::concat.apply [], _
     for item in tasks
       if item.hash == location.hash.slice(1)
         itemSelected item
@@ -136,13 +143,11 @@ loadEntryPoint = (fn)-> ->
   # If we are in spec mode
   if options.specs?
     p = Promise.map options.specs, getSpecs
-      .then fn
   else
-    task = function: require options.infile
-    p = Promise.resolve [task]
-
+    spec = new Printer
+    spec.task options.outfile, options.infile
+    p = Promise.resolve [spec]
   p.then fn
 
 fn = loadEntryPoint(runBasedOnHash)
 fn()
-
