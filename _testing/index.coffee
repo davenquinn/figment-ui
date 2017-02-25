@@ -6,6 +6,8 @@ d3 = require 'd3-selection'
 {Printer} = require("../index.coffee")
 window.Printer = Printer
 
+options = remote.getGlobal 'options'
+
 try
   require '../_helpers/stylus-css-modules'
 catch e
@@ -44,6 +46,7 @@ sharedStart = (array) ->
 itemSelected = (d)->
   location.hash = "##{d.hash}"
   body.attr 'class','figure'
+
   title
     .html ""
     .append 'a'
@@ -102,6 +105,13 @@ createMainPage = (runners)->
 runBasedOnHash = (runners)->
   z = remote.getGlobal('zoom')
   setZoom z
+
+  # We've only got one possibility,
+  # so we don't need hashes!
+  if runners.length == 1
+    itemSelected runners[0]
+    return
+
   if location.hash.length > 1
     console.log "Attempting to navigate to #{location.hash}"
     # Check if we can grab a dataset
@@ -123,9 +133,16 @@ getSpecs = (d)->
       v
 
 loadEntryPoint = (fn)-> ->
-  specs = remote.getGlobal 'specs'
-  Promise.map specs, getSpecs
-    .then fn
+  # If we are in spec mode
+  if options.specs?
+    Promise.map options.specs, getSpecs
+      .then fn
+  else
+    task =
+      function: require options.infile
+      hash: "#hash"
+    location.hash = "#hash"
+    fn([task])
 
 fn = loadEntryPoint(runBasedOnHash)
 fn()

@@ -22,23 +22,25 @@ if debug
   console.log "Reloading from directory #{r}"
   require('electron-reload')(r)
 
-opts = {show: show}
-
 args = argv._
 global.args = args
 global.specMode = argv['spec-mode']
-
-if argv['spec-mode']
-  # Create list of task-runner files to import
-  # Each argument should be a javascript or coffeescript
-  # file exporting a renderer object
-  global.specs = args.map (d)->path.resolve(d)
 
 global.options = {
   # Wait between rendering items
   waitForUser: show
   dpi: parseInt(argv.dpi) or 300
+  debug: debug
 }
+
+if argv['spec-mode']
+  # Create list of task-runner files to import
+  # Each argument should be a javascript or coffeescript
+  # file exporting a renderer object
+  options.specs = args.map (d)->path.resolve(d)
+else
+  options.infile = argv._[0]
+  options.outfile = argv._[1]
 
 ### Setup IPC ###
 
@@ -52,8 +54,8 @@ createWindow = ->
          then "Creating browser window" \
          else "Creating headless renderer"
 
-  win = new BrowserWindow opts
-  if debug and argv['spec-mode']
+  win = new BrowserWindow {show: show}
+  if debug
     url = "file://#{__dirname}/_testing/index.html"
   else
     url = "file://#{__dirname}/_headless/index.html"
