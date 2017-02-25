@@ -135,14 +135,13 @@ getSpecs = (d)->
 loadEntryPoint = (fn)-> ->
   # If we are in spec mode
   if options.specs?
-    Promise.map options.specs, getSpecs
+    p = Promise.map options.specs, getSpecs
       .then fn
   else
-    task =
-      function: require options.infile
-      hash: "#hash"
-    location.hash = "#hash"
-    fn([task])
+    task = function: require options.infile
+    p = Promise.resolve [task]
+
+  p.then fn
 
 fn = loadEntryPoint(runBasedOnHash)
 fn()
