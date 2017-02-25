@@ -4,6 +4,7 @@ fs = require 'fs'
 {createHash} = require 'crypto'
 path = require 'path'
 d3 = require 'd3-selection'
+colors = require 'colors/safe'
 
 options = remote.getGlobal 'options' or {}
 options.dpi ?= 300
@@ -55,7 +56,10 @@ printFigureArea = (task)->
     ###
     c = remote.getCurrentWebContents()
     console.log "Printing to #{task.outfile}"
-    v = el.getBoundingClientRect()
+    try
+      v = el.getBoundingClientRect()
+    catch
+      throw "There is no element to print"
     d3.select(el).html()
     console.log v
 
@@ -71,7 +75,7 @@ printFigureArea = (task)->
       fs.mkdirSync dir
 
     c.printToPDF opts, (e,d)=>
-      throw e if e?
+      reject(e) if e?
       fs.writeFileSync task.outfile, d
       console.log "Finished task"
       setZoom(1)
@@ -148,11 +152,7 @@ class Printer
         p = p.then waitForUserInput
 
       p.then printFigureArea
-        .catch (e)->
-          try
-            console.log e.stack
-          catch
-            console.log "Unhandled error: #{e}"
+        .catch (e)->console.log('Error: '+e)
 
     Promise
       .map @tasks, __runTask, concurrency: 1
