@@ -41,7 +41,7 @@ setZoom = (z)->
     .style 'zoom', (d)->d.zoom
 
 pixelsToMicrons = (px)->
-  Math.ceil(px/96*options.dpi/96*25400)
+  Math.ceil(px/96.0*options.dpi/96.0*25400)
 
 printFigureArea = (task)->
   opts = task.opts or {}

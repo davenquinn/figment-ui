@@ -7,7 +7,7 @@ Promise = require 'bluebird'
 shortcuts = require './shortcuts'
 readline = require 'readline'
 
-argv = min process.argv.slice(2), boolean: ['debug', 'spec-mode']
+argv = min process.argv.slice(2), boolean: ['debug', 'spec-mode', 'show']
 # Specify --debug to show BrowserWindow
 #   and open devtools
 # Specify --spec to load from a spec
@@ -29,7 +29,7 @@ global.specMode = argv['spec-mode']
 global.options = {
   # Wait between rendering items
   waitForUser: show
-  dpi: parseInt(argv.dpi) or 300
+  dpi: parseFloat(argv.dpi) or 300.0
   debug: debug
 }
 
