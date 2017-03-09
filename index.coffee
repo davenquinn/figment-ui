@@ -4,6 +4,7 @@ fs = require 'fs'
 {createHash} = require 'crypto'
 path = require 'path'
 d3 = require 'd3-selection'
+colors = require 'colors/safe'
 
 options = remote.getGlobal 'options' or {}
 options.dpi ?= 300
@@ -24,57 +25,65 @@ generateFigure = (task)->
   el.style.margin = 0
   console.log "Starting task #{task.outfile}"
   new Promise (resolve, reject)->
+    # Turn off logging from inside function
+    #ocl = console.log
+    #console.log = ->
     task.function el, (err)->
+      #console.log = ocl
       if err?
         reject()
       else
         resolve(task)
 
-printFigureArea = (task, opts={})->
-  opts.selector ?= 'body>*:first-child'
-  el = document.querySelector opts.selector
-
+setZoom = (z)->
   d3.select 'body'
-    .datum zoom: options.dpi/96
+    .datum zoom: z
     .style 'zoom', (d)->d.zoom
-
-  new Promise (resolve, reject)->
-    ## Could add error handling with reject
-    print el, task.outfile, ->
-      console.log "Finished task"
-      resolve()
 
 pixelsToMicrons = (px)->
   Math.ceil(px/96*options.dpi/96*25400)
 
-print = (el, filename, callback)->
-  ###
-  Print the webview to the callback
-  ###
-  c = remote.getCurrentWebContents()
-  console.log "Printing to #{filename}"
-  v = el.getBoundingClientRect()
-  d3.select(el).html()
+printFigureArea = (task)->
+  opts = task.opts or {}
+  opts.selector ?= 'body>*:first-child'
+  el = document.querySelector opts.selector
 
-  opts =
-    printBackground: true
-    marginsType: 1
-    pageSize:
-      height: pixelsToMicrons v.height
-      width: pixelsToMicrons v.width
+  setZoom(options.dpi/96)
 
-  dir = path.dirname filename
-  if not fs.existsSync(dir)
-    fs.mkdirSync dir
+  new Promise (resolve, reject)->
+    ###
+    Print the webview to the callback
+    ###
+    c = remote.getCurrentWebContents()
+    console.log "Printing to #{task.outfile}"
+    try
+      v = el.getBoundingClientRect()
+    catch
+      throw "There is no element to print"
+    d3.select(el).html()
+    console.log v
 
-  c.printToPDF opts, (e,d)=>
-    throw e if e?
-    fs.writeFileSync filename, d
-    callback()
+    opts =
+      printBackground: true
+      marginsType: 1
+      pageSize:
+        height: pixelsToMicrons v.height
+        width: pixelsToMicrons v.width
+
+    dir = path.dirname task.outfile
+    if not fs.existsSync(dir)
+      fs.mkdirSync dir
+
+    c.printToPDF opts, (e,d)=>
+      reject(e) if e?
+      fs.writeFileSync task.outfile, d
+      console.log "Finished task"
+      setZoom(1)
+      resolve()
 
 # Initialize renderer
 class Printer
-  constructor: (@options)->
+  constructor: (@options={})->
     ###
     Setup a rendering object
     ###
@@ -100,10 +109,11 @@ class Printer
         throw e unless e instanceof TypeError
         _helpers[helper]()
 
-  task: (fn, funcOrString)->
+  task: (fn, funcOrString, opts={})->
     ###
     Add a task
     ###
+    opts.dpi ?= 300
 
     # Check if we've got a function or string
     if typeof funcOrString == 'function'
@@ -113,7 +123,8 @@ class Printer
       # but do it later so errors can be accurately
       # traced
       func = (el, cb)->
-        f = module.parent.require funcOrString
+        fn = path.join process.cwd(), funcOrString
+        f = require fn
         f(el, cb)
 
     # Apply build directory
@@ -128,6 +139,7 @@ class Printer
       outfile: fn
       function: func
       hash: h
+      opts: opts
     return @
 
   run: ->
@@ -139,13 +151,8 @@ class Printer
       if options.waitForUser
         p = p.then waitForUserInput
 
-      p.then sleep
-       .then printFigureArea
-        .catch (e)->
-          try
-            console.log e.stack
-          catch
-            console.log "Unhandled error: #{e}"
+      p.then printFigureArea
+        .catch (e)->console.log('Error: '+e)
 
     Promise
       .map @tasks, __runTask, concurrency: 1

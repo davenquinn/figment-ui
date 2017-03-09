@@ -3,6 +3,9 @@ path = require 'path'
 Promise = require 'bluebird'
 d3 = require 'd3-selection'
 
+{Printer} = require("../index.coffee")
+window.Printer = Printer
+
 try
   require '../_helpers/stylus-css-modules'
 catch e
@@ -49,7 +52,7 @@ itemSelected = (d)->
     .on 'click', loadEntryPoint(createMainPage)
 
   main.html ""
-  d.function main.node()
+  d.function main.node(), ->
 
 renderSpecList = (d)->
   # Render spec list from runner
