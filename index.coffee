@@ -128,8 +128,11 @@ class Printer
         f(el, cb)
 
     # Apply build directory
-    if not path.isAbsolute(fn)
-      fn = path.join(@options.buildDir,fn)
+    if fn?
+      if not path.isAbsolute(fn)
+        fn = path.join(@options.buildDir,fn)
+    else
+      fn = ""
 
     h = createHash('md5')
           .update(fn)
