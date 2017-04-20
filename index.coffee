@@ -8,6 +8,7 @@ colors = require 'colors/safe'
 
 options = remote.getGlobal 'options' or {}
 options.dpi ?= 300
+options.log = true
 
 waitForUserInput = (data)->
   new Promise (resolve, reject)->
@@ -26,10 +27,16 @@ generateFigure = (task)->
   console.log "Starting task #{task.outfile}"
   new Promise (resolve, reject)->
     # Turn off logging from inside function
-    #ocl = console.log
-    #console.log = ->
+    unless options.log
+      ocl = console.log
+      console.log = ->
+
+    # Remove old style tags
+    d3.selectAll("style").remove()
+
     task.function el, (err)->
-      #console.log = ocl
+      unless options.log
+        console.log = ocl
       if err?
         reject()
       else
