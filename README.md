@@ -23,7 +23,7 @@ quality static figures.
   (pictured above).
   - `pdf-printer --debug empty-file.js`
   - This could be a good opportunity to
-    add annotations with [d3-annotate](https://github.com/susielu/d3-annotate).
+    add annotations with [d3-annotation](https://github.com/susielu/d3-annotation).
 - Print programmatically from the command line!
 
 ## CLI usage
