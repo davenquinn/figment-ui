@@ -12,6 +12,20 @@ tools that have been designed for it (e.g. `d3`),
 a first-class graphics environment for creating high
 quality static figures.
 
+## Workflow
+
+![PDF Printer debug mode](pdf-printer-debug-mode.png)
+
+- Make a figure!
+  - Use HTML/Javascript/SVG/CSS (and preprocessors if needed)
+  - Call system APIs, run SQL locally, etc.
+- Debug or fiddle with your creation in debug mode
+  (pictured above).
+  - `pdf-printer --debug empty-file.js`
+  - This could be a good opportunity to
+    add annotations with [d3-annotate](https://github.com/susielu/d3-annotate).
+- Print programmatically from the command line!
+
 ## CLI usage
 
 A simple UNIXy CLI is available by default:
@@ -89,5 +103,6 @@ p.task 'test2.pdf', (el,callback)->
 - Make helpers definable in CLI
 - Remove `coffeescript` and `stylus` defaults
 - Allow testing on multiple figures at once
+- Add a "Print" button to the testing page
 
 
