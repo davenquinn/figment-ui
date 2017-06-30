@@ -4,7 +4,7 @@ A package for building static data visualizations and
 printing them to PDF files.
 
 This package is similar in many respects to
-s[electron-pdf](https://github.com/fraserxu/electron-pdf),
+[electron-pdf](https://github.com/fraserxu/electron-pdf),
 but works at a higher level, and for a more specific purpose.
 It is designed to make the
 DOM, its SVG extensions, and the universe of awesome
