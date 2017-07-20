@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "bluebird": "^3.4.6",
-    "coffeescript": "https://github.com/GeoffreyBooth/coffeescript.git#2.0.0-beta3",
+    "coffeescript": "next",
     "colors": "^1.1.2",
     "d3-selection": "^1.0.3",
     "electron-localshortcut": "^1.0.0",
