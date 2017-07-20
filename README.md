@@ -1,11 +1,30 @@
 # pdf-printer
 
 A package for building static data visualizations and
-printing them to PDF files. It is designed to make the
+printing them to PDF files.
+
+This package is similar in many respects to
+[electron-pdf](https://github.com/fraserxu/electron-pdf),
+but works at a higher level, and for a more specific purpose.
+It is designed to make the
 DOM, its SVG extensions, and the universe of awesome
 tools that have been designed for it (e.g. `d3`),
 a first-class graphics environment for creating high
-quality figures.
+quality static figures.
+
+## Workflow
+
+![PDF Printer debug mode](pdf-printer-debug-mode.png)
+
+- Make a figure!
+  - Use HTML/Javascript/SVG/CSS (and preprocessors if needed)
+  - Call system APIs, run SQL locally, etc.
+- Debug or fiddle with your creation in debug mode
+  (pictured above).
+  - `pdf-printer --debug empty-file.js`
+  - This could be a good opportunity to
+    add annotations with [d3-annotation](https://github.com/susielu/d3-annotation).
+- Print programmatically from the command line!
 
 ## CLI usage
 
@@ -33,7 +52,8 @@ export function createFigure(el, cb){
 ### Options
 
 `--debug`: Show a debug mode in which files are reloaded
-on change from the root directory
+on change from the root directory. This can be used to
+make changes to figure code and settings in advance of printing.
 
 `--show`: Show figures before printing (wait for user input
 before proceeding.
@@ -75,3 +95,14 @@ p.task 'test2.pdf', (el,callback)->
     .text 'This is a basic figure'
   callback()
 ```
+
+## TODO
+
+- Support more formats
+- Create a dependency on `electron-pdf`?
+- Make helpers definable in CLI
+- Remove `coffeescript` and `stylus` defaults
+- Allow testing on multiple figures at once
+- Add a "Print" button to the testing page
+
+

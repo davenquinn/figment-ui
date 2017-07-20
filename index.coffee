@@ -7,7 +7,7 @@ d3 = require 'd3-selection'
 colors = require 'colors/safe'
 
 options = remote.getGlobal 'options' or {}
-options.dpi ?= 300
+options.dpi ?= 96
 options.log = true
 
 waitForUserInput = (data)->

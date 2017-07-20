@@ -184,9 +184,9 @@ code-point-at@^1.0.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/code-point-at/-/code-point-at-1.1.0.tgz#0d070b4d043a5bea33a2f1a40e2edb3d9a4ccf77"
 
-coffee-script@^1.12.2:
-  version "1.12.2"
-  resolved "https://registry.yarnpkg.com/coffee-script/-/coffee-script-1.12.2.tgz#0d4cbdee183f650da95419570c4929d08ef91376"
+coffeescript@next:
+  version "2.0.0-beta3"
+  resolved "https://registry.yarnpkg.com/coffeescript/-/coffeescript-2.0.0-beta3.tgz#5bce739c6c69a5c8e8bb5fb967a16db0cca5c04f"
 
 colors@^1.1.2:
   version "1.1.2"

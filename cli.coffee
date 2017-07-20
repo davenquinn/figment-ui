@@ -49,6 +49,8 @@ rl = readline.createInterface
 
 createWindow = ->
 
+  console.log process.versions
+
   console.log if debug \
          then "Creating browser window" \
          else "Creating headless renderer"
