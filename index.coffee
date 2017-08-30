@@ -8,7 +8,7 @@ colors = require 'colors/safe'
 
 options = remote.getGlobal 'options' or {}
 options.dpi ?= 96
-options.log = true
+options.log = false
 
 waitForUserInput = (data)->
   new Promise (resolve, reject)->
@@ -38,7 +38,7 @@ generateFigure = (task)->
       unless options.log
         console.log = ocl
       if err?
-        reject()
+        reject(err)
       else
         resolve(task)
 
@@ -52,8 +52,7 @@ pixelsToMicrons = (px)->
 
 printFigureArea = (task)->
   opts = task.opts or {}
-  opts.selector ?= 'body>*:first-child'
-  el = document.querySelector opts.selector
+  opts.selector ?= "body>*"
 
   setZoom(options.dpi/96)
 
@@ -61,6 +60,18 @@ printFigureArea = (task)->
     ###
     Print the webview to the callback
     ###
+
+    ### Make sure there is only one child ###
+    rootElements = document.querySelectorAll opts.selector
+    if rootElements.length > 1
+      reject Error("There is more than one root element,
+                    which currently leads to trouble while
+                    rendering. Please check your render
+                   method and try again.")
+      return
+    el = rootElements[0]
+    d3.select(el).style 'overflow','hidden'
+
     c = remote.getCurrentWebContents()
     console.log "Printing to #{task.outfile}"
     try

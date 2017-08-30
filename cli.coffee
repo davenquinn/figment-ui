@@ -72,5 +72,10 @@ createWindow = ->
   win.on 'closed', ->
     win = null
 
+quitApp = -> app.quit()
+
 app.on 'ready', createWindow
-app.on 'window-all-closed', -> app.quit()
+app.on 'window-all-closed', quitApp
+
+process.on 'SIGINT', quitApp
+process.on 'SIGHUP', quitApp
