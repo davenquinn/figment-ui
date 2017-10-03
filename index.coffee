@@ -30,10 +30,6 @@ generateFigure = (task)->
     unless options.log
       ocl = console.log
       console.log = ->
-
-    # Remove old style tags
-    d3.selectAll("style").remove()
-
     task.function el, (err)->
       unless options.log
         console.log = ocl
@@ -141,6 +137,8 @@ class Printer
       # but do it later so errors can be accurately
       # traced
       func = (el, cb)->
+        # Remove old style tags
+        #d3.selectAll("style").remove()
         fn = path.join process.cwd(), funcOrString
         f = require fn
         f(el, cb)

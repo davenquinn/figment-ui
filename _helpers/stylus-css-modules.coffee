@@ -21,7 +21,8 @@ module.exports = (mode='local')->
     extensions: ['.styl'],
     preprocessCss: (css, filename)->
       stylus(css)
-        .set('filename', filename)
+        .set 'filename', filename
+        .set 'paths', require.main.paths
         .render()
     processCss: appendStyle
 

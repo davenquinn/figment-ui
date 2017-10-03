@@ -37,6 +37,7 @@ if argv['spec-mode']
   # Create list of task-runner files to import
   # Each argument should be a javascript or coffeescript
   # file exporting a renderer object
+  console.log argv
   options.specs = args.map (d)->path.resolve(d)
 else
   [options.infile, options.outfile] = args

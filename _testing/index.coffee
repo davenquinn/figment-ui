@@ -133,6 +133,7 @@ runBasedOnHash = (runners)->
   createMainPage(runners)
 
 getSpecs = (d)->
+  console.log d
   res = require(d)
   Promise.resolve res
     .then (v)->
