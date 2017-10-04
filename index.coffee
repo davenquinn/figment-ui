@@ -68,7 +68,7 @@ printFigureArea = (task)->
     el = rootElements[0]
     d3.select(el).style 'overflow','hidden'
 
-    c = remote.getCurrentWebContents()
+    c = document.querySelector 'webview'
     console.log "Printing to #{task.outfile}"
     try
       v = el.getBoundingClientRect()
@@ -108,20 +108,6 @@ class Printer
     @tasks = []
 
     @options.helpers ?= ['css','stylus']
-    @__setupHelpers()
-
-  __setupHelpers: ->
-    # Apply list of helpers
-    # either by getting from registry
-    # or by passing a function
-    _helpers = require './_helpers'
-    for helper in @options.helpers
-      console.log "Setting up helper #{helper}"
-      try
-        helper()
-      catch e
-        throw e unless e instanceof TypeError
-        _helpers[helper]()
 
   task: (fn, funcOrString, opts={})->
     ###
@@ -131,17 +117,15 @@ class Printer
 
     # Check if we've got a function or string
     if typeof funcOrString == 'function'
+      throw "We only support strings now, because we run things in a webview"
       func = funcOrString
     else
       # Require relative to parent module,
       # but do it later so errors can be accurately
       # traced
-      func = (el, cb)->
-        # Remove old style tags
-        #d3.selectAll("style").remove()
-        fn = path.join process.cwd(), funcOrString
-        f = require fn
-        f(el, cb)
+      func = path.join process.cwd(), funcOrString
+      #f = require fn
+      #f(el, cb)
 
     # Apply build directory
     if fn?
@@ -156,7 +140,8 @@ class Printer
 
     @tasks.push
       outfile: fn
-      function: func
+      code: func
+      helpers: @options.helpers
       hash: h
       opts: opts
     return @

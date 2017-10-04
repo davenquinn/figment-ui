@@ -14,6 +14,16 @@ catch e
   console.log "Couldn't import helper for stylus css modules,
                stylus and css-modules-require-hook should be installed"
 
+c = remote.getGlobal('console')
+console.log = c.log
+console.error = c.error
+console.warn = c.warn
+
+# redirect errors to stderr
+window.addEventListener 'error', (e) ->
+  e.preventDefault()
+  console.error e.error.stack or 'Uncaught ' + e.error
+
 createMainPage = null
 isMainPage = null
 tasks = []
@@ -26,7 +36,7 @@ title = d3.select '#controls>h1'
 d3.select '#toggle-dev-tools'
   .on 'click', ->
     return unless webview?
-    webview.openDevTools(mode:'right')
+    webview.openDevTools()
 
 ipcRenderer.on 'zoom', (event, zoom)->
   return unless webview?
@@ -61,11 +71,17 @@ itemSelected = (d)->
   ## Set up a webview
   webview = main.append "webview"
     .attr "nodeintegration", true
-    .attr "src", "file://"+require.resolve("../_headless/index.html")
+    .attr "src", "file://"+require.resolve("../_runner/index.html")
     .node()
 
-  ### Run the function ###
-  #d.function main.node(), ->
+  webview.addEventListener 'dom-ready', (e)->
+    webview.send "run-task", {
+      code: d.code
+      helpers: d.helpers
+    }
+
+    webview.addEventListener 'finished', (e)->
+      console.log "Finished rendering"
 
 renderSpecList = (d)->
   # Render spec list from runner
