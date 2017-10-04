@@ -23,6 +23,15 @@ ipcRenderer.on 'run-task', (e,data)->
   func = require code
   func document.querySelector("body"), callback
 
+ipcRenderer.on 'prepare-for-printing', ->
+  el = document.querySelector 'body'
+  {width, height} = el.getBoundingClientRect()
+  msg = {
+    message: "Ready to print"
+    bounds: {width, height}
+  }
+  ipcRenderer.sendToHost JSON.stringify(msg)
+
 redirectErrors = ->
   c = remote.getGlobal('console')
   console.log = c.log

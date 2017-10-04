@@ -48,6 +48,13 @@ printFigureArea = (task)->
 
   webview.setZoomFactor(options.dpi/96)
 
+  v = await new Promise (resolve, reject)->
+    webview.addEventListener 'ipc-message', (event)->
+      console.log event.channel
+      {bounds} = JSON.parse event.channel
+      resolve(bounds)
+    webview.send "prepare-for-printing"
+
   new Promise (resolve, reject)->
     ###
     Print the webview to the callback
