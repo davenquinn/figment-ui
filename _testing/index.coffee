@@ -3,7 +3,7 @@ path = require 'path'
 Promise = require 'bluebird'
 d3 = require 'd3-selection'
 
-{Printer} = require("../index.coffee")
+{Printer, printFigureArea} = require("../index.coffee")
 window.Printer = Printer
 
 options = remote.getGlobal 'options'
@@ -34,6 +34,11 @@ webview = null
 
 title = d3.select '#controls>h1'
 d3.select '#toggle-dev-tools'
+  .on 'click', ->
+    return unless webview?
+    webview.openDevTools()
+
+d3.select '#print-to-pdf'
   .on 'click', ->
     return unless webview?
     webview.openDevTools()

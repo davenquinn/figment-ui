@@ -161,6 +161,7 @@ class Printer
     Promise
       .map @tasks, __runTask, concurrency: 1
 
-module.exports =
-  Printer: Printer
-  print: print
+module.exports = {
+  Printer
+  printFigureArea
+}

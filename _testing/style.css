@@ -33,15 +33,17 @@ body {
 #controls h1 a:hover {
   color: #000;
 }
-#toggle-dev-tools {
+.buttons {
   position: absolute;
   top: 10px;
   right: 10px;
+}
+.buttons a {
   display: inline-block;
   padding: 0.2em 0.5em;
   font-size: 1em;
 }
-#toggle-dev-tools:hover {
+.buttons a:hover {
   background: #4ba6ff;
   color: #fff;
 }
