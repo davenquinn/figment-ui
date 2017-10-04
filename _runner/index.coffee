@@ -4,11 +4,6 @@ Promise = require 'bluebird'
 options = remote.getGlobal 'options'
 console.log options
 
-setZoom = (z)->
-  d3.select 'body'
-    .datum zoom: z
-    .style 'zoom', (d)->d.zoom
-
 ipcRenderer.on 'run-task', (e,data)->
   ### Setup helpers ###
   {helpers, code} = data
