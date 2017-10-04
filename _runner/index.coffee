@@ -18,7 +18,7 @@ ipcRenderer.on 'run-task', (e,data)->
       _helpers[helper]()
 
   callback = ->
-    ipcRenderer.send "finished"
+    ipcRenderer.sendToHost "finished"
 
   func = require code
   func document.querySelector("body"), callback

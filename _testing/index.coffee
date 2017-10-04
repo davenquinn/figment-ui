@@ -8,16 +8,11 @@ window.Printer = Printer
 
 options = remote.getGlobal 'options'
 
-try
-  require '../_helpers/stylus-css-modules'
-catch e
-  console.log "Couldn't import helper for stylus css modules,
-               stylus and css-modules-require-hook should be installed"
-
 c = remote.getGlobal('console')
 console.log = c.log
 console.error = c.error
 console.warn = c.warn
+process.exit = remote.app.quit
 
 # redirect errors to stderr
 window.addEventListener 'error', (e) ->
@@ -184,3 +179,4 @@ loadEntryPoint = (fn)-> ->
 
 fn = loadEntryPoint(runBasedOnHash)
 fn()
+

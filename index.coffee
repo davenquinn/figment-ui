@@ -21,21 +21,22 @@ sleep = (data)->
     setTimeout fn, 1000
 
 generateFigure = (task)->
-  el = document.body
-  el.innerHTML = ""
-  el.style.margin = 0
-  console.log "Starting task #{task.outfile}"
+  main = d3.select "#main"
+  main.html ""
+  ## Set up a webview
+  webview = main.append "webview"
+    .attr "nodeintegration", true
+    .attr "src", "file://"+require.resolve("./_runner/index.html")
+    .node()
+
   new Promise (resolve, reject)->
-    # Turn off logging from inside function
-    unless options.log
-      ocl = console.log
-      console.log = ->
-    task.function el, (err)->
-      unless options.log
-        console.log = ocl
-      if err?
-        reject(err)
-      else
+    webview.addEventListener 'dom-ready', (e)->
+      webview.send "run-task", {
+        code: task.code
+        helpers: task.helpers
+      }
+    webview.addEventListener 'ipc-message', (e)->
+      if event.channel == 'finished'
         resolve(task)
 
 pixelsToMicrons = (px)->
@@ -43,7 +44,6 @@ pixelsToMicrons = (px)->
 
 printFigureArea = (task)->
   opts = task.opts or {}
-  opts.selector ?= "body>*"
   webview = document.querySelector 'webview'
 
   webview.setZoomFactor(options.dpi/96)
@@ -148,4 +148,5 @@ class Printer
 module.exports = {
   Printer
   printFigureArea
+  generateFigure
 }
