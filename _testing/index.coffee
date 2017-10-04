@@ -19,18 +19,18 @@ isMainPage = null
 tasks = []
 
 body = d3.select 'body'
-main = d3.select '#main'
+main = d3.select('#main')
+webview = null
+
 title = d3.select '#controls>h1'
 d3.select '#toggle-dev-tools'
   .on 'click', ->
-    ipcRenderer.send 'toggle-dev-tools'
+    return unless webview?
+    webview.openDevTools(mode:'right')
 
-setZoom = (zoom)->
-  main
-    .datum zoom: zoom
-    .style 'zoom', (d)->d.zoom
 ipcRenderer.on 'zoom', (event, zoom)->
-  setZoom zoom
+  return unless webview?
+  webview.setZoomFactor zoom
 
 sharedStart = (array) ->
   # From
@@ -45,8 +45,8 @@ sharedStart = (array) ->
   a1.substring 0, i
 
 itemSelected = (d)->
+  ### Run a single task ###
   location.hash = "##{d.hash}"
-  body.attr 'class','figure'
 
   t = title.html ""
   if tasks.length > 1
@@ -58,8 +58,14 @@ itemSelected = (d)->
     t.text "PDF Printer"
 
   main.html ""
+  ## Set up a webview
+  webview = main.append "webview"
+    .attr "nodeintegration", true
+    .attr "src", "file://"+require.resolve("../_headless/index.html")
+    .node()
+
   ### Run the function ###
-  d.function main.node(), ->
+  #d.function main.node(), ->
 
 renderSpecList = (d)->
   # Render spec list from runner
@@ -93,6 +99,8 @@ createMainPage = (runners)->
   # Create a list of tasks
   body.attr 'class','task-list'
 
+  main = d3.select "#main"
+
   title
     .html ""
     .text 'Figure index'
@@ -108,7 +116,8 @@ createMainPage = (runners)->
 
 runBasedOnHash = (runners)->
   z = remote.getGlobal('zoom')
-  setZoom z
+  if webview?
+    webview.setZoomFactor z
 
   _ = runners.map (d)->d.tasks
   tasks = Array::concat.apply [], _

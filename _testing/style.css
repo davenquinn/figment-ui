@@ -47,20 +47,31 @@ body {
 }
 #main {
   box-sizing: border-box;
-  padding: 10px;
+  padding: 0px;
   flex-grow: 1;
   overflow: scroll;
   margin: 0 auto;
   width: 100%;
   background-color: #fff;
 }
+webview {
+  margin: 10px 10px;
+  height: 100%;
+}
 body.task-list {
   font-family: "Helvetica Neue", Helvetica, sans-serif;
+}
+body.task-list #main .runner {
+  max-width: 90%;
+  width: 20em;
+  margin: 1em auto;
+  padding: 0.5em;
 }
 body.task-list #main h2,
 body.task-list #main h5 {
   font-weight: 400;
   margin: 0;
+  overflow-wrap: break-word;
 }
 body.task-list #main>div {
   margin-top: 1.5em;
@@ -69,8 +80,6 @@ body.task-list #main>div {
   padding: 10px;
 }
 body.task-list #main>div h5 {
-  position: absolute;
-  top: -1.2em;
   color: #aaa;
 }
 body.task-list #main * {

@@ -73,10 +73,12 @@ createWindow = ->
   win.on 'closed', ->
     win = null
 
-quitApp = -> app.quit()
+quitApp = ->
+  app.quit()
 
 app.on 'ready', createWindow
 app.on 'window-all-closed', quitApp
 
 process.on 'SIGINT', quitApp
+process.on 'SIGTERM', quitApp
 process.on 'SIGHUP', quitApp
