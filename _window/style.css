@@ -57,8 +57,9 @@ body {
   background-color: #fff;
 }
 webview {
-  margin: 10px 10px;
+  margin: 0;
   height: 100%;
+  width: 100%;
 }
 body.task-list {
   font-family: "Helvetica Neue", Helvetica, sans-serif;

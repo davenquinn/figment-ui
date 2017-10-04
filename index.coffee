@@ -40,13 +40,13 @@ generateFigure = (task)->
         resolve(task)
 
 pixelsToMicrons = (px)->
-  Math.ceil(px/96.0*options.dpi/96.0*25400)
+  Math.ceil(px/96.0*25400)
 
 printFigureArea = (task)->
   opts = task.opts or {}
   webview = document.querySelector 'webview'
 
-  webview.setZoomFactor(options.dpi/96)
+  #webview.setZoomFactor(options.dpi/96)
 
   v = await new Promise (resolve, reject)->
     webview.addEventListener 'ipc-message', (event)->

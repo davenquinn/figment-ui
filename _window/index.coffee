@@ -33,8 +33,9 @@ controls = d3.select "#controls"
 title = d3.select '#controls>h1'
 d3.select '#toggle-dev-tools'
   .on 'click', ->
-    return unless webview?
-    webview.openDevTools()
+    document
+      .querySelector 'webview'
+      .openDevTools()
 
 ipcRenderer.on 'zoom', (event, zoom)->
   return unless webview?
@@ -177,6 +178,27 @@ loadEntryPoint = (fn)-> ->
     p = Promise.resolve [spec]
   p.then fn
 
-fn = loadEntryPoint(runBasedOnHash)
-fn()
+runTask = (spec)->
+  ## Runner for all tasks
+  console.log "Running tasks from #{spec}"
+  taskRunner = require spec
+  Promise.resolve taskRunner
+    .then (t)->t.run()
+
+
+if options.debug
+  fn = loadEntryPoint(runBasedOnHash)
+  fn()
+else
+  # Run single tasks
+  if options.specs?
+    console.log "Running from spec"
+    p = Promise.map options.specs, runTask, concurrency: 1
+  else
+    taskRunner = new Printer
+    taskRunner.task options.outfile, options.infile
+    p = taskRunner.run()
+  p.then ->
+    console.log "Done!"
+    remote.app.quit()
 

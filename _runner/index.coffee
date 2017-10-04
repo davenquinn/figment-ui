@@ -4,6 +4,11 @@ Promise = require 'bluebird'
 options = remote.getGlobal 'options'
 console.log options
 
+setZoom = (z)->
+  d3.select 'body'
+    .datum zoom: z
+    .style 'zoom', (d)->d.zoom
+
 ipcRenderer.on 'run-task', (e,data)->
   ### Setup helpers ###
   {helpers, code} = data
@@ -24,7 +29,7 @@ ipcRenderer.on 'run-task', (e,data)->
   func document.querySelector("body"), callback
 
 ipcRenderer.on 'prepare-for-printing', ->
-  el = document.querySelector 'body'
+  el = document.querySelector 'body>*:first-child'
   {width, height} = el.getBoundingClientRect()
   msg = {
     message: "Ready to print"

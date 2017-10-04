@@ -57,10 +57,7 @@ createWindow = ->
          else "Creating headless renderer"
 
   win = new BrowserWindow {show: show}
-  if debug
-    url = "file://#{__dirname}/_testing/index.html"
-  else
-    url = "file://#{__dirname}/_headless/index.html"
+  url = "file://#{__dirname}/_window/index.html"
   win.loadURL url
   shortcuts(win)
   ipcMain.on 'toggle-dev-tools', ->
