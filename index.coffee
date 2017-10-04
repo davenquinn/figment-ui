@@ -38,44 +38,21 @@ generateFigure = (task)->
       else
         resolve(task)
 
-setZoom = (z)->
-  d3.select 'body'
-    .datum zoom: z
-    .style 'zoom', (d)->d.zoom
-
 pixelsToMicrons = (px)->
   Math.ceil(px/96.0*options.dpi/96.0*25400)
 
 printFigureArea = (task)->
   opts = task.opts or {}
   opts.selector ?= "body>*"
+  webview = document.querySelector 'webview'
 
-  setZoom(options.dpi/96)
+  webview.setZoomFactor(options.dpi/96)
 
   new Promise (resolve, reject)->
     ###
     Print the webview to the callback
     ###
-
-    ### Make sure there is only one child ###
-    rootElements = document.querySelectorAll opts.selector
-    if rootElements.length > 1
-      reject Error("There is more than one root element,
-                    which currently leads to trouble while
-                    rendering. Please check your render
-                   method and try again.")
-      return
-    el = rootElements[0]
-    d3.select(el).style 'overflow','hidden'
-
-    c = document.querySelector 'webview'
     console.log "Printing to #{task.outfile}"
-    try
-      v = el.getBoundingClientRect()
-    catch
-      throw "There is no element to print"
-    d3.select(el).html()
-    console.log v
 
     opts =
       printBackground: true
@@ -88,11 +65,11 @@ printFigureArea = (task)->
     if not fs.existsSync(dir)
       fs.mkdirSync dir
 
-    c.printToPDF opts, (e,d)=>
+    webview.printToPDF opts, (e,d)=>
       reject(e) if e?
       fs.writeFileSync task.outfile, d
       console.log "Finished task"
-      setZoom(1)
+      webview.setZoomFactor(1)
       resolve()
 
 # Initialize renderer

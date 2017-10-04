@@ -65,7 +65,7 @@ body.task-list {
 }
 body.task-list #main .runner {
   max-width: 90%;
-  width: 20em;
+  width: 50em;
   margin: 1em auto;
   padding: 0.5em;
 }

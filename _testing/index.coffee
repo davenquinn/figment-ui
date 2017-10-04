@@ -31,14 +31,12 @@ tasks = []
 body = d3.select 'body'
 main = d3.select('#main')
 webview = null
+currentTask = null
+
+controls = d3.select "#controls"
 
 title = d3.select '#controls>h1'
 d3.select '#toggle-dev-tools'
-  .on 'click', ->
-    return unless webview?
-    webview.openDevTools()
-
-d3.select '#print-to-pdf'
   .on 'click', ->
     return unless webview?
     webview.openDevTools()
@@ -71,6 +69,14 @@ itemSelected = (d)->
       .on 'click', loadEntryPoint(createMainPage)
   else
     t.text "PDF Printer"
+
+  ### set current task ###
+  controls.style "display", "block"
+  d3.select '#print-to-pdf'
+    .on 'click', ->
+      return unless webview?
+      console.log "Printing figure"
+      printFigureArea d
 
   main.html ""
   ## Set up a webview
@@ -117,15 +123,11 @@ renderSpecList = (d)->
       .on 'click', itemSelected
 
 createMainPage = (runners)->
+  controls.style "display", "none"
   # Create a list of tasks
   body.attr 'class','task-list'
 
   main = d3.select "#main"
-
-  title
-    .html ""
-    .text 'Figure index'
-
   main.html ""
   sel = main.selectAll 'div'
         .data runners
