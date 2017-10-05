@@ -4,7 +4,7 @@ Promise = require 'bluebird'
 d3 = require 'd3-selection'
 {watch} = require 'chokidar'
 
-{Printer, printFigureArea} = require("../index.coffee")
+{Printer, printFigureArea} = require("./lib.coffee")
 window.Printer = Printer
 
 options = remote.getGlobal 'options'
