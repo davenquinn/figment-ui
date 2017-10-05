@@ -3,6 +3,7 @@ path = require 'path'
 Promise = require 'bluebird'
 d3 = require 'd3-selection'
 {watch} = require 'chokidar'
+{spawn} = require 'child_process'
 
 {Printer, printFigureArea} = require("./lib.coffee")
 window.Printer = Printer
@@ -29,6 +30,10 @@ main = d3.select('#main')
 webview = null
 currentTask = null
 
+reloadWebview = ->
+  webview.reloadIgnoringCache()
+  console.log "Reloading..."
+
 controls = d3.select "#controls"
 
 title = d3.select '#controls>h1'
@@ -43,6 +48,8 @@ ipcRenderer.on 'zoom', (event, zoom)->
   return unless webview?
   webview.setZoomFactor zoom
 
+ipcRenderer.on 'reload', reloadWebview
+
 sharedStart = (array) ->
   # From
   # http://stackoverflow.com/questions/1916218/find-the-longest-common-starting-substring-in-a-set-of-strings
@@ -54,6 +61,9 @@ sharedStart = (array) ->
   while i < L and a1.charAt(i) == a2.charAt(i)
     i++
   a1.substring 0, i
+
+openEditor = (d)->
+  spawn "mvim", [d.code], detached: true
 
 itemSelected = (d)->
   ### Run a single task ###
@@ -76,6 +86,12 @@ itemSelected = (d)->
       console.log "Printing figure"
       printFigureArea d
 
+  d3.select '#open-editor'
+    .on 'click', ->
+      return unless webview?
+      console.log "Opening editor"
+      openEditor d
+
   main.html ""
   ## Set up a webview
   webview = main.append "webview"
@@ -92,9 +108,7 @@ itemSelected = (d)->
     console.log "Reloading from directory #{dn}"
     opts = {ignored: [/node_modules|[/\\]\./]}
     watcher = watch(dn,opts)
-    watcher.on 'change', ->
-      webview.reloadIgnoringCache()
-      console.log "Reloading..."
+    watcher.on 'change', reloadWebview
 
   webview.addEventListener 'dom-ready', (e)->
     if devToolsEnabled
