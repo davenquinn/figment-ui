@@ -33,6 +33,7 @@ controls = d3.select "#controls"
 title = d3.select '#controls>h1'
 d3.select '#toggle-dev-tools'
   .on 'click', ->
+    ipcRenderer.send 'dev-tools'
     document
       .querySelector 'webview'
       .openDevTools()
@@ -81,7 +82,12 @@ itemSelected = (d)->
     .attr "src", "file://"+require.resolve("../_runner/index.html")
     .node()
 
+  {devToolsEnabled} = remote.getGlobal 'options'
+
   webview.addEventListener 'dom-ready', (e)->
+    if devToolsEnabled
+      webview.openDevTools()
+
     webview.send "run-task", {
       code: d.code
       helpers: d.helpers
@@ -89,6 +95,9 @@ itemSelected = (d)->
 
     webview.addEventListener 'finished', (e)->
       console.log "Finished rendering"
+
+    webview.addEventListener 'devtools-closed', (e)->
+      ipcRenderer.send 'dev-tools', 'closed'
 
 renderSpecList = (d)->
   # Render spec list from runner

@@ -31,6 +31,7 @@ global.options = {
   waitForUser: show
   dpi: parseFloat(argv.dpi) or 300.0
   debug: debug
+  devToolsEnabled: false
 }
 
 if argv['spec-mode']
@@ -60,8 +61,9 @@ createWindow = ->
   url = "file://#{__dirname}/_window/index.html"
   win.loadURL url
   shortcuts(win)
-  ipcMain.on 'toggle-dev-tools', ->
-    win.toggleDevTools()
+  ipcMain.on 'dev-tools', (event)->
+    options.devToolsEnabled = !options.devToolsEnabled
+    console.log options.devToolsEnabled
 
   ipcMain.on 'wait-for-input', (event)->
     rl.question 'Press enter to continue', (ans)->
