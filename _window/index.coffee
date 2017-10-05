@@ -2,6 +2,7 @@
 path = require 'path'
 Promise = require 'bluebird'
 d3 = require 'd3-selection'
+{watch} = require 'chokidar'
 
 {Printer, printFigureArea} = require("../index.coffee")
 window.Printer = Printer
@@ -82,7 +83,18 @@ itemSelected = (d)->
     .attr "src", "file://"+require.resolve("../_runner/index.html")
     .node()
 
-  {devToolsEnabled} = remote.getGlobal 'options'
+  {devToolsEnabled, reload} = remote.getGlobal 'options'
+
+  ## Setup reload handler
+  if reload
+    ## Watch the directory of the file by default
+    dn = path.dirname path.resolve(d.code)
+    console.log "Reloading from directory #{dn}"
+    opts = {ignored: [/node_modules|[/\\]\./]}
+    watcher = watch(dn,opts)
+    watcher.on 'change', ->
+      webview.reloadIgnoringCache()
+      console.log "Reloading..."
 
   webview.addEventListener 'dom-ready', (e)->
     if devToolsEnabled

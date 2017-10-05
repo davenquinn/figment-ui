@@ -16,11 +16,6 @@ debug = argv.debug
 # debugging taskflow of this module)
 show = argv.show or debug
 # Set directory to reload if not given
-if debug
-  argv.reload ?= process.cwd()
-  r = path.resolve argv.reload
-  console.log "Reloading from directory #{r}"
-  require('electron-reload')(r)
 
 args = argv._
 global.args = args
@@ -32,6 +27,7 @@ global.options = {
   dpi: parseFloat(argv.dpi) or 300.0
   debug: debug
   devToolsEnabled: false
+  reload: argv.reload or argv.debug
 }
 
 if argv['spec-mode']
