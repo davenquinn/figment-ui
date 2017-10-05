@@ -13,6 +13,6 @@ module.exports = (win)->
   register win, "CommandOrControl+0", =>
     global.zoom = 1
     win.webContents.send 'zoom', zoom
-  register win, "CommandOrControl+r", =>
+  register win, "CommandOrControl+R", =>
     win.webContents.send 'reload'
 
