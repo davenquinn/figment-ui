@@ -31,7 +31,11 @@ webview = null
 currentTask = null
 
 reloadWebview = ->
-  webview.reloadIgnoringCache()
+  if not webview?
+    wc = remote.getCurrentWebContents()
+    wc.reloadIgnoringCache()
+  else
+    webview.reloadIgnoringCache()
   console.log "Reloading..."
 
 controls = d3.select "#controls"
