@@ -28,39 +28,48 @@ body
   background-color: #eee
   border-bottom: 2px solid #aaa
 
-
-#toggle-dev-tools
+.buttons
   position: absolute
   top: 10px
   right: 10px
-  display: inline-block
-  padding: 0.2em 0.5em
-  font-size: 1em
-  &:hover
-    background: lighten(dodgerblue,20%)
-    color: white
+  a
+    display: inline-block
+    padding: 0.2em 0.5em
+    font-size: 1em
+    &:hover
+      background: lighten(dodgerblue,20%)
+      color: white
 
 #main
   box-sizing: border-box
-  padding: 10px
+  padding: 0px
   flex-grow: 1
   overflow: scroll
   margin: 0 auto
   width: 100%
   background-color: white
 
+webview
+  margin: 0;
+  height: 100%;
+  width: 100%;
+
 body.task-list
   font-family: "Helvetica Neue", Helvetica, sans-serif;
   #main
+    .runner
+      max-width: 90%
+      width: 50em
+      margin: 1em auto
+      padding: 0.5em
     h2, h5
       font-weight: 400
       margin: 0
+      overflow-wrap: break-word
     &>div
       margin-top: 1.5em
       position:relative
       h5
-        position: absolute
-        top: -1.2em
         color: #aaa
       background: #eee
       padding: 10px

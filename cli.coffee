@@ -16,11 +16,6 @@ debug = argv.debug
 # debugging taskflow of this module)
 show = argv.show or debug
 # Set directory to reload if not given
-if debug
-  argv.reload ?= process.cwd()
-  r = path.resolve argv.reload
-  console.log "Reloading from directory #{r}"
-  require('electron-reload')(r)
 
 args = argv._
 global.args = args
@@ -31,6 +26,8 @@ global.options = {
   waitForUser: show
   dpi: parseFloat(argv.dpi) or 300.0
   debug: debug
+  devToolsEnabled: false
+  reload: argv.reload or argv.debug
 }
 
 if argv['spec-mode']
@@ -57,14 +54,12 @@ createWindow = ->
          else "Creating headless renderer"
 
   win = new BrowserWindow {show: show}
-  if debug
-    url = "file://#{__dirname}/_testing/index.html"
-  else
-    url = "file://#{__dirname}/_headless/index.html"
+  url = "file://#{__dirname}/_window/index.html"
   win.loadURL url
   shortcuts(win)
-  ipcMain.on 'toggle-dev-tools', ->
-    win.toggleDevTools()
+  ipcMain.on 'dev-tools', (event)->
+    options.devToolsEnabled = !options.devToolsEnabled
+    console.log options.devToolsEnabled
 
   ipcMain.on 'wait-for-input', (event)->
     rl.question 'Press enter to continue', (ans)->
@@ -73,10 +68,12 @@ createWindow = ->
   win.on 'closed', ->
     win = null
 
-quitApp = -> app.quit()
+quitApp = ->
+  app.quit()
 
 app.on 'ready', createWindow
 app.on 'window-all-closed', quitApp
 
 process.on 'SIGINT', quitApp
+process.on 'SIGTERM', quitApp
 process.on 'SIGHUP', quitApp

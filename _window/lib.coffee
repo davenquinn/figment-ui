@@ -21,61 +21,45 @@ sleep = (data)->
     setTimeout fn, 1000
 
 generateFigure = (task)->
-  el = document.body
-  el.innerHTML = ""
-  el.style.margin = 0
-  console.log "Starting task #{task.outfile}"
+  main = d3.select "#main"
+  main.html ""
+  ## Set up a webview
+  webview = main.append "webview"
+    .attr "nodeintegration", true
+    .attr "src", "file://"+require.resolve("./_runner/index.html")
+    .node()
+
   new Promise (resolve, reject)->
-    # Turn off logging from inside function
-    unless options.log
-      ocl = console.log
-      console.log = ->
-    task.function el, (err)->
-      unless options.log
-        console.log = ocl
-      if err?
-        reject(err)
-      else
+    webview.addEventListener 'dom-ready', (e)->
+      webview.send "run-task", {
+        code: task.code
+        helpers: task.helpers
+      }
+    webview.addEventListener 'ipc-message', (e)->
+      if event.channel == 'finished'
         resolve(task)
 
-setZoom = (z)->
-  d3.select 'body'
-    .datum zoom: z
-    .style 'zoom', (d)->d.zoom
-
 pixelsToMicrons = (px)->
-  Math.ceil(px/96.0*options.dpi/96.0*25400)
+  Math.ceil(px/96.0*25400)
 
 printFigureArea = (task)->
   opts = task.opts or {}
-  opts.selector ?= "body>*"
+  webview = document.querySelector 'webview'
 
-  setZoom(options.dpi/96)
+  #webview.setZoomFactor(options.dpi/96)
+
+  v = await new Promise (resolve, reject)->
+    webview.addEventListener 'ipc-message', (event)->
+      console.log event.channel
+      {bounds} = JSON.parse event.channel
+      resolve(bounds)
+    webview.send "prepare-for-printing"
 
   new Promise (resolve, reject)->
     ###
     Print the webview to the callback
     ###
-
-    ### Make sure there is only one child ###
-    rootElements = document.querySelectorAll opts.selector
-    if rootElements.length > 1
-      reject Error("There is more than one root element,
-                    which currently leads to trouble while
-                    rendering. Please check your render
-                   method and try again.")
-      return
-    el = rootElements[0]
-    d3.select(el).style 'overflow','hidden'
-
-    c = remote.getCurrentWebContents()
     console.log "Printing to #{task.outfile}"
-    try
-      v = el.getBoundingClientRect()
-    catch
-      throw "There is no element to print"
-    d3.select(el).html()
-    console.log v
 
     opts =
       printBackground: true
@@ -88,11 +72,11 @@ printFigureArea = (task)->
     if not fs.existsSync(dir)
       fs.mkdirSync dir
 
-    c.printToPDF opts, (e,d)=>
+    webview.printToPDF opts, (e,d)=>
       reject(e) if e?
       fs.writeFileSync task.outfile, d
       console.log "Finished task"
-      setZoom(1)
+      webview.setZoomFactor(1)
       resolve()
 
 # Initialize renderer
@@ -108,20 +92,6 @@ class Printer
     @tasks = []
 
     @options.helpers ?= ['css','stylus']
-    @__setupHelpers()
-
-  __setupHelpers: ->
-    # Apply list of helpers
-    # either by getting from registry
-    # or by passing a function
-    _helpers = require './_helpers'
-    for helper in @options.helpers
-      console.log "Setting up helper #{helper}"
-      try
-        helper()
-      catch e
-        throw e unless e instanceof TypeError
-        _helpers[helper]()
 
   task: (fn, funcOrString, opts={})->
     ###
@@ -131,17 +101,15 @@ class Printer
 
     # Check if we've got a function or string
     if typeof funcOrString == 'function'
+      throw "We only support strings now, because we run things in a webview"
       func = funcOrString
     else
       # Require relative to parent module,
       # but do it later so errors can be accurately
       # traced
-      func = (el, cb)->
-        # Remove old style tags
-        #d3.selectAll("style").remove()
-        fn = path.join process.cwd(), funcOrString
-        f = require fn
-        f(el, cb)
+      func = path.join process.cwd(), funcOrString
+      #f = require fn
+      #f(el, cb)
 
     # Apply build directory
     if fn?
@@ -156,7 +124,8 @@ class Printer
 
     @tasks.push
       outfile: fn
-      function: func
+      code: func
+      helpers: @options.helpers
       hash: h
       opts: opts
     return @
@@ -176,6 +145,8 @@ class Printer
     Promise
       .map @tasks, __runTask, concurrency: 1
 
-module.exports =
-  Printer: Printer
-  print: print
+module.exports = {
+  Printer
+  printFigureArea
+  generateFigure
+}
