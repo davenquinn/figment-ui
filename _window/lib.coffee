@@ -26,7 +26,7 @@ generateFigure = (task)->
   ## Set up a webview
   webview = main.append "webview"
     .attr "nodeintegration", true
-    .attr "src", "file://"+require.resolve("./_runner/index.html")
+    .attr "src", "file://"+require.resolve("../_runner/index.html")
     .node()
 
   new Promise (resolve, reject)->
@@ -134,6 +134,7 @@ class Printer
     # Progress through list of figures, print
     # each one to file
     __runTask = (t)->
+      console.log "#{t.code} ⇒ #{t.outfile}"
       p = generateFigure(t)
 
       if options.waitForUser
