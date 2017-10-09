@@ -100,7 +100,7 @@ itemSelected = (d)->
   ## Set up a webview
   webview = main.append "webview"
     .attr "nodeintegration", true
-    .attr "src", "file://"+require.resolve("../_runner/index.html")
+    .attr "src", "file://"+require.resolve("../_runner/index-testing.html")
     .node()
 
   {devToolsEnabled, reload} = remote.getGlobal 'options'
