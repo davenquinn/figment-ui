@@ -28,7 +28,7 @@ ipcRenderer.on 'prepare-for-printing', ->
   {width, height} = el.getBoundingClientRect()
   msg = {
     message: "Ready to print"
-    bounds: {width, height}
+    bounds: {width, height: height+2}
   }
   ipcRenderer.sendToHost JSON.stringify(msg)
 

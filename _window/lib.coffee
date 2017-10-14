@@ -65,8 +65,8 @@ printFigureArea = (task)->
       printBackground: true
       marginsType: 1
       pageSize:
-        height: pixelsToMicrons v.height
-        width: pixelsToMicrons v.width
+        height: pixelsToMicrons(v.height)+10
+        width: pixelsToMicrons(v.width)+10
 
     dir = path.dirname task.outfile
     if not fs.existsSync(dir)
