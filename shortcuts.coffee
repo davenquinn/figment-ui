@@ -2,6 +2,7 @@
 {ipcMain} = require 'electron'
 
 global.zoom = 1
+global.toolbar = true
 
 module.exports = (win)->
   register win, "CommandOrControl+-", =>
@@ -15,4 +16,7 @@ module.exports = (win)->
     win.webContents.send 'zoom', zoom
   register win, "CommandOrControl+R", =>
     win.webContents.send 'reload'
+  register win, "CommandOrControl+T", =>
+    global.toolbar = not toolbar
+    win.webContents.send 'show-toolbar', toolbar
 

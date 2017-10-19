@@ -1,3 +1,6 @@
+*
+  box-sizing border-box
+
 body
   margin: 0px
   display: flex
@@ -8,10 +11,13 @@ body
 
 #controls
   position: relative
-  padding: 10px
-  height: 1.2em
-  min-height: 1.2em
-  font-family: "Helvetica Neue", Helvetica, sans-serif;
+  padding: 2px 1em
+  height: 25px
+  align-items: center
+  font-family: "San Francisco", Helvetica, sans-serif;
+  display flex
+  flex-direction row
+  justify-content space-between
   a
     text-decoration: none
     cursor: pointer
@@ -19,23 +25,28 @@ body
     font-weight: 400
   h1
     margin: 0
+    padding 0
     font-weight: 500
-    font-size: 1.1em
+    font-size: 0.8em
+    color #444
+    text-transform: uppercase
+    flex 1
     a
       color: #444
       &:hover
         color: black
   background-color: #eee
-  border-bottom: 2px solid #aaa
+  border-bottom: 1px solid #ccc
 
 .buttons
-  position: absolute
-  top: 10px
-  right: 10px
+
   a
     display: inline-block
-    padding: 0.2em 0.5em
-    font-size: 1em
+    padding: 0.1em 0.3em
+    font-size: 0.8em
+    border-radius 4px
+    background: #ddd
+    border 1px solid #ccc
     &:hover
       background: lighten(dodgerblue,20%)
       color: white

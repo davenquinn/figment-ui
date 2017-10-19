@@ -48,6 +48,10 @@ d3.select '#toggle-dev-tools'
       .querySelector 'webview'
       .openDevTools()
 
+ipcRenderer.on 'show-toolbar', (event, toolbarEnabled)->
+  mode = if toolbarEnabled then 'flex' else 'none'
+  controls.style 'display', mode
+
 ipcRenderer.on 'zoom', (event, zoom)->
   return unless webview?
   webview.setZoomFactor zoom
@@ -83,7 +87,6 @@ itemSelected = (d)->
     t.text "PDF Printer"
 
   ### set current task ###
-  controls.style "display", "block"
   d3.select '#print-to-pdf'
     .on 'click', ->
       return unless webview?
