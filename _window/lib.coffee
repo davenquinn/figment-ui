@@ -107,7 +107,10 @@ class Printer
       # Require relative to parent module,
       # but do it later so errors can be accurately
       # traced
-      func = path.join process.cwd(), funcOrString
+      if not path.isAbsolute(funcOrString)
+        func = path.join process.cwd(), funcOrString
+      else
+        func = funcOrString
       #f = require fn
       #f(el, cb)
 

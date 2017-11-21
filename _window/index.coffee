@@ -75,6 +75,8 @@ openEditor = (d)->
 
 itemSelected = (d)->
   ### Run a single task ###
+  console.log "Running task"
+  console.log d
   location.hash = "##{d.hash}"
 
   t = title.html ""
@@ -111,7 +113,11 @@ itemSelected = (d)->
   ## Setup reload handler
   if reload
     ## Watch the directory of the file by default
-    dn = path.dirname path.resolve(d.code)
+
+    # I'f we've got a string already, use reload
+    reload = d.code unless typeof reload is 'string'
+
+    dn = path.dirname path.resolve(reload)
     console.log "Reloading from directory #{dn}"
     opts = {ignored: [/node_modules|[/\\]\./]}
     watcher = watch(dn,opts)
