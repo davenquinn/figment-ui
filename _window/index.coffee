@@ -89,7 +89,7 @@ itemSelected = (d)->
     t.text "PDF Printer"
 
   ### set current task ###
-  d3.select '#print-to-pdf'
+  d3.select '#print'
     .on 'click', ->
       return unless webview?
       console.log "Printing figure"
