@@ -3,7 +3,7 @@ path = require 'path'
 fs = require 'fs'
 min = require 'minimist'
 Promise = require 'bluebird'
-{BrowserWindow, app, ipcMain} = require 'electron'
+{BrowserWindow, app, ipcMain, protocol} = require 'electron'
 shortcuts = require './shortcuts'
 readline = require 'readline'
 
@@ -47,7 +47,15 @@ rl = readline.createInterface
 
 createWindow = ->
 
-  console.log process.versions
+  cb = (request, callback) =>
+    url = request.url.substr(6)
+    pth = path.normalize("#{process.cwd()}/#{url}")
+    console.log pth
+    callback({path:pth})
+
+  protocol.registerFileProtocol 'app', cb, (error)->
+    return unless error
+    console.error('Failed to register protocol')
 
   console.log if debug \
          then "Creating browser window" \
