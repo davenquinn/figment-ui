@@ -8,8 +8,10 @@ get = (module)->
     console.log "Couldn't import module #{module}"
     throw e
 
-module.exports = (mode='local')->
+module.exports = (mode='local', paths=null)->
   # Mode sets `postcss-modules-local-by-default`
+  if not paths?
+    paths = require.main.paths
   try
     hook = get 'css-modules-require-hook'
     stylus = get 'stylus'
@@ -22,7 +24,7 @@ module.exports = (mode='local')->
     preprocessCss: (css, filename)->
       stylus(css)
         .set 'filename', filename
-        .set 'paths', require.main.paths
+        .set 'paths', paths
         .render()
     processCss: appendStyle
 
