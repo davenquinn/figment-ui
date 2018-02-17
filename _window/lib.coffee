@@ -42,42 +42,73 @@ generateFigure = (task)->
 pixelsToMicrons = (px)->
   Math.ceil(px/96.0*25400)
 
+printToPDF = (webview, size)->
+  new Promise (resolve, reject)->
+    ###
+    Print the webview to the callback
+    ###
+    opts =
+      printBackground: true
+      marginsType: 1
+      pageSize:
+        height: pixelsToMicrons(size.height)+10
+        width: pixelsToMicrons(size.width)+10
+
+    webview.printToPDF opts, (e,data)=>
+      reject(e) if e?
+      resolve(data)
+
+printToImage = (webview, opts)->
+  new Promise (resolve, reject)->
+    ###
+    Print the webview to the callback
+    ###
+    opts.format ?= 'png'
+    opts.scaleFactor ?= 2
+    opts.quality ?= 90
+    {width,height} = opts
+    width*=2
+    height*=2
+    rect = {x:0,y:0,width,height}
+    webview.capturePage rect, (image)->
+      reject(e) if e?
+      if ['jpeg','jpg'].includes(opts.format)
+        d = image.toJPEG(rect, opts.quality)
+      else
+        d = image.toPNG(opts.scaleFactor)
+      resolve(d)
+
 printFigureArea = (task)->
+  ###
+  # Function to print webpage
+  ###
   opts = task.opts or {}
   webview = document.querySelector 'webview'
 
   #webview.setZoomFactor(options.dpi/96)
 
-  v = await new Promise (resolve, reject)->
+  opts = await new Promise (resolve, reject)->
     webview.addEventListener 'ipc-message', (event)->
-      console.log event.channel
       {bounds} = JSON.parse event.channel
       resolve(bounds)
     webview.send "prepare-for-printing"
 
-  new Promise (resolve, reject)->
-    ###
-    Print the webview to the callback
-    ###
-    console.log "Printing to #{task.outfile}"
+  {outfile} = task
+  dir = path.dirname outfile
+  if not fs.existsSync(dir)
+    fs.mkdirSync dir
+  console.log "Printing to #{outfile}"
 
-    opts =
-      printBackground: true
-      marginsType: 1
-      pageSize:
-        height: pixelsToMicrons(v.height)+10
-        width: pixelsToMicrons(v.width)+10
+  ext = path.extname(outfile)
+  if ['.jpg','.jpeg','.png'].includes(ext)
+    opts.format = ext.slice(1)
+    buf = await printToImage(webview, opts)
+  else
+    buf = await printToPDF(webview, opts)
 
-    dir = path.dirname task.outfile
-    if not fs.existsSync(dir)
-      fs.mkdirSync dir
-
-    webview.printToPDF opts, (e,d)=>
-      reject(e) if e?
-      fs.writeFileSync task.outfile, d
-      console.log "Finished task"
-      webview.setZoomFactor(1)
-      resolve()
+  webview.setZoomFactor(1)
+  fs.writeFileSync outfile, buf
+  console.log "Finished task"
 
 # Initialize renderer
 class Printer
@@ -107,7 +138,10 @@ class Printer
       # Require relative to parent module,
       # but do it later so errors can be accurately
       # traced
-      func = path.join process.cwd(), funcOrString
+      if not path.isAbsolute(funcOrString)
+        func = path.join process.cwd(), funcOrString
+      else
+        func = funcOrString
       #f = require fn
       #f(el, cb)
 
