@@ -4,16 +4,20 @@ Promise = require 'bluebird'
 d3 = require 'd3-selection'
 {watch} = require 'chokidar'
 {spawn} = require 'child_process'
-
+{runTask} = require '../src/task'
 {Printer, printFigureArea} = require("./lib.coffee")
 window.Printer = Printer
 
 options = remote.getGlobal 'options'
 
-c = remote.getGlobal('console')
-console.log = c.log
-console.error = c.error
-console.warn = c.warn
+# # Print logging statements to both webtools and to command line
+# c1 = remote.getGlobal('console')
+# for i in ['log', 'warn', 'error']
+#   oldFunc = console[i]
+#   console[i] = ->
+#     oldFunc.apply(arguments)
+#     c1[i].apply(arguments)
+
 process.exit = remote.app.quit
 
 # redirect errors to stderr
@@ -26,16 +30,12 @@ isMainPage = null
 tasks = []
 
 body = d3.select 'body'
-main = d3.select('#main')
-webview = null
+main = d3.select '#main'
 currentTask = null
 
 reloadWebview = ->
-  if not webview?
-    wc = remote.getCurrentWebContents()
-    wc.reloadIgnoringCache()
-  else
-    webview.reloadIgnoringCache()
+  wc = remote.getCurrentWebContents()
+  wc.reloadIgnoringCache()
   console.log "Reloading..."
 
 controls = d3.select "#controls"
@@ -44,23 +44,22 @@ title = d3.select '#controls>h1'
 d3.select '#toggle-dev-tools'
   .on 'click', ->
     ipcRenderer.send 'dev-tools'
-    document
-      .querySelector 'webview'
-      .openDevTools()
+    win = require('electron').remote.getCurrentWindow()
+    win.openDevTools()
 
 ipcRenderer.on 'show-toolbar', (event, toolbarEnabled)->
   mode = if toolbarEnabled then 'flex' else 'none'
   controls.style 'display', mode
 
 ipcRenderer.on 'zoom', (event, zoom)->
-  return unless webview?
   webview.setZoomFactor zoom
 
 ipcRenderer.on 'reload', reloadWebview
 
 sharedStart = (array) ->
   # From
-  # http://stackoverflow.com/questions/1916218/find-the-longest-common-starting-substring-in-a-set-of-strings
+  # http://stackoverflow.com/questions/1916218/
+  #       find-the-longest-common-starting-substring-in-a-set-of-strings
   A = array.concat().sort()
   a1 = A[0]
   a2 = A[A.length - 1]
@@ -76,7 +75,6 @@ openEditor = (d)->
 itemSelected = (d)->
   ### Run a single task ###
   console.log "Running task"
-  console.log d
   location.hash = "##{d.hash}"
 
   t = title.html ""
@@ -102,11 +100,6 @@ itemSelected = (d)->
       openEditor d
 
   main.html ""
-  ## Set up a webview
-  webview = main.append "webview"
-    .attr "nodeintegration", true
-    .attr "src", "file://"+require.resolve("../_runner/index-testing.html")
-    .node()
 
   {devToolsEnabled, reload} = remote.getGlobal 'options'
 
@@ -123,22 +116,18 @@ itemSelected = (d)->
     watcher = watch(dn,opts)
     watcher.on 'change', reloadWebview
 
-  webview.addEventListener 'dom-ready', (e)->
-    if devToolsEnabled
-      webview.openDevTools()
+  win = require('electron').remote.getCurrentWindow()
+  if devToolsEnabled
+    win.openDevTools()
 
-    webview.send "run-task", {
-      code: d.code
-      helpers: d.helpers
-    }
-
-    webview.addEventListener 'finished', (e)->
-      console.log "Finished rendering"
-
-    webview.addEventListener 'devtools-closed', (e)->
-      ipcRenderer.send 'dev-tools', 'closed'
+  vals = do -> {code, helpers} = d
+  console.log "Ready to run task"
+  runTask null, vals, ->
+    console.log "Finished rendering"
 
 renderSpecList = (d)->
+
+  console.log "Spec list"
   # Render spec list from runner
   el = d3.select @
 
@@ -183,8 +172,8 @@ createMainPage = (runners)->
 
 runBasedOnHash = (runners)->
   z = remote.getGlobal('zoom')
-  if webview?
-    webview.setZoomFactor z
+  win = require('electron').remote.getCurrentWindow()
+  win.webContents.setZoomFactor z
 
   _ = runners.map (d)->d.tasks
   tasks = Array::concat.apply [], _
@@ -217,6 +206,7 @@ getSpecs = (d)->
       v
 
 loadEntryPoint = (fn)-> ->
+  console.log "Loading entry point #{fn}"
   # If we are in spec mode
   if options.specs?
     p = Promise.map options.specs, getSpecs
@@ -226,7 +216,7 @@ loadEntryPoint = (fn)-> ->
     p = Promise.resolve [spec]
   p.then fn
 
-runTask = (spec)->
+runTaskA = (spec)->
   ## Runner for all tasks
   console.log "Running tasks from #{spec}"
   taskRunner = require spec
@@ -249,4 +239,3 @@ else
   p.then ->
     console.log "Done!"
     remote.app.quit()
-
