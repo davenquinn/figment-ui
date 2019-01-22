@@ -21,7 +21,7 @@ sleep = (data)->
     setTimeout fn, 1000
 
 generateFigure = (task)->
-  main = d3.select "#main"
+  main = d3.select "#pdf-printer-ui-controls"
   main.html ""
   ## Set up a webview
   webview = main.append "webview"

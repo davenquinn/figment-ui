@@ -13,7 +13,7 @@ runTask = (e, data, callback)->
       throw e unless e instanceof TypeError
       _helpers[helper]()
 
-  el = document.querySelector("body")
+  el = document.querySelector("#pdf-printer-figure-container")
   func = require code
   func el, callback
 

@@ -30,7 +30,7 @@ isMainPage = null
 tasks = []
 
 body = d3.select 'body'
-main = d3.select '#main'
+main = d3.select '#pdf-printer-figure-container'
 currentTask = null
 
 reloadWebview = ->
@@ -160,7 +160,7 @@ createMainPage = (runners)->
   # Create a list of tasks
   body.attr 'class','task-list'
 
-  main = d3.select "#main"
+  main = d3.select "#pdf-printer-figure-container"
   main.html ""
   sel = main.selectAll 'div'
         .data runners
