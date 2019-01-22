@@ -9,7 +9,7 @@ body {
   height: 100vh;
   background-color: #fff;
 }
-#controls {
+#pdf-printer-ui-controls {
   position: relative;
   padding: 2px 1em;
   height: 25px;
@@ -21,14 +21,14 @@ body {
   background-color: #eee;
   border-bottom: 1px solid #ccc;
 }
-#controls a {
+#pdf-printer-ui-controls a {
   text-decoration: none;
   cursor: pointer;
 }
-#controls * {
+#pdf-printer-ui-controls * {
   font-weight: 400;
 }
-#controls h1 {
+#pdf-printer-ui-controls h1 {
   margin: 0;
   padding: 0;
   font-weight: 500;
@@ -37,10 +37,10 @@ body {
   text-transform: uppercase;
   flex: 1;
 }
-#controls h1 a {
+#pdf-printer-ui-controls h1 a {
   color: #444;
 }
-#controls h1 a:hover {
+#pdf-printer-ui-controls h1 a:hover {
   color: #000;
 }
 .buttons a {

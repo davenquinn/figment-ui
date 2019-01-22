@@ -13,8 +13,9 @@ runTask = (e, data, callback)->
       throw e unless e instanceof TypeError
       _helpers[helper]()
 
+  el = document.querySelector("body")
   func = require code
-  func document.querySelector("body"), callback
+  func el, callback
 
 prepareForPrinting = ->
   el = document.querySelector 'body>*:first-child'

@@ -38,9 +38,9 @@ reloadWebview = ->
   wc.reloadIgnoringCache()
   console.log "Reloading..."
 
-controls = d3.select "#controls"
+controls = d3.select "#pdf-printer-ui-controls"
 
-title = d3.select '#controls>h1'
+title = d3.select '#pdf-printer-ui-controls>h1'
 d3.select '#toggle-dev-tools'
   .on 'click', ->
     ipcRenderer.send 'dev-tools'
