@@ -78,6 +78,7 @@ createWindow = ->
     win = null
 
 quitApp = ->
+  console.log "Received signal to terminate"
   app.quit()
 
 app.on 'ready', createWindow
