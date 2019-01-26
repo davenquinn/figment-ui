@@ -1,24 +1,38 @@
-var babelLoader = {
+const babelLoader = {
   loader: 'babel-loader',
   options: {
-    presets: ['env','react'],
-    sourceMap: true
+    presets: ['@babel/preset-env']
   }
-}
+};
 
-var coffeeLoader = {
-  loader: 'coffee-loader'
+const coffeeLoader = {
+  loader: 'coffee-loader',
   options: {sourceMap: true}
 };
 
 module.exports = {
   module: {
     rules: [
-      {test: /\.coffee$/, use: [babelLoader, coffeeLoader], exclude: /node_modules/},
-      {test: /\.(js|jsx)$/, use: [babelLoader], exclude: /node_modules/},
-      {test: /\.styl$/, use: ["style-loader","css-loader", "stylus-loader"]},
-      {test: /\.css$/, use: ["style-loader", "css-loader"]},
+      {
+        test: /\.coffee$/,
+        use: [babelLoader, coffeeLoader],
+        exclude: /node_modules/
+      },
+      {
+        test: /\.styl$/,
+        use: ["style-loader","css-loader", "stylus-loader"],
+        exclude: /node_modules/
+      },
+      {
+        test: /\.css$/,
+        use: ["style-loader", "css-loader"],
+        exclude: /node_modules/
+      }
     ]
   },
-  resolve: {extensions: [".coffee", ".js", ".jsx", ".styl"]}
-};
+  resolve: {
+    extensions: ['.js', '.coffee']
+  },
+  entry: "a",
+  stats: "none"
+}
