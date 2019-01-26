@@ -17,10 +17,12 @@
     </div>
   </body>
   <script>
-    // Require helpers and then main script
-    // ... this could be abstracted for greater
-    // ... control of extension modules
-    require("coffeescript/register")
-    require("./index")
+    var webpackRegister = require('webpack-register');
+    webpackRegister.setOption({exts: ['styl', 'coffee']});
+    webpackRegister.hook({
+      config: require.resolve('pdf-printer/webpack.config.js')
+    }).then(function() {
+      require('./index.coffee');
+    });
   </script>
 </html>

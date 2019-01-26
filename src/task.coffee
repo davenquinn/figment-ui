@@ -1,17 +1,7 @@
 runTask = (e, data, callback)->
   callback ?= null
   ### Setup helpers ###
-  {helpers, code} = data
-
-  console.log "Trying to run task"
-  _helpers = require '../_helpers'
-  for helper in helpers
-    console.log "Setting up helper #{helper}"
-    try
-      helper()
-    catch e
-      throw e unless e instanceof TypeError
-      _helpers[helper]()
+  {code} = data
 
   el = document.querySelector("#pdf-printer-figure-container")
   func = require code

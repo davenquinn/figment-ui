@@ -22,7 +22,8 @@
     "electron-reload": "^1.0.3",
     "loglevel": "^1.4.1",
     "stream-to": "^2.0.0",
-    "stylus": "^0.54.5"
+    "stylus": "^0.54.5",
+    "webpack-register": "^0.2.6"
   },
   "devDependencies": {
     "chai": "^3.5.0",
