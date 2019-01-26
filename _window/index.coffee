@@ -130,7 +130,7 @@ renderSpecList = (d)->
   console.log "Spec list"
   # Render spec list from runner
   el = d3.select @
-
+    .attr "class", "task-list"
   # Find shared starting substring
   arr = d.tasks.map (d)->d.outfile
   arr.push d.name
@@ -158,7 +158,6 @@ renderSpecList = (d)->
 createMainPage = (runners)->
   controls.style "display", "none"
   # Create a list of tasks
-  body.attr 'class','task-list'
 
   main = d3.select "#pdf-printer-figure-container"
   main.html ""
