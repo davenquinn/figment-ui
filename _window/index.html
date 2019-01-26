@@ -20,7 +20,9 @@
     // Require helpers and then main script
     // ... this could be abstracted for greater
     // ... control of extension modules
+    require('module').prototype.options = {transpile: {presets: ['env']}};
     require("coffeescript/register")
+    require("@babel/register")
     require("./index")
   </script>
 </html>
