@@ -1,9 +1,9 @@
-d3 = require 'd3'
+{select} = require 'd3-selection'
 
 module.exports = (el_, callback)->
 
   # Create our svg
-  el = d3.select el_
+  el = select el_
     .append 'svg'
     .attr 'width', 200
     .attr 'height', 100

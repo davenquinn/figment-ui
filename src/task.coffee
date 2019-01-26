@@ -1,13 +1,9 @@
-path = require 'path'
-Promise = require 'bluebird'
-{remote, ipcRenderer} = require 'electron'
-options = remote.getGlobal 'options'
-console.log options
-
-ipcRenderer.on 'run-task', (e,data)->
+runTask = (e, data, callback)->
+  callback ?= null
   ### Setup helpers ###
   {helpers, code} = data
 
+  console.log "Trying to run task"
   _helpers = require '../_helpers'
   for helper in helpers
     console.log "Setting up helper #{helper}"
@@ -17,13 +13,11 @@ ipcRenderer.on 'run-task', (e,data)->
       throw e unless e instanceof TypeError
       _helpers[helper]()
 
-  callback = ->
-    ipcRenderer.sendToHost "finished"
-
+  el = document.querySelector("#pdf-printer-figure-container")
   func = require code
-  func document.querySelector("body"), callback
+  func el, callback
 
-ipcRenderer.on 'prepare-for-printing', ->
+prepareForPrinting = ->
   el = document.querySelector 'body>*:first-child'
   {width, height} = el.getBoundingClientRect()
   msg = {
@@ -43,3 +37,4 @@ redirectErrors = ->
     e.preventDefault()
     console.error e.error.stack or 'Uncaught ' + e.error
 
+module.exports = {runTask, prepareForPrinting, redirectErrors}

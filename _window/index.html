@@ -4,7 +4,7 @@
     <link rel='stylesheet' href='style.css'>
   </head>
   <body>
-    <div id='controls'>
+   <div id='pdf-printer-ui-controls'>
       <h1>Figure List</h1>
       <div class='buttons'>
         <a id='toggle-dev-tools'>Toggle DevTools</a>
@@ -12,13 +12,13 @@
         <a id='open-editor'>Open Editor</a>
       </div>
     </div>
-    <div id="main"></div>
-    <script>
-      // Require helpers and then main script
-      // ... this could be abstracted for greater
-      // ... control of extension modules
-      require("coffeescript/register")
-      require("./index")
-    </script>
+    <div id="pdf-printer-figure-container"></div>
   </body>
+  <script>
+    // Require helpers and then main script
+    // ... this could be abstracted for greater
+    // ... control of extension modules
+    require("coffeescript/register")
+    require("./index")
+  </script>
 </html>

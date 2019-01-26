@@ -35,6 +35,7 @@ if argv['spec-mode']
   # Each argument should be a javascript or coffeescript
   # file exporting a renderer object
   console.log argv
+  console.log "Working in spec mode"
   options.specs = args.map (d)->path.resolve(d)
 else
   [options.infile, options.outfile] = args
@@ -77,6 +78,7 @@ createWindow = ->
     win = null
 
 quitApp = ->
+  console.log "Received signal to terminate"
   app.quit()
 
 app.on 'ready', createWindow
