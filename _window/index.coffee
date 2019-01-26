@@ -119,7 +119,7 @@ itemSelected = (d)->
 
     dn = path.dirname path.resolve(reload)
     console.log "Reloading from directory #{dn}"
-    opts = {ignored: [/node_modules|[/\\]\./]}
+    opts = {ignored: [/node_modules|[/\\]\./, path.dirname(d.outfile)]}
     watcher = watch(dn,opts)
     watcher.on 'change', reloadWebview
 
