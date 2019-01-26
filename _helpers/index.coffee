@@ -2,7 +2,7 @@ cssm = require './stylus-css-modules'
 {readFileSync} = require 'fs'
 {appendStyle} = require './util'
 
-module.exports =
+module.exports = {
   'stylus-css-modules-local': ->cssm('local')
   'stylus-css-modules-global': ->cssm('global')
   css: ->
@@ -21,3 +21,4 @@ module.exports =
         .render (e,css)->
           throw "Error on stylus compilation" unless css?
           appendStyle(css) if css?
+}
