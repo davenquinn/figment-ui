@@ -1,4 +1,4 @@
-{remote, ipcRenderer} = require 'electron'
+{remote, ipcRenderer, webFrame} = require 'electron'
 path = require 'path'
 Promise = require 'bluebird'
 d3 = require 'd3-selection'
@@ -30,12 +30,15 @@ isMainPage = null
 tasks = []
 
 body = d3.select 'body'
+
+zoomContainer = d3.select '#pdf-printer-figure-zoom-container'
 main = d3.select '#pdf-printer-figure-container'
 currentTask = null
 
 reloadWebview = ->
   wc = remote.getCurrentWebContents()
   wc.reloadIgnoringCache()
+  webFrame.setZoomLevel(1)
   console.log "Reloading..."
 
 controls = d3.select "#pdf-printer-ui-controls"
@@ -51,8 +54,15 @@ ipcRenderer.on 'show-toolbar', (event, toolbarEnabled)->
   mode = if toolbarEnabled then 'flex' else 'none'
   controls.style 'display', mode
 
+setZoomFactor = (zoom)->
+  webFrame.setZoomLevel(1)
+  z = if zoom == 1 then null else "scale(#{zoom})"
+  zoomContainer
+    .style('transform', z)
+    .style('transform-origin', "50% 0px")
+
 ipcRenderer.on 'zoom', (event, zoom)->
-  webview.setZoomFactor zoom
+  setZoomFactor(zoom)
 
 ipcRenderer.on 'reload', reloadWebview
 
@@ -171,8 +181,7 @@ createMainPage = (runners)->
 
 runBasedOnHash = (runners)->
   z = remote.getGlobal('zoom')
-  win = require('electron').remote.getCurrentWindow()
-  win.webContents.setZoomFactor z
+  setZoomFactor z
 
   _ = runners.map (d)->d.tasks
   tasks = Array::concat.apply [], _
@@ -221,7 +230,6 @@ runTaskA = (spec)->
   taskRunner = require spec
   Promise.resolve taskRunner
     .then (t)->t.run()
-
 
 if options.debug
   fn = loadEntryPoint(runBasedOnHash)

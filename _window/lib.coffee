@@ -85,8 +85,6 @@ printFigureArea = (task)->
   opts = task.opts or {}
   webview = document.querySelector 'webview'
 
-  #webview.setZoomFactor(options.dpi/96)
-
   opts = await new Promise (resolve, reject)->
     webview.addEventListener 'ipc-message', (event)->
       {bounds} = JSON.parse event.channel
@@ -106,7 +104,6 @@ printFigureArea = (task)->
   else
     buf = await printToPDF(webview, opts)
 
-  webview.setZoomFactor(1)
   fs.writeFileSync outfile, buf
   console.log "Finished task"
 
