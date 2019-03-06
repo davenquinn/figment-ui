@@ -57,9 +57,10 @@ ipcRenderer.on 'show-toolbar', (event, toolbarEnabled)->
 setZoomFactor = (zoom)->
   webFrame.setZoomLevel(1)
   z = if zoom == 1 then null else "scale(#{zoom})"
-  zoomContainer
+  main
     .style('transform', z)
-    .style('transform-origin', "50% 0px")
+    .style('transform-origin', "0px 0px")
+    .style('padding', "#{20/zoom}px")
 
 ipcRenderer.on 'zoom', (event, zoom)->
   setZoomFactor(zoom)
