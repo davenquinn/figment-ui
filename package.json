@@ -6,7 +6,7 @@
   "author": "Daven Quinn",
   "license": "ISC",
   "bin": {
-    "pdf-printer": "cli.js"
+    "pdf-printer": "bin/cli.js"
   },
   "dependencies": {
     "@babel/core": "^7.2.2",

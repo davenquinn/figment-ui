@@ -63,7 +63,8 @@ createWindow = ->
          else "Creating headless renderer"
 
   win = new BrowserWindow {show: show}
-  url = "file://#{__dirname}/_window/index.html"
+  parentDir = path.resolve(path.join(__dirname,'..'))
+  url = "file://"+path.join(parentDir,'_window', 'index.html')
   win.loadURL url
   shortcuts(win)
   ipcMain.on 'dev-tools', (event)->
