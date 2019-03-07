@@ -18,7 +18,7 @@ runTask = (e, data, callback)->
   func el, callback
 
 prepareForPrinting = ->
-  el = document.querySelector 'body>*:first-child'
+  el = document.querySelector '#pdf-printer-figure-container>*:first-child'
   {width, height} = el.getBoundingClientRect()
   msg = {
     message: "Ready to print"

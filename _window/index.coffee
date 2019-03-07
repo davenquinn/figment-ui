@@ -86,6 +86,7 @@ openEditor = (d)->
 itemSelected = (d)->
   ### Run a single task ###
   console.log "Running task"
+
   location.hash = "##{d.hash}"
 
   t = title.html ""
@@ -100,7 +101,6 @@ itemSelected = (d)->
   ### set current task ###
   d3.select '#print'
     .on 'click', ->
-      return unless webview?
       console.log "Printing figure"
       printFigureArea d
 
@@ -110,6 +110,7 @@ itemSelected = (d)->
       console.log "Opening editor"
       openEditor d
 
+  d3.selectAll("style").remove()
   main.html ""
 
   {devToolsEnabled, reload} = remote.getGlobal 'options'
@@ -216,6 +217,7 @@ getSpecs = (d)->
 
 loadEntryPoint = (fn)-> ->
   console.log "Loading entry point #{fn}"
+
   # If we are in spec mode
   if options.specs?
     p = Promise.map options.specs, getSpecs

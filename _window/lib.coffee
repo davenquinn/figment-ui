@@ -83,13 +83,10 @@ printFigureArea = (task)->
   # Function to print webpage
   ###
   opts = task.opts or {}
-  webview = document.querySelector 'webview'
+  el = document.querySelector('#pdf-printer-figure-container>*:first-child')
 
-  opts = await new Promise (resolve, reject)->
-    webview.addEventListener 'ipc-message', (event)->
-      {bounds} = JSON.parse event.channel
-      resolve(bounds)
-    webview.send "prepare-for-printing"
+  {width, height} = el.getBoundingClientRect()
+  opts = {width, height}
 
   {outfile} = task
   dir = path.dirname outfile
@@ -98,11 +95,15 @@ printFigureArea = (task)->
   console.log "Printing to #{outfile}"
 
   ext = path.extname(outfile)
+
+  {webContents} = require('electron')
+  console.log webContents
+
   if ['.jpg','.jpeg','.png'].includes(ext)
     opts.format = ext.slice(1)
-    buf = await printToImage(webview, opts)
+    buf = await printToImage(webContents, opts)
   else
-    buf = await printToPDF(webview, opts)
+    buf = await printToPDF(webContents, opts)
 
   fs.writeFileSync outfile, buf
   console.log "Finished task"
