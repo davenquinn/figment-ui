@@ -1,7 +1,7 @@
 <html>
   <head>
     <title>PDFPrinter testing environment</title>
-    <link rel='stylesheet' href='style.css'>
+    <link rel='stylesheet' href='./style.styl'>
   </head>
   <body>
    <div id='pdf-printer-ui-controls'>
@@ -16,13 +16,5 @@
       <div id="pdf-printer-figure-container"></div>
     </div>
   </body>
-  <script>
-    // Require helpers and then main script
-    // ... this could be abstracted for greater
-    // ... control of extension modules
-    require('module').prototype.options = {transpile: {presets: ['env']}};
-    require("coffeescript/register")
-    require("@babel/register")
-    require("./index")
-  </script>
+  <script src="./index.coffee"></script>
 </html>

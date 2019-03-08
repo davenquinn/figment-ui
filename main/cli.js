@@ -6,14 +6,15 @@ const Promise = require('bluebird');
 const {BrowserWindow, app, ipcMain, protocol} = require('electron');
 const shortcuts = require('./shortcuts');
 const readline = require('readline');
+const { spawn } = require('child_process');
 
 const argv = min(process.argv.slice(2), {
-  boolean: ['debug', 'spec-mode', 'show']
+  boolean: ['debug', 'spec-mode', 'show', 'dev']
 });
 // Specify --debug to show BrowserWindow
 //   and open devtools
 // Specify --spec to load from a spec
-const { debug } = argv;
+const { debug, dev } = argv;
 // Option just to show browser window (primarily for
 // debugging taskflow of this module)
 const show = argv.show || debug;
@@ -27,7 +28,8 @@ global.options = {
   // Wait between rendering items
   waitForUser: show,
   dpi: parseFloat(argv.dpi) || 300.0,
-  debug,
+  debug: debug || false,
+  dev: dev || false,
   devToolsEnabled: false,
   reload: argv.reload || argv.debug
 };
@@ -50,7 +52,26 @@ const rl = readline.createInterface({
   output: process.stdout
 });
 
-const createWindow = function() {
+
+
+const runBundler = async function() {
+  let env = Object.create(process.env);
+  let fp = path.join(__dirname, 'dev-bundler.js');
+  env.ELECTRON_RUN_AS_NODE = '1';
+  env.FORCE_COLOR = true;
+  const p = spawn(process.argv[0], [fp], { env: env } );
+
+  for await (const data of p.stdout) {
+    process.stdout.write(data.toString('utf8'));
+  };
+  return p
+};
+
+const createWindow = async function() {
+
+  if (argv['dev']) {
+    runBundler();
+  }
 
   const cb = (request, callback) => {
     const url = request.url.substr(6);
@@ -71,7 +92,7 @@ const createWindow = function() {
 
   let win = new BrowserWindow({show});
   const parentDir = path.resolve(path.join(__dirname,'..'));
-  const url = `file://${path.join(parentDir,'_window', 'index.html')}`;
+  const url = `file://${path.join(parentDir,'build', 'index.html')}`;
   win.loadURL(url);
   shortcuts(win);
   ipcMain.on('dev-tools', (event)=>{
