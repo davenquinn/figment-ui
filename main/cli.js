@@ -1,12 +1,11 @@
 // Headless mode for figure generation
 const path = require('path');
-const fs = require('fs');
 const min = require('minimist');
-const Promise = require('bluebird');
 const {BrowserWindow, app, ipcMain, protocol} = require('electron');
-const shortcuts = require('./shortcuts');
 const readline = require('readline');
-const { spawn } = require('child_process');
+
+const shortcuts = require('./shortcuts');
+const {runBundler} = require('../bundler');
 
 const argv = min(process.argv.slice(2), {
   boolean: ['debug', 'spec-mode', 'show', 'dev']
@@ -52,21 +51,6 @@ const rl = readline.createInterface({
   output: process.stdout
 });
 
-
-
-const runBundler = async function() {
-  let env = Object.create(process.env);
-  let fp = path.join(__dirname, 'dev-bundler.js');
-  env.ELECTRON_RUN_AS_NODE = '1';
-  env.FORCE_COLOR = true;
-  const p = spawn(process.argv[0], [fp], { env: env } );
-
-  for await (const data of p.stdout) {
-    process.stdout.write(data.toString('utf8'));
-  };
-  return p
-};
-
 const createWindow = async function() {
 
   if (argv['dev']) {
@@ -92,7 +76,7 @@ const createWindow = async function() {
 
   let win = new BrowserWindow({show});
   const parentDir = path.resolve(path.join(__dirname,'..'));
-  const url = `file://${path.join(parentDir,'build', 'index.html')}`;
+  const url = "file://"+path.join(parentDir,'lib', 'index.html');
   win.loadURL(url);
   shortcuts(win);
   ipcMain.on('dev-tools', (event)=>{

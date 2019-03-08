@@ -3,3 +3,4 @@ test/output
 package-lock.json
 .cache
 build
+lib

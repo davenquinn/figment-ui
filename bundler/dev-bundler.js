@@ -16,9 +16,9 @@ const file = project('_window/index.html')
 
 // Bundler options
 const options = {
-  outDir: project('build'), // The out directory to put the build files in, defaults to dist
+  outDir: project('lib'), // The out directory to put the build files in, defaults to dist
   publicUrl: './', // The url to server on, defaults to dist
-  watch: false, // whether to watch the files and rebuild them on change, defaults to process.env.NODE_ENV !== 'production'
+  watch: true, // whether to watch the files and rebuild them on change, defaults to process.env.NODE_ENV !== 'production'
   cache: true, // Enabled or disables caching, defaults to true
   cacheDir: project('.cache'), // The directory cache gets put in, defaults to .cache
   contentHash: false, // Disable content hash from being included on the filename
