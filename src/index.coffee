@@ -4,7 +4,7 @@ Promise = require 'bluebird'
 d3 = require 'd3-selection'
 {watch} = require 'chokidar'
 {spawn} = require 'child_process'
-{runTask} = require '../src/task'
+{runTask} = require './task'
 {Printer, printFigureArea} = require("./lib.coffee")
 window.Printer = Printer
 

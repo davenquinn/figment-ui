@@ -12,7 +12,7 @@ const project = (fp)=>{
 };
 
 // Entrypoint file location
-const file = project('_window/index.html')
+const file = project('src/index.html')
 
 // Bundler options
 const options = {
