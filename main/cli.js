@@ -23,6 +23,8 @@ const args = argv._;
 global.args = args;
 global.specMode = argv['spec-mode'];
 
+global.bundlerScript = path.resolve(__dirname, '..', 'bundler', 'dev-bundler.js');
+
 global.options = {
   // Wait between rendering items
   waitForUser: show,
