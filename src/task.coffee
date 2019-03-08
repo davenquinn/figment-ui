@@ -1,3 +1,7 @@
+path = require 'path'
+{runBundler} = require '../bundler'
+{ipcRenderer} = require 'electron'
+
 runTask = (e, data, callback)->
   ###
   # This is the function that actually runs a discrete task
@@ -5,11 +9,18 @@ runTask = (e, data, callback)->
 
   callback ?= null
   {code} = data # The file that has the code in it...
+  dn = path.dirname(path.resolve(code))
+
+  outDir = path.join(dn,'.build')
+  cacheDir = path.join(dn, '.cache')
+
+  runBundler(code, {outDir, cacheDir})
 
   console.log "Trying to run task"
   el = document.querySelector("#pdf-printer-figure-container")
-  func = require code
-  func el, callback
+  console.log "Ready"
+  #func = require code
+  #func el, callback
 
 prepareForPrinting = ->
   el = document.querySelector '#pdf-printer-figure-container>*:first-child'

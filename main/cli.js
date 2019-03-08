@@ -60,6 +60,8 @@ process.on('SIGINT', quitApp);
 process.on('SIGTERM', quitApp);
 process.on('SIGHUP', quitApp);
 
+// Set global variables for bundler
+
 const createWindow = function() {
 
   if (argv['dev']) {
@@ -100,6 +102,10 @@ const createWindow = function() {
   ipcMain.on('wait-for-input', (event)=>
     rl.question('Press enter to continue', ans=> event.sender.send('done-waiting'))
   );
+
+  ipcMain.on('bundle-log', (event, line)=>{
+    process.stdout.write(line);
+  })
 
   return win.on('closed', ()=> win = null);
 };
