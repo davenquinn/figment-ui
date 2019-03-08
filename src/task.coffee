@@ -1,18 +1,12 @@
 runTask = (e, data, callback)->
+  ###
+  # This is the function that actually runs a discrete task
+  ###
+
   callback ?= null
-  ### Setup helpers ###
-  {helpers, code} = data
+  {code} = data # The file that has the code in it...
 
   console.log "Trying to run task"
-  _helpers = require '../_helpers'
-  for helper in helpers
-    console.log "Setting up helper #{helper}"
-    try
-      helper()
-    catch e
-      throw e unless e instanceof TypeError
-      _helpers[helper]()
-
   el = document.querySelector("#pdf-printer-figure-container")
   func = require code
   func el, callback

@@ -2,7 +2,6 @@
 path = require 'path'
 Promise = require 'bluebird'
 d3 = require 'd3-selection'
-{watch} = require 'chokidar'
 {spawn} = require 'child_process'
 {runTask} = require './task'
 {Printer, printFigureArea} = require("./lib.coffee")
@@ -114,19 +113,6 @@ itemSelected = (d)->
   main.html ""
 
   {devToolsEnabled, reload} = remote.getGlobal 'options'
-
-  ## Setup reload handler
-  if reload
-    ## Watch the directory of the file by default
-
-    # I'f we've got a string already, use reload
-    reload = d.code unless typeof reload is 'string'
-
-    dn = path.dirname path.resolve(reload)
-    console.log "Reloading from directory #{dn}"
-    opts = {ignored: [/node_modules|[/\\]\./, path.dirname(d.outfile)]}
-    watcher = watch(dn,opts)
-    watcher.on 'change', reloadWebview
 
   win = require('electron').remote.getCurrentWindow()
   if devToolsEnabled

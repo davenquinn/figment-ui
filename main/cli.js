@@ -51,10 +51,23 @@ const rl = readline.createInterface({
   output: process.stdout
 });
 
-const createWindow = async function() {
+const quitApp = function() {
+  console.log("Received signal to terminate");
+  return app.quit();
+};
+
+process.on('SIGINT', quitApp);
+process.on('SIGTERM', quitApp);
+process.on('SIGHUP', quitApp);
+
+const createWindow = function() {
 
   if (argv['dev']) {
-    runBundler();
+    const fp = path.resolve(__dirname, '..','src','index.html');
+    const outDir = path.resolve(__dirname, '..', 'lib');
+    const cacheDir = path.resolve(__dirname, '..', '.cache');
+    runBundler(fp, {outDir, cacheDir})
+      .catch(console.error);
   }
 
   const cb = (request, callback) => {
@@ -91,15 +104,6 @@ const createWindow = async function() {
   return win.on('closed', ()=> win = null);
 };
 
-const quitApp = function() {
-  console.log("Received signal to terminate");
-  return app.quit();
-};
-
 app.on('ready', createWindow);
 app.on('window-all-closed', quitApp);
-
-process.on('SIGINT', quitApp);
-process.on('SIGTERM', quitApp);
-process.on('SIGHUP', quitApp);
 
