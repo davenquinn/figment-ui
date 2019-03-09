@@ -54,8 +54,8 @@ const rl = readline.createInterface({
 });
 
 const quitApp = function() {
-  console.log("Received signal to terminate");
-  return app.quit();
+  process.stdout.write("Received signal to terminate");
+  app.quit();
 };
 
 process.on('SIGINT', quitApp);
@@ -108,7 +108,6 @@ const createWindow = function() {
   ipcMain.on('bundle-log', (event, line)=>{
     process.stdout.write(line);
   })
-
   return win.on('closed', ()=> win = null);
 };
 

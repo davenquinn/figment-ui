@@ -7,7 +7,8 @@ function printLine(line) {
   if (isRenderer) {
     ipcRenderer.send('bundle-log', line);
   } else {
-    process.stdout.write(line);
+    let newLine = line.replace("✨", "🌸");
+    process.stdout.write(newLine);
   }
 }
 

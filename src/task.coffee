@@ -11,16 +11,20 @@ runTask = (e, data, callback)->
   {code} = data # The file that has the code in it...
   dn = path.dirname(path.resolve(code))
 
-  outDir = path.join(dn,'.build')
   cacheDir = path.join(dn, '.cache')
+  outDir = path.join(cacheDir,'build')
 
   runBundler(code, {outDir, cacheDir})
 
   console.log "Trying to run task"
   el = document.querySelector("#pdf-printer-figure-container")
   console.log "Ready"
-  #func = require code
-  #func el, callback
+
+  compiledCode = path.join(outDir, 'index.js')
+
+  # Race condition
+  func = require compiledCode
+  func el, callback
 
 prepareForPrinting = ->
   el = document.querySelector '#pdf-printer-figure-container>*:first-child'
