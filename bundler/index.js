@@ -3,7 +3,14 @@ const { ipcRenderer, remote } = require('electron');
 const path = require('path');
 const isRenderer = require('is-electron-renderer');
 
-function printLine(line) {
+function printLine(obj) {
+  let line;
+  // Convert to string if needed
+  if (typeof obj === 'string' || obj instanceof String) {
+    line = obj;
+  } else {
+    line = JSON.stringify(obj);
+  }
   if (isRenderer) {
     ipcRenderer.send('bundle-log', line);
   } else {
@@ -34,8 +41,16 @@ const runBundler = async function(inFile, options={}) {
   env.FORCE_COLOR = true;
 
   const opts = JSON.stringify(options);
-  const proc = spawn(runner, [bundlerScript, inFile, opts], { env: env } );
+  const proc = spawn(runner, [bundlerScript, inFile, opts], {
+    env: env,
+    stdio: ['pipe','pipe','inherit','ipc']
+  });
+  proc.on('message', (bundle)=>{
+    if (!isRenderer) { return; }
+    printLine(bundle)
+  });
   printToStdout(proc);
+
   return proc;
 };
 

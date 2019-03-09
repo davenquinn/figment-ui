@@ -106,7 +106,12 @@ const createWindow = function() {
   );
 
   ipcMain.on('bundle-log', (event, line)=>{
+    rl.close()
     process.stdout.write(line);
+    rl.question("", (val) => {
+      console.log(`Hi ${val}!`);
+    })
+
   })
   return win.on('closed', ()=> win = null);
 };

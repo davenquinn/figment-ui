@@ -33,7 +33,16 @@ const options = {
 async function runBundle(opts) {
   // Initializes a bundler using the entrypoint location and options provided
   const bundler = new Bundler(file, options);
-  const bundle = await bundler.bundle();
+  bundler.on('bundled', (bundle)=>{
+    let out = {
+      type: bundle.type,
+      name: bundle.name
+    };
+    let {type, name, id, basename} = bundle.entryAsset;
+    out.entryAsset = {type, name, id, basename};
+    process.send(out);
+  });
+  await bundler.bundle();
 }
 
 runBundle();
