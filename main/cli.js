@@ -109,7 +109,7 @@ const createWindow = function() {
     rl.close()
     process.stdout.write(line);
     rl.question("", (val) => {
-      console.log(`Hi ${val}!`);
+      console.log("Answer");
     })
 
   })

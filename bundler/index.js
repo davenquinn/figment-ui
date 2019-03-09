@@ -3,6 +3,8 @@ const { ipcRenderer, remote } = require('electron');
 const path = require('path');
 const isRenderer = require('is-electron-renderer');
 
+const debug = false;
+
 function printLine(obj) {
   let line;
   // Convert to string if needed
@@ -46,8 +48,8 @@ const runBundler = async function(inFile, options={}) {
     stdio: ['pipe','pipe','inherit','ipc']
   });
   proc.on('message', (bundle)=>{
-    if (!isRenderer) { return; }
-    printLine(bundle)
+    if (!isRenderer) return;
+    if (debug) printLine(bundle);
   });
   printToStdout(proc);
 
