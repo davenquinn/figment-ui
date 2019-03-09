@@ -20,7 +20,8 @@ runTask = (e, data, callback)->
   el = document.querySelector("#pdf-printer-figure-container")
   console.log "Ready"
 
-  compiledCode = path.join(outDir, 'index.js')
+  stem = path.basename(code,path.extname(code))
+  compiledCode = path.join(outDir, "#{stem}.js")
 
   # Race condition
   func = require compiledCode
