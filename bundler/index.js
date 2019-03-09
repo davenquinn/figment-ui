@@ -28,7 +28,7 @@ async function printToStdout(child) {
   };
 };
 
-const runBundler = async function(inFile, options={}) {
+const runBundler = function(inFile, options={}) {
   let env, runner, bundlerScript;
   if (isRenderer) {
     env = Object.create(remote.process.env);

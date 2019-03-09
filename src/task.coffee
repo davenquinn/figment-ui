@@ -14,18 +14,25 @@ runTask = (e, data, callback)->
   cacheDir = path.join(dn, '.cache')
   outDir = path.join(cacheDir,'build')
 
-  runBundler(code, {outDir, cacheDir})
+  proc = runBundler(code, {outDir, cacheDir})
+  proc.on 'message', (bundle)->
+    el = document.querySelector("#pdf-printer-figure-container")
+    newEl = document.createElement('div')
+    newEl.id = 'pdf-printer-figure-container'
+    el.parentNode.replaceChild(newEl, el)
 
-  console.log "Trying to run task"
-  el = document.querySelector("#pdf-printer-figure-container")
-  console.log "Ready"
+    console.log "Trying to run task"
+    console.log "Ready"
+    console.log bundle
 
-  stem = path.basename(code,path.extname(code))
-  compiledCode = path.join(outDir, "#{stem}.js")
+    if bundle.type != 'js'
+      throw "Only javascript output is supported (for now)"
 
-  # Race condition
-  func = require compiledCode
-  func el, callback
+    compiledCode = bundle.name
+
+    # Race condition
+    func = require compiledCode
+    func newEl, callback
 
 prepareForPrinting = ->
   el = document.querySelector '#pdf-printer-figure-container>*:first-child'

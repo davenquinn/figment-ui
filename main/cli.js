@@ -70,8 +70,7 @@ const createWindow = function() {
     const fp = path.resolve(__dirname, '..','src','index.html');
     const outDir = path.resolve(__dirname, '..', 'lib');
     const cacheDir = path.resolve(__dirname, '..', '.cache');
-    runBundler(fp, {outDir, cacheDir})
-      .catch(console.error);
+    runBundler(fp, {outDir, cacheDir});
   }
 
   const cb = (request, callback) => {
