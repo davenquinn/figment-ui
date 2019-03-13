@@ -96,6 +96,14 @@ p.task 'test2.pdf', (el,callback)->
   callback()
 ```
 
+## Development
+
+- `/main` directory contains main process Javascript
+- `/src` directory contains renderer process Javascript/Coffeescript
+  (compiled with Parcel).
+
+Compilation can be run with `npm start`.
+
 ## TODO
 
 - Support more formats
@@ -103,6 +111,5 @@ p.task 'test2.pdf', (el,callback)->
 - Make helpers definable in CLI
 - Remove `coffeescript` and `stylus` defaults
 - Allow testing on multiple figures at once
-- Add a "Print" button to the testing page
 
 

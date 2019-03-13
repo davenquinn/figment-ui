@@ -1,21 +1,38 @@
+path = require 'path'
+{runBundler} = require '../bundler'
+{ipcRenderer} = require 'electron'
+
 runTask = (e, data, callback)->
+  ###
+  # This is the function that actually runs a discrete task
+  ###
+
   callback ?= null
-  ### Setup helpers ###
-  {helpers, code} = data
+  {code} = data # The file that has the code in it...
+  dn = path.dirname(path.resolve(code))
 
-  console.log "Trying to run task"
-  _helpers = require '../_helpers'
-  for helper in helpers
-    console.log "Setting up helper #{helper}"
-    try
-      helper()
-    catch e
-      throw e unless e instanceof TypeError
-      _helpers[helper]()
+  cacheDir = path.join(dn, '.cache')
+  outDir = path.join(cacheDir,'build')
 
-  el = document.querySelector("#pdf-printer-figure-container")
-  func = require code
-  func el, callback
+  proc = runBundler(code, {outDir, cacheDir})
+  proc.on 'message', (bundle)->
+    el = document.querySelector("#pdf-printer-figure-container")
+    newEl = document.createElement('div')
+    newEl.id = 'pdf-printer-figure-container'
+    el.parentNode.replaceChild(newEl, el)
+
+    console.log "Trying to run task"
+    console.log "Ready"
+    console.log bundle
+
+    if bundle.type != 'js'
+      throw "Only javascript output is supported (for now)"
+
+    compiledCode = bundle.name
+
+    # Race condition
+    func = require compiledCode
+    func newEl, callback
 
 prepareForPrinting = ->
   el = document.querySelector '#pdf-printer-figure-container>*:first-child'

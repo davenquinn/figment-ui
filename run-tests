@@ -5,4 +5,4 @@ cd test
 rm -rf output
 
 echo "Simple spec"
-../cli.js $@ --spec-mode example-spec.coffee
+bin/cli.js $@ --spec-mode example-spec.coffee
