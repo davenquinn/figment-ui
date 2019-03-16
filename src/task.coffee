@@ -1,4 +1,5 @@
 path = require 'path'
+fs = require 'fs'
 {runBundler} = require '../bundler'
 {ipcRenderer} = require 'electron'
 
@@ -30,8 +31,19 @@ runTask = (e, data, callback)->
 
     compiledCode = bundle.name
 
+    css = path.join(outDir, 'index.css')
+    if fs.existsSync(css)
+      styles = fs.readFileSync(css, 'utf-8')
+      head = document.querySelector('head')
+      style = document.createElement('style')
+      head.appendChild(style)
+      style.type = 'text/css'
+      style.appendChild(document.createTextNode(styles))
+
     # Race condition
+    process.chdir(dn)
     func = require compiledCode
+    # Try to make requires relative to initial dir
     func newEl, callback
 
 prepareForPrinting = ->
