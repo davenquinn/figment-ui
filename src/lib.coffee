@@ -82,6 +82,7 @@ printFigureArea = (task)->
   ###
   # Function to print webpage
   ###
+  console.log task
   opts = task.opts or {}
   el = document.querySelector('#pdf-printer-figure-container>*:first-child')
 
@@ -95,16 +96,15 @@ printFigureArea = (task)->
   console.log "Printing to #{outfile}"
 
   ext = path.extname(outfile)
-
-  {webContents} = require('electron')
-  console.log webContents
+  wc = remote.getCurrentWebContents()
 
   if ['.jpg','.jpeg','.png'].includes(ext)
     opts.format = ext.slice(1)
-    buf = await printToImage(webContents, opts)
+    buf = await printToImage(wc, opts)
   else
-    buf = await printToPDF(webContents, opts)
+    buf = await printToPDF(wc, opts)
 
+  console.log "#{outfile}"
   fs.writeFileSync outfile, buf
   console.log "Finished task"
 

@@ -69,6 +69,11 @@ html, body, #pdf-printer-figure-container-outer
       background: lighten(dodgerblue,20%)
       color: white
 
+@media print
+  #pdf-printer-ui-controls
+    display none
+  #pdf-printer-figure-container-outer
+    padding 0 !important
 
 #pdf-printer-figure-container .task-list
   font-family: "Helvetica Neue", Helvetica, sans-serif;

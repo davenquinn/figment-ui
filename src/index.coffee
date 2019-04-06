@@ -80,7 +80,7 @@ sharedStart = (array) ->
   a1.substring 0, i
 
 openEditor = (d)->
-  spawn "mvim", [d.code], detached: true
+  spawn process.EDITOR, [d.code], detached: true
 
 itemSelected = (d)->
   ### Run a single task ###
