@@ -47,16 +47,24 @@ printToPDF = (webview, size)->
     ###
     Print the webview to the callback
     ###
-    opts =
+    el = document.querySelector("#pdf-printer-figure-container")
+    opts = {
       printBackground: true
       marginsType: 1
-      pageSize:
-        height: pixelsToMicrons(size.height)+10
-        width: pixelsToMicrons(size.width)+10
+      pageSize: {
+        height: pixelsToMicrons(size.height*size.scaleFactor)+10
+        width: pixelsToMicrons(size.width*size.scaleFactor)+10
+      }
+    }
+    el.style.transform = "scale(#{size.scaleFactor})"
+    el.style.transformOrigin = "top left"
 
     webview.printToPDF opts, (e,data)=>
       reject(e) if e?
       resolve(data)
+      el.style.transform = null
+      el.style.transformOrigin = null
+
 
 printToImage = (webview, opts)->
   new Promise (resolve, reject)->
@@ -64,12 +72,13 @@ printToImage = (webview, opts)->
     Print the webview to the callback
     ###
     opts.format ?= 'png'
-    opts.scaleFactor ?= 2
+    opts.scaleFactor ?= 1.8
     opts.quality ?= 90
     {width,height} = opts
-    width*=2
-    height*=2
-    rect = {x:0,y:0,width,height}
+    width*=opts.scaleFactor
+    height*=opts.scaleFactor
+    rect = {x:0,y:30,width,height}
+    console.log rect
     webview.capturePage rect, (image)->
       reject(e) if e?
       if ['jpeg','jpg'].includes(opts.format)
@@ -84,10 +93,12 @@ printFigureArea = (task)->
   ###
   console.log task
   opts = task.opts or {}
+  {scaleFactor} = opts
+  scaleFactor ?= 1
   el = document.querySelector('#pdf-printer-figure-container>*:first-child')
 
   {width, height} = el.getBoundingClientRect()
-  opts = {width, height}
+  opts = {width, height, scaleFactor}
 
   {outfile} = task
   dir = path.dirname outfile
@@ -110,17 +121,18 @@ printFigureArea = (task)->
 
 # Initialize renderer
 class Printer
-  constructor: (@options={})->
+  constructor: (options={})->
     ###
     Setup a rendering object
     ###
+    console.log arguments[0]
     @cliOptions = {}
     console.log "Started renderer"
 
+    @options = options
     @options.buildDir ?= ''
     @tasks = []
 
-    @options.helpers ?= ['css','stylus']
 
   task: (fn, funcOrString, opts={})->
     ###
@@ -143,6 +155,7 @@ class Printer
       #f = require fn
       #f(el, cb)
 
+    console.log @options
     # Apply build directory
     if fn?
       if not path.isAbsolute(fn)
