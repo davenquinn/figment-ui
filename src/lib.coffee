@@ -48,6 +48,7 @@ printToPDF = (webview, size)->
     Print the webview to the callback
     ###
     el = document.querySelector("#pdf-printer-figure-container")
+    controls = document.querySelector("#pdf-printer-ui-controls")
     opts = {
       printBackground: true
       marginsType: 1
@@ -59,11 +60,15 @@ printToPDF = (webview, size)->
     el.style.transform = "scale(#{size.scaleFactor})"
     el.style.transformOrigin = "top left"
 
+    oldDisplay = controls.style.display
+    controls.style.display = "none"
+
     webview.printToPDF opts, (e,data)=>
       reject(e) if e?
       resolve(data)
       el.style.transform = null
       el.style.transformOrigin = null
+      controls.style.display = oldDisplay
 
 
 printToImage = (webview, opts)->
