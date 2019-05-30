@@ -1,10 +1,33 @@
-#import {render} from 'react-dom'
-import "@babel/polyfill"
+require "@babel/polyfill"
+require './style.styl'
 
-#import React from "react"
-#import ReactDOM from "react-dom"
-#import h from "react-hyperscript"
+{render} = require 'react-dom'
+h = require 'react-hyperscript'
+React = require 'react'
 
 el = document.querySelector("#app")
 
-#ReactDOM.render(h("div#app-main"),el)
+UIControls = (props)->
+  h 'div.pdf-printer-ui-controls', [
+    h 'h1', 'Figure Lists'
+    h 'div.buttons', [
+      h 'a#toggle-dev-tools', "Toggle DevTools"
+      h 'a#print', "Print"
+      h 'a#open-editor', "Open Editor"
+    ]
+  ]
+
+FigureContainer = (props)->
+  h 'div.pdf-printer-figure-container-outer', [
+    h 'div.pdf-printer-figure-container'
+  ]
+
+class App extends Component
+  render: ->
+    h 'div#app-main', [
+      h UIControls,
+      h FigureContainer
+    ]
+
+
+render(h(App),el)
