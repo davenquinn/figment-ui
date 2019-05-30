@@ -7,4 +7,4 @@ cd test
 rm -rf output
 
 echo "Simple spec"
-../bin/cli.js --debug --spec-mode example-spec.js
+../bin/cli.js --debug --dev --spec-mode example-spec.js
