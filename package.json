@@ -8,6 +8,9 @@
   "bin": {
     "pdf-printer": "electron bin/cli.js"
   },
+  "scripts": {
+    "postinstall": "patch-package"
+  },
   "dependencies": {
     "@babel/polyfill": "^7.4.4",
     "@babel/preset-env": "^7.4.5",
