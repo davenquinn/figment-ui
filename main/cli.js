@@ -90,7 +90,11 @@ const createWindow = function() {
          : "Creating headless renderer"
   );
 
-  let win = new BrowserWindow({show, webPreferences: {webSecurity: false}});
+  let win = new BrowserWindow({show, webPreferences: {
+      nodeIntegration: true,
+      webSecurity: false
+    }
+  });
   const parentDir = path.resolve(path.join(__dirname,'..'));
   const url = "file://"+path.join(parentDir,'lib', 'index.html');
   win.loadURL(url);

@@ -1,0 +1,11 @@
+diff --git a/node_modules/jsesc/jsesc.js b/node_modules/jsesc/jsesc.js
+index 7b8b923..14be535 100644
+--- a/node_modules/jsesc/jsesc.js
++++ b/node_modules/jsesc/jsesc.js
+@@ -1,5 +1,5 @@
+ 'use strict';
+-
++const {Buffer} = global;
+ const object = {};
+ const hasOwnProperty = object.hasOwnProperty;
+ const forOwn = (object, callback) => {

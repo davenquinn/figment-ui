@@ -1,11 +1,10 @@
-require "@babel/polyfill"
-require './style.styl'
 
-{render} = require 'react-dom'
-h = require 'react-hyperscript'
-React = require 'react'
+import "@babel/polyfill"
+import './style.styl'
 
-el = document.querySelector("#app")
+import {render} from 'react-dom'
+import h from 'react-hyperscript'
+import React from 'react'
 
 UIControls = (props)->
   h 'div.pdf-printer-ui-controls', [
@@ -22,12 +21,12 @@ FigureContainer = (props)->
     h 'div.pdf-printer-figure-container'
   ]
 
-class App extends Component
+class App extends React.Component
   render: ->
     h 'div#app-main', [
       h UIControls,
       h FigureContainer
     ]
 
-
+el = document.querySelector("#app")
 render(h(App),el)
