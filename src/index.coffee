@@ -5,9 +5,10 @@ import './style.styl'
 import {render} from 'react-dom'
 import h from 'react-hyperscript'
 import React from 'react'
+import {remote} from 'electron'
 
 UIControls = (props)->
-  h 'div.pdf-printer-ui-controls', [
+  h 'div#pdf-printer-ui-controls', [
     h 'h1', 'Figure Lists'
     h 'div.buttons', [
       h 'a#toggle-dev-tools', "Toggle DevTools"
@@ -17,11 +18,18 @@ UIControls = (props)->
   ]
 
 FigureContainer = (props)->
-  h 'div.pdf-printer-figure-container-outer', [
-    h 'div.pdf-printer-figure-container'
+  h 'div#pdf-printer-figure-container-outer', [
+    h 'div#pdf-printer-figure-container'
   ]
 
 class App extends React.Component
+  constructor: (props)->
+    options = remote.getGlobal 'options'
+    super props
+    @state = {
+      showToolbar: true
+      options...
+    }
   render: ->
     h 'div#app-main', [
       h UIControls,
