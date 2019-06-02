@@ -2,20 +2,14 @@
 import "@babel/polyfill"
 import './style.styl'
 
+import {FocusStyleManager} from '@blueprintjs/core'
 import {render} from 'react-dom'
 import h from 'react-hyperscript'
 import React from 'react'
 import {remote} from 'electron'
+import {UIControls} from './ui-controls'
 
-UIControls = (props)->
-  h 'div#pdf-printer-ui-controls', [
-    h 'h1', 'Figure Lists'
-    h 'div.buttons', [
-      h 'a#toggle-dev-tools', "Toggle DevTools"
-      h 'a#print', "Print"
-      h 'a#open-editor', "Open Editor"
-    ]
-  ]
+FocusStyleManager.onlyShowFocusOnTabs()
 
 FigureContainer = (props)->
   h 'div#pdf-printer-figure-container-outer', [
