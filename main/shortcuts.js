@@ -23,9 +23,9 @@ module.exports = (win)=> {
     win.webContents.send('zoom', zoom);
   });
 
-  register(win, "CommandOrControl+R", ()=>{
-    win.webContents.send('reload');
-  });
+  //register(win, "CommandOrControl+R", ()=>{
+    //win.webContents.send('reload');
+  //});
 
   register(win, "CommandOrControl+T", ()=>{
     global.toolbar = !global.toolbar;
