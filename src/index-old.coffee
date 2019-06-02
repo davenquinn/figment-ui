@@ -43,11 +43,6 @@ reloadWebview = ->
 controls = d3.select "#pdf-printer-ui-controls"
 
 title = d3.select '#pdf-printer-ui-controls>h1'
-d3.select '#toggle-dev-tools'
-  .on 'click', ->
-    ipcRenderer.send 'dev-tools'
-    win = require('electron').remote.getCurrentWindow()
-    win.openDevTools()
 
 ipcRenderer.on 'show-toolbar', (event, toolbarEnabled)->
   mode = if toolbarEnabled then 'flex' else 'none'

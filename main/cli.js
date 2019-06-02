@@ -3,6 +3,8 @@ const path = require('path');
 const min = require('minimist');
 const {BrowserWindow, app, ipcMain, protocol} = require('electron');
 const readline = require('readline');
+const {REACT_DEVELOPER_TOOLS, default: installExtension} = require('electron-devtools-installer');
+
 
 const shortcuts = require('./shortcuts');
 const {runBundler} = require('../bundler');
@@ -64,7 +66,8 @@ process.on('SIGHUP', quitApp);
 
 // Set global variables for bundler
 
-const createWindow = function() {
+async function createWindow() {
+  await installExtension(REACT_DEVELOPER_TOOLS);
 
   if (argv['dev']) {
     const fp = path.resolve(__dirname, '..','src','index.html');
@@ -118,6 +121,9 @@ const createWindow = function() {
   return win.on('closed', ()=> win = null);
 };
 
-app.on('ready', createWindow);
+app.on('ready', async ()=> {
+  await createWindow();
+});
+
 app.on('window-all-closed', quitApp);
 
