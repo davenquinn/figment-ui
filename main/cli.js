@@ -108,13 +108,12 @@ const createWindow = function() {
     rl.question('Press enter to continue', ans=> event.sender.send('done-waiting'))
   );
 
-  ipcMain.on('bundle-log', (event, line)=>{
-    rl.close()
-    process.stdout.write(line);
-    rl.question("", (val) => {
-      console.log("Answer");
-    })
+  rl.on('SIGINT', ()=>{
+    quitApp();
+  });
 
+  ipcMain.on('bundle-log', (event, line)=>{
+    process.stdout.write(line);
   })
   return win.on('closed', ()=> win = null);
 };
