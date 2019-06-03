@@ -29,4 +29,11 @@ class AppStateManager extends Component
     win = remote.getCurrentWindow()
     win.openDevTools()
 
+  componentDidMount: =>
+    ipcRenderer.on 'show-toolbar', (event, toolbarEnabled)=>
+      console.log toolbarEnabled
+      @updateState {toolbarEnabled: {$set: toolbarEnabled}}
+
+
+
 export {AppStateContext, AppStateManager}

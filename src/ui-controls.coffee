@@ -9,15 +9,20 @@ class DevToolsButton extends Component
     onClick = @context.toggleDevTools
     h Button, {onClick}, "DevTools"
 
-UIControls = (props)->
-  h 'div#pdf-printer-ui-controls', [
-    h 'h1', 'Figure List'
-    h 'div.buttons', [
-      h DevToolsButton
-      h Button, "Print"
-      h Button, "Open Editor"
-    ]
-  ]
+class UIControls extends Component
+  @contextType: AppStateContext
+  render: ->
+    enabled = @context.toolbarEnabled
+    enabled ?= true
+    return null unless enabled
 
+    h 'div#pdf-printer-ui-controls', [
+      h 'h1', 'Figure List'
+      h 'div.buttons', [
+        h DevToolsButton
+        h Button, "Print"
+        h Button, "Open Editor"
+      ]
+    ]
 
 export {UIControls}

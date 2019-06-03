@@ -44,10 +44,6 @@ controls = d3.select "#pdf-printer-ui-controls"
 
 title = d3.select '#pdf-printer-ui-controls>h1'
 
-ipcRenderer.on 'show-toolbar', (event, toolbarEnabled)->
-  mode = if toolbarEnabled then 'flex' else 'none'
-  controls.style 'display', mode
-
 setZoomFactor = (zoom)->
   webFrame.setZoomLevel(1)
   z = if zoom == 1 then null else "scale(#{zoom})"
