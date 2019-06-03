@@ -16,9 +16,9 @@ FocusStyleManager.onlyShowFocusOnTabs()
 class AppMain extends Component
   @contextType: AppStateContext
   renderMain: ->
-    {taskLists, selectedTask} = @context
+    {taskLists, selectedTask, zoomLevel} = @context
     if selectedTask?
-      return h FigureContainer, {task: selectedTask}
+      return h FigureContainer, {task: selectedTask, zoomLevel}
     if taskLists?
       return h TaskList, {runners: taskLists}
     return null

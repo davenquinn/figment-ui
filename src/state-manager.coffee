@@ -26,7 +26,7 @@ class AppStateManager extends Component
       toolbarEnabled: true
       taskLists: null
       selectedTask: null
-      zoomFactor: 1
+      zoomLevel: 1
       options...
     }
 
@@ -58,8 +58,10 @@ class AppStateManager extends Component
 
   componentDidMount: =>
     ipcRenderer.on 'show-toolbar', (event, toolbarEnabled)=>
-      console.log toolbarEnabled
       @updateState {toolbarEnabled: {$set: toolbarEnabled}}
+
+    ipcRenderer.on 'zoom', (event, zoom)=>
+      @updateState {zoomLevel: {$set: zoom}}
 
 
 export {AppStateContext, AppStateManager}

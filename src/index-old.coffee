@@ -52,9 +52,6 @@ setZoomFactor = (zoom)->
     .style('transform-origin', "0px 0px")
     .style('padding', "#{20/zoom}px")
 
-ipcRenderer.on 'zoom', (event, zoom)->
-  setZoomFactor(zoom)
-
 ipcRenderer.on 'reload', reloadWebview
 
 openEditor = (d)->

@@ -6,12 +6,23 @@ fs = require 'fs'
 {runBundler} = require '../bundler'
 
 class FigureContainer extends Component
-  @contextType: AppStateContext
-  constructor: (props)->
-    super props
+  @defaultProps: {
+    zoomLevel: 1
+  }
   render: ->
+    {zoomLevel} = @props
+
+    z = if zoomLevel == 1 then null else "scale(#{zoomLevel})"
+    style = {
+      transform: z
+      transformOrigin: "0px 0px"
+      padding: "#{20/zoomLevel}px"
+    }
+
     h 'div#pdf-printer-figure-container-outer', null, [
-      h 'div#pdf-printer-figure-container'
+      h 'div#pdf-printer-figure-container', {style}, [
+        h 'div#pdf-printer-figure-container-inner'
+      ]
     ]
 
   runTask: (e, data, callback)=>
@@ -30,9 +41,9 @@ class FigureContainer extends Component
     proc = runBundler(code, {outDir, cacheDir})
     proc.on 'message', (bundle)->
       console.log "Bundling done"
-      el = document.querySelector("#pdf-printer-figure-container")
+      el = document.querySelector("#pdf-printer-figure-container-inner")
       newEl = document.createElement('div')
-      newEl.id = 'pdf-printer-figure-container'
+      newEl.id = 'pdf-printer-figure-container-inner'
       el.parentNode.replaceChild(newEl, el)
 
       if bundle.type != 'js'
@@ -45,7 +56,7 @@ class FigureContainer extends Component
         styles = fs.readFileSync(css, 'utf-8')
         head = document.querySelector('head')
         style = document.createElement('style')
-        newEl.appendChild(style)
+        head.appendChild(style)
         style.type = 'text/css'
         style.appendChild(document.createTextNode(styles))
 

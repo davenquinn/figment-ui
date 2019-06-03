@@ -1,4 +1,5 @@
 {select} = require 'd3-selection'
+require './large-svg.styl'
 
 module.exports = (el_, callback)->
 
