@@ -24,9 +24,9 @@ class AppStateManager extends Component
 
     @state = {
       toolbarEnabled: true
+      taskLists: null
       selectedTask: null
       zoomFactor: 1
-      taskLists: []
       options...
     }
 
