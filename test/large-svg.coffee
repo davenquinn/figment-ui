@@ -7,6 +7,10 @@ module.exports = (el_, callback)->
     .append 'svg'
     .attr 'width', 1200
     .attr 'height', 600
+
+  el.append 'rect'
+    .attr 'width', 1200
+    .attr 'height', 600
     .attr 'fill', '#aaa'
 
   el.append 'text'

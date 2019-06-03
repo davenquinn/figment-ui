@@ -57,19 +57,6 @@ ipcRenderer.on 'zoom', (event, zoom)->
 
 ipcRenderer.on 'reload', reloadWebview
 
-sharedStart = (array) ->
-  # From
-  # http://stackoverflow.com/questions/1916218/
-  #       find-the-longest-common-starting-substring-in-a-set-of-strings
-  A = array.concat().sort()
-  a1 = A[0]
-  a2 = A[A.length - 1]
-  L = a1.length
-  i = 0
-  while i < L and a1.charAt(i) == a2.charAt(i)
-    i++
-  a1.substring 0, i
-
 openEditor = (d)->
   spawn process.EDITOR, [d.code], detached: true
 
@@ -113,50 +100,6 @@ itemSelected = (d)->
   console.log "Ready to run task"
   runTask null, vals, ->
     console.log "Finished rendering"
-
-renderSpecList = (d)->
-
-  console.log "Spec list"
-  # Render spec list from runner
-  el = d3.select @
-    .attr "class", "task-list"
-  # Find shared starting substring
-  arr = d.tasks.map (d)->d.outfile
-  arr.push d.name
-
-  prefix = sharedStart(arr)
-
-  el.append 'h5'
-    .text prefix
-
-  el.append 'h2'
-    .text d.name.slice(prefix.length)
-
-  sel = el
-    .append 'ul'
-    .selectAll 'li'
-    .data d.tasks
-
-  sel.enter()
-    .append 'li'
-    .append 'a'
-      .attr 'href',(d)->"##{d.hash}"
-      .text (d)->d.outfile.slice(prefix.length)
-      .on 'click', itemSelected
-
-createMainPage = (runners)->
-  controls.style "display", "none"
-  # Create a list of tasks
-
-  main = d3.select "#pdf-printer-figure-container"
-  main.html ""
-  sel = main.selectAll 'div'
-        .data runners
-
-  sel.enter()
-    .append 'div'
-    .attr 'class', 'runner'
-    .each renderSpecList
 
 runBasedOnHash = (runners)->
   z = remote.getGlobal('zoom')

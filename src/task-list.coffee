@@ -15,8 +15,6 @@ sharedStart = (array) ->
     i++
   a1.substring 0, i
 
-itemSelected = null
-
 class TaskListItem extends Component
   @contextType: AppStateContext
   onClick: =>

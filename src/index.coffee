@@ -18,12 +18,13 @@ class AppMain extends Component
   renderMain: ->
     {taskLists, selectedTask} = @context
     if selectedTask?
-      return h FigureContainer
+      return h FigureContainer, {task: selectedTask}
     if taskLists?
       return h TaskList, {runners: taskLists}
     return null
 
   renderControls: ->
+    {selectedTask} = @context
     return null unless selectedTask?
     return h UIControls
 

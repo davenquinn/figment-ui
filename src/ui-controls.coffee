@@ -1,4 +1,4 @@
-import {Button} from '@blueprintjs/core'
+import {AnchorButton, Button} from '@blueprintjs/core'
 import h from 'react-hyperscript'
 import {Component} from 'react'
 import {AppStateContext} from './state-manager'
@@ -9,15 +9,18 @@ class DevToolsButton extends Component
     onClick = @context.toggleDevTools
     h Button, {onClick}, "DevTools"
 
-class UIControls extends Component
+class BackButton extends Component
   @contextType: AppStateContext
   render: ->
-    enabled = @context.toolbarEnabled
-    enabled ?= true
-    return null unless enabled
+    {update} = @context
+    onClick = ->
+      update {selectedTask: {$set: null}}
+    h Button, {icon: 'caret-left', onClick}, 'Back to list'
 
+class UIControls extends Component
+  render: ->
     h 'div#pdf-printer-ui-controls', [
-      h 'h1', 'Figure List'
+      h BackButton
       h 'div.buttons', [
         h DevToolsButton
         h Button, "Print"
