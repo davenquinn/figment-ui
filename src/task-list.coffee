@@ -1,5 +1,6 @@
 import {Component} from 'react'
 import h from 'react-hyperscript'
+import {AppStateContext} from './state-manager'
 
 sharedStart = (array) ->
   # From
@@ -16,14 +17,19 @@ sharedStart = (array) ->
 
 itemSelected = null
 
-TaskListItem = (props)->
-  {hash, displayName} = props
-  h 'li', null, (
-    h 'a', {
-      href: "##{hash}"
-      onClick: itemSelected
-    }, displayName
-  )
+class TaskListItem extends Component
+  @contextType: AppStateContext
+  onClick: =>
+    {task} = @props
+    @context.update {selectedTask: {$set: task}}
+  render: ->
+    {task, displayName} = @props
+    h 'li', null, (
+      h 'a', {
+        href: "##{task.hash}"
+        onClick: @onClick
+      }, displayName
+    )
 
 TaskListSection = (props)->
   {tasks, name} = props
@@ -38,9 +44,9 @@ TaskListSection = (props)->
   h 'div.task-list', [
     h 'h5', prefix
     h 'h2', name.slice(prefix.length)
-    h 'ul', tasks.map (d)->
-      displayName = d.outfile.slice(prefix.length)
-      h TaskListItem, {displayName, d...}
+    h 'ul', tasks.map (task)->
+      displayName = task.outfile.slice(prefix.length)
+      h TaskListItem, {displayName, task}
   ]
 
 
