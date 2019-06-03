@@ -31,6 +31,7 @@ TaskListSection = (props)->
   # Render spec list from runner
   # Find shared starting substring
   arr = tasks.map (d)->d.outfile
+  arr.push name
 
   prefix = sharedStart(arr)
 
