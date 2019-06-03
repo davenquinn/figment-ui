@@ -17,14 +17,30 @@ class BackButton extends Component
       update {selectedTask: {$set: null}}
     h Button, {icon: 'caret-left', onClick}, 'Back to list'
 
+class PrintButton extends Component
+  @contextType: AppStateContext
+  render: ->
+    {printFigureArea} = @context
+    onClick = ->
+      printFigureArea()
+    h Button, {icon: 'print', onClick}, 'Print'
+
+class EditorButton extends Component
+  @contextType: AppStateContext
+  render: ->
+    h Button, {
+      icon: 'edit',
+      onClick: @context.openEditor
+    }, 'Open editor'
+
 class UIControls extends Component
   render: ->
     h 'div#pdf-printer-ui-controls', [
       h BackButton
       h 'div.buttons', [
         h DevToolsButton
-        h Button, "Print"
-        h Button, "Open Editor"
+        h PrintButton
+        h EditorButton
       ]
     ]
 

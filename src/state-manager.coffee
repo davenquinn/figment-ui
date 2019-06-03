@@ -3,9 +3,10 @@ import h from 'react-hyperscript'
 import update from 'immutability-helper'
 import {remote, ipcRenderer} from 'electron'
 import Promise from 'bluebird'
+{spawn} = require 'child_process'
 
 # This is awful
-import {Printer} from "./lib.coffee"
+import {Printer, printFigureArea} from "./lib.coffee"
 window.Printer = Printer
 
 AppStateContext = createContext {}
@@ -17,6 +18,10 @@ getSpecs = (d)->
       v.name = d
       v
 
+openEditor = (d)->
+  spawn process.EDITOR, [d.code], detached: true
+
+
 class AppStateManager extends Component
   constructor: (props)->
     super props
@@ -26,7 +31,8 @@ class AppStateManager extends Component
       toolbarEnabled: true
       taskLists: null
       selectedTask: null
-      zoomLevel: 1
+      # We should improve this
+      zoomLevel: remote.getGlobal('zoom')
       options...
     }
 
@@ -43,9 +49,21 @@ class AppStateManager extends Component
     res = await p
     @updateState {taskLists: {$set: res}}
 
+  openEditor: =>
+    {selectedTask: task} = @state
+    return unless task?
+    console.log task
+    spawn process.env.EDITOR, [task.code], {detached: true}
+
   render: ->
-    {toggleDevTools} = @
-    value = {update: @updateState, toggleDevTools, @state...}
+    {toggleDevTools, openEditor} = @
+    value = {
+      update: @updateState,
+      printFigureArea,
+      toggleDevTools,
+      openEditor,
+      @state...
+    }
     h AppStateContext.Provider, {value}, @props.children
 
   updateState: (spec)=>

@@ -44,14 +44,6 @@ controls = d3.select "#pdf-printer-ui-controls"
 
 title = d3.select '#pdf-printer-ui-controls>h1'
 
-setZoomFactor = (zoom)->
-  webFrame.setZoomLevel(1)
-  z = if zoom == 1 then null else "scale(#{zoom})"
-  main
-    .style('transform', z)
-    .style('transform-origin', "0px 0px")
-    .style('padding', "#{20/zoom}px")
-
 ipcRenderer.on 'reload', reloadWebview
 
 openEditor = (d)->

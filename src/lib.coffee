@@ -47,7 +47,7 @@ printToPDF = (webview, size)->
     ###
     Print the webview to the callback
     ###
-    el = document.querySelector("#pdf-printer-figure-container")
+    el = document.querySelector("#pdf-printer-figure-container-inner")
     controls = document.querySelector("#pdf-printer-ui-controls")
     opts = {
       printBackground: true
@@ -100,7 +100,7 @@ printFigureArea = (task)->
   opts = task.opts or {}
   {scaleFactor} = opts
   scaleFactor ?= 1
-  el = document.querySelector('#pdf-printer-figure-container>*:first-child')
+  el = document.querySelector('#pdf-printer-figure-container-inner>*:first-child')
 
   {width, height} = el.getBoundingClientRect()
   opts = {width, height, scaleFactor}
