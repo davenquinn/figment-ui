@@ -184,13 +184,6 @@ runBasedOnHash = (runners)->
   # If no hash then create main page
   createMainPage(runners)
 
-getSpecs = (d)->
-  console.log d
-  res = require(d)
-  Promise.resolve res
-    .then (v)->
-      v.name = d
-      v
 
 loadEntryPoint = (fn)-> ->
   console.log "Loading entry point #{fn}"
