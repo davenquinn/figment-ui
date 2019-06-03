@@ -1,15 +1,13 @@
 import {Button} from '@blueprintjs/core'
 import h from 'react-hyperscript'
+import {Component} from 'react'
+import {AppStateContext} from './state-manager'
 
-{remote, ipcRenderer, webFrame} = require 'electron'
-
-DevToolsButton = ->
-  onClick = ->
-    ipcRenderer.send 'dev-tools'
-    win = remote.getCurrentWindow()
-    win.openDevTools()
-
-  h Button, {onClick}, "DevTools"
+class DevToolsButton extends Component
+  @contextType: AppStateContext
+  render: ->
+    onClick = @context.toggleDevTools
+    h Button, {onClick}, "DevTools"
 
 UIControls = (props)->
   h 'div#pdf-printer-ui-controls', [

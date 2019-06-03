@@ -4,12 +4,10 @@ import h from 'react-hyperscript'
 
 class FigureContainer extends Component
   @contextType: AppStateContext
-
+  constructor: (props)->
+    super props
   render: ->
-
-    console.log @context
-
-    h 'div#pdf-printer-figure-container-outer', [
+    h 'div#pdf-printer-figure-container-outer', null, [
       h 'div#pdf-printer-figure-container', null, "Hi"
     ]
 
