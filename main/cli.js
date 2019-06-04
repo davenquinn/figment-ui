@@ -31,10 +31,16 @@ global.options = {
   // Wait between rendering items
   waitForUser: show,
   dpi: parseFloat(argv.dpi) || 300.0,
-  debug: debug || false,
+  debug: debug || true,
   dev: dev || false,
   devToolsEnabled: false,
   reload: argv.reload || argv.debug
+};
+
+global.appState = {
+  toolbarEnabled: true,
+  selectedTask: null,
+  zoomLevel: 1
 };
 
 if (argv['spec-mode']) {
@@ -98,6 +104,7 @@ async function createWindow() {
       webSecurity: false
     }
   });
+
   const parentDir = path.resolve(path.join(__dirname,'..'));
   const url = "file://"+path.join(parentDir,'lib', 'index.html');
   win.loadURL(url);
@@ -105,6 +112,11 @@ async function createWindow() {
   ipcMain.on('dev-tools', (event)=>{
     options.devToolsEnabled = !options.devToolsEnabled;
     return console.log(options.devToolsEnabled);
+  });
+
+  ipcMain.on('update-state', (event, res)=>{
+    console.log(res);
+    global.appState = res;
   });
 
   ipcMain.on('wait-for-input', (event)=>

@@ -12,9 +12,7 @@ class DevToolsButton extends Component
 class BackButton extends Component
   @contextType: AppStateContext
   render: ->
-    {update} = @context
-    onClick = ->
-      update {selectedTask: {$set: null}}
+    onClick = => @context.selectTask null
     h Button, {icon: 'caret-left', onClick}, 'Back to list'
 
 class PrintButton extends Component

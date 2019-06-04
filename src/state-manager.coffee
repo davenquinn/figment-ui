@@ -18,25 +18,30 @@ getSpecs = (d)->
       v.name = d
       v
 
-openEditor = (d)->
-  spawn process.EDITOR, [d.code], detached: true
-
-
 class AppStateManager extends Component
   constructor: (props)->
     super props
     options = remote.getGlobal 'options'
+    appState = remote.getGlobal 'appState'
 
     @state = {
-      toolbarEnabled: true
       taskLists: null
-      selectedTask: null
       # We should improve this
-      zoomLevel: remote.getGlobal('zoom')
       options...
+      appState...
     }
 
     @defineTasks options
+
+  selectedTask: =>
+    {selectedTaskHash, taskLists} = @state
+    console.log selectedTaskHash
+    return null unless taskLists?
+    for taskList in taskLists
+      for task in taskList.tasks
+        if task.hash == selectedTaskHash
+          return task
+    return null
 
   defineTasks: (options)=>
     # If we are in spec mode
@@ -50,24 +55,41 @@ class AppStateManager extends Component
     @updateState {taskLists: {$set: res}}
 
   openEditor: =>
-    {selectedTask: task} = @state
+    task = @selectedTask()
     return unless task?
     console.log task
     spawn process.env.EDITOR, [task.code], {detached: true}
 
+  selectTask: (task)=>
+    hash = null
+    if task?
+      hash = task.hash
+    @updateState {selectedTaskHash: {$set: hash}}
+
   render: ->
-    {toggleDevTools, openEditor} = @
+    methods = do => {toggleDevTools, openEditor, selectTask} = @
+    selectedTask = @selectedTask()
+    console.log selectedTask
     value = {
       update: @updateState,
       printFigureArea,
-      toggleDevTools,
-      openEditor,
+      methods...
       @state...
+      selectedTask
     }
+
+    console.log value
     h AppStateContext.Provider, {value}, @props.children
 
   updateState: (spec)=>
     @setState update(@state,spec)
+    # forward state to main process
+    appState = do => {
+      toolbarEnabled,
+      selectedTaskHash,
+      zoomLevel } = @state
+    console.log appState
+    ipcRenderer.send 'update-state', appState
 
   toggleDevTools: =>
     ipcRenderer.send 'dev-tools'
@@ -80,6 +102,10 @@ class AppStateManager extends Component
 
     ipcRenderer.on 'zoom', (event, zoom)=>
       @updateState {zoomLevel: {$set: zoom}}
+
+    ipcRenderer.on 'update-state', (event, state)=>
+      console.log "Updating state from main process"
+      @setState {state...}
 
 
 export {AppStateContext, AppStateManager}

@@ -19,7 +19,7 @@ class TaskListItem extends Component
   @contextType: AppStateContext
   onClick: =>
     {task} = @props
-    @context.update {selectedTask: {$set: task}}
+    @context.selectTask(task)
   render: ->
     {task, displayName} = @props
     h 'li', null, (
