@@ -35,7 +35,6 @@ class AppStateManager extends Component
 
   selectedTask: =>
     {selectedTaskHash, taskLists} = @state
-    console.log selectedTaskHash
     return null unless taskLists?
     for taskList in taskLists
       for task in taskList.tasks
@@ -57,7 +56,6 @@ class AppStateManager extends Component
   openEditor: =>
     task = @selectedTask()
     return unless task?
-    console.log task
     spawn process.env.EDITOR, [task.code], {detached: true}
 
   selectTask: (task)=>
@@ -69,7 +67,6 @@ class AppStateManager extends Component
   render: ->
     methods = do => {toggleDevTools, openEditor, selectTask} = @
     selectedTask = @selectedTask()
-    console.log selectedTask
     value = {
       update: @updateState,
       printFigureArea,
@@ -82,13 +79,13 @@ class AppStateManager extends Component
     h AppStateContext.Provider, {value}, @props.children
 
   updateState: (spec)=>
-    @setState update(@state,spec)
+    newState = update(@state,spec)
+    @setState newState
     # forward state to main process
-    appState = do => {
+    appState = do -> {
       toolbarEnabled,
       selectedTaskHash,
-      zoomLevel } = @state
-    console.log appState
+      zoomLevel } = newState
     ipcRenderer.send 'update-state', appState
 
   toggleDevTools: =>

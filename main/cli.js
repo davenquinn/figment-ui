@@ -116,7 +116,6 @@ async function createWindow() {
   });
 
   ipcMain.on('update-state', (event, res)=>{
-    console.log(res);
     global.appState = res;
   });
 
