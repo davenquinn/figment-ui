@@ -30,7 +30,6 @@ class TaskElement extends Component
     return if prevProps.code == @props.code
     @runTask()
 
-
 class TaskStylesheet extends Component
   render: ->
     h 'style', {type: 'text/css'}
@@ -81,13 +80,13 @@ class TaskHolder extends Component
       if bundle.type != 'js'
         throw "Only javascript output is supported (for now)"
 
-      compiledCode = bundle.name
-
+      # Get css and javascript
       cssFile = path.join(outDir, 'index.css')
       styles = null
       if fs.existsSync(cssFile)
         styles = fs.readFileSync(cssFile, 'utf-8')
 
+      compiledCode = bundle.name
       code = require compiledCode
       @setState {code, styles}
 
