@@ -42,9 +42,11 @@ TaskListSection = (props)->
 
   prefix = sharedStart(arr)
 
-  h 'div.task-list', [
-    h 'h5', prefix
-    h 'h2', name.slice(prefix.length)
+  h 'div#pdf-printer-task-list', [
+    h 'h2', [
+      h 'span.prefix', prefix
+      h 'span.name', name.slice(prefix.length)
+    ]
     h 'ul', tasks.map (task)->
       displayName = task.outfile.slice(prefix.length)
       h TaskListItem, {displayName, task}
