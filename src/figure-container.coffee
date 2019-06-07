@@ -7,25 +7,75 @@ path = require 'path'
 fs = require 'fs'
 {runBundler} = require '../bundler'
 
-class TaskHolder extends Component
+class TaskElement extends Component
+  @defaultProps: {
+    code: null
+    callback: null
+  }
   render: ->
-    h 'div#pdf-printer-figure-container-inner'
-  runTask: (e, data, callback)=>
+    h 'div'
+  runTask: =>
+    {code, callback} = @props
+    return unless code?
+    # Here is where we would accept different
+    # types of components
+    func = code
+    callback ?= ->
+
+    el = findDOMNode(@)
+    func el, callback
+  componentDidMount: ->
+    @runTask()
+  componentDidUpdate: (prevProps)->
+    return if prevProps.code == @props.code
+    @runTask()
+
+
+class TaskStylesheet extends Component
+  render: ->
+    h 'style', {type: 'text/css'}
+  mountStyles: ->
+    el = findDOMNode @
+    {styles} = @props
+    return unless styles?
+    el.appendChild(document.createTextNode(styles))
+  componentDidMount: ->
+    @mountStyles()
+  componentDidUpdate: (prevProps)->
+    return if prevProps.styles == @props.styles
+    @mountStyles()
+
+class TaskHolder extends Component
+  constructor: (props)->
+    super props
+    @state = {
+      code: null
+      styles: null
+    }
+  render: ->
+    {code, styles} = @state
+    if not code? and not styles?
+      h 'div#pdf-printer-progress-indicator', [
+        h 'p', "Creating bundle..."
+      ]
+    h 'div#pdf-printer-figure-container-inner', [
+      h TaskStylesheet, {styles}
+      h TaskElement, {code}
+    ]
+  runBundler: (e, data, callback)=>
     ###
     # This is the function that actually runs a discrete task
     ###
     console.log "Running task"
 
-    callback ?= ->
-    {code} = data # The file that has the code in it...
-    dn = path.dirname(path.resolve(code))
+    {code: codeFile} = data # The file that has the code in it...
+    dn = path.dirname(path.resolve(codeFile))
 
     cacheDir = path.join(dn, '.cache')
     outDir = path.join(cacheDir,'build')
 
-    el = findDOMNode(@)
-    proc = runBundler(code, {outDir, cacheDir})
-    proc.on 'message', (bundle)->
+    proc = runBundler(codeFile, {outDir, cacheDir})
+    proc.on 'message', (bundle)=>
       console.log "Bundling done"
 
       if bundle.type != 'js'
@@ -33,25 +83,18 @@ class TaskHolder extends Component
 
       compiledCode = bundle.name
 
-      css = path.join(outDir, 'index.css')
-      if fs.existsSync(css)
-        styles = fs.readFileSync(css, 'utf-8')
-        head = document.querySelector('head')
-        style = document.createElement('style')
-        head.appendChild(style)
-        style.type = 'text/css'
-        style.appendChild(document.createTextNode(styles))
+      cssFile = path.join(outDir, 'index.css')
+      styles = null
+      if fs.existsSync(cssFile)
+        styles = fs.readFileSync(cssFile, 'utf-8')
 
-      # Race condition
-      process.chdir(dn)
-      func = require compiledCode
-      # Try to make requires relative to initial dir
-      func el, callback
+      code = require compiledCode
+      @setState {code, styles}
 
   componentDidMount: ->
     {task} = @props
     return unless task?
-    @runTask null, task
+    @runBundler null, task
 
 class FigureContainer extends Component
   @defaultProps: {
