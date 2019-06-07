@@ -24,14 +24,9 @@ class AppMain extends Component
       return h TaskList, {runners: taskLists}
     return null
 
-  renderControls: ->
-    {selectedTask} = @context
-    return null unless selectedTask?
-    return h UIControls
-
   render: ->
     h 'div#app-main', [
-      @renderControls()
+      h UIControls
       @renderMain()
     ]
 

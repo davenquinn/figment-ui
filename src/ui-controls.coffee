@@ -3,17 +3,21 @@ import h from 'react-hyperscript'
 import {Component} from 'react'
 import {AppStateContext} from './state-manager'
 
+ToolButton = (props)->
+  h Button, {small: true, props...}
+
 class DevToolsButton extends Component
   @contextType: AppStateContext
   render: ->
     onClick = @context.toggleDevTools
-    h Button, {onClick}, "DevTools"
+    h ToolButton, {onClick}, "DevTools"
 
 class BackButton extends Component
   @contextType: AppStateContext
   render: ->
+    return null unless @context.selectedTask?
     onClick = => @context.selectTask null
-    h Button, {icon: 'caret-left', onClick}, 'Back to list'
+    h ToolButton, {icon: 'caret-left', onClick}, 'Back to list'
 
 class PrintButton extends Component
   @contextType: AppStateContext
@@ -21,24 +25,34 @@ class PrintButton extends Component
     {printFigureArea} = @context
     onClick = ->
       printFigureArea()
-    h Button, {icon: 'print', onClick}, 'Print'
+    h ToolButton, {icon: 'print', onClick}, 'Print'
 
 class EditorButton extends Component
   @contextType: AppStateContext
   render: ->
-    h Button, {
+    h ToolButton, {
       icon: 'edit',
       onClick: @context.openEditor
     }, 'Open editor'
 
 class UIControls extends Component
+  @contextType: AppStateContext
+  renderTaskButtons: ->
+    {selectedTask} = @context
+    return null unless selectedTask?
+    h [
+      h PrintButton
+      h EditorButton
+    ]
+
   render: ->
     h 'div#pdf-printer-ui-controls', [
-      h BackButton
-      h 'div.buttons', [
+      h 'div.left-buttons', [
+        h BackButton
+      ]
+      h 'div.right-buttons', [
         h DevToolsButton
-        h PrintButton
-        h EditorButton
+        @renderTaskButtons()
       ]
     ]
 
