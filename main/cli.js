@@ -64,6 +64,7 @@ const rl = readline.createInterface({
 const quitApp = function() {
   process.stdout.write("Received signal to terminate");
   app.quit();
+  process.exit(0);
 };
 
 process.on('SIGINT', quitApp);
