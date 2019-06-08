@@ -9,6 +9,7 @@ fs = require 'fs'
 class TaskRenderer extends Component
   constructor: (props)->
     super props
+    @bundler = null
     @state = {
       code: null
       styles: null
@@ -23,20 +24,26 @@ class TaskRenderer extends Component
       h TaskStylesheet, {styles}
       h TaskElement, {code}
     ]
-  runBundler: (e, data, callback)=>
+  startBundler: =>
     ###
     # This is the function that actually runs a discrete task
     ###
+    @bundler.kill(0) if @bundler?
+
+    {task} = @props
     console.log "Running task"
 
-    {code: codeFile} = data # The file that has the code in it...
+    {code: codeFile} = task # The file that has the code in it...
     dn = path.dirname(path.resolve(codeFile))
 
     cacheDir = path.join(dn, '.cache')
     outDir = path.join(cacheDir,'build')
 
-    proc = runBundler(codeFile, {outDir, cacheDir})
-    proc.on 'message', (bundle)=>
+    @bundler = runBundler(codeFile, {outDir, cacheDir})
+    process.on 'exit', =>
+      @bundler.kill()
+
+    @bundler.on 'message', (bundle)=>
       console.log "Bundling done"
 
       if bundle.type != 'js'
@@ -55,6 +62,15 @@ class TaskRenderer extends Component
   componentDidMount: ->
     {task} = @props
     return unless task?
-    @runBundler null, task
+    @startBundler task
+
+  componentDidUpdate: (prevProps)->
+    {task} = @props
+    return if prevProps.task == task
+    @startBundler task
+
+  componentWillUnmount: ->
+    return unless @bundler?
+    @bundler.kill(0)
 
 export {TaskRenderer}

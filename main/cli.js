@@ -43,6 +43,8 @@ global.appState = {
   zoomLevel: 1
 };
 
+let bundlerProcess = null;
+
 if (argv['spec-mode']) {
   // Create list of task-runner files to import
   // Each argument should be a javascript or coffeescript
@@ -64,6 +66,10 @@ const rl = readline.createInterface({
 const quitApp = function() {
   process.stdout.write("Received signal to terminate");
   app.quit();
+  app.exit(0);
+  if (bundlerProcess) {
+    bundlerProcess.kill(0);
+  }
   process.exit(0);
 };
 
@@ -80,7 +86,7 @@ async function createWindow() {
     const fp = path.resolve(__dirname, '..','src','index.html');
     const outDir = path.resolve(__dirname, '..', 'lib');
     const cacheDir = path.resolve(__dirname, '..', '.cache');
-    runBundler(fp, {outDir, cacheDir});
+    bundlerProcess = runBundler(fp, {outDir, cacheDir});
   }
 
   const cb = (request, callback) => {

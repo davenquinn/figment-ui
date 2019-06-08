@@ -53,6 +53,7 @@ const runBundler = function(inFile, options={}) {
   });
   printToStdout(proc);
 
+  console.log(`Started process ${proc.pid}`);
   return proc;
 };
 

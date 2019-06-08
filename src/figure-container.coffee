@@ -19,7 +19,7 @@ class FigureContainer extends Component
 
     h 'div#pdf-printer-figure-container-outer', null, [
       h 'div#pdf-printer-figure-container', {style}, [
-        h TaskRenderer, {task}
+        h TaskRenderer, {task, key: task}
       ]
     ]
 
