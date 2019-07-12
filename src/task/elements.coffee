@@ -1,7 +1,36 @@
-import {Component} from 'react'
+import React, {Component} from 'react'
 import h from 'react-hyperscript'
 import {findDOMNode} from 'react-dom'
-import isReact from 'is-react'
+
+class ErrorBoundary extends React.Component
+  constructor: (props)->
+    super props
+    @state = {
+      error: null
+      errorInfo: null
+    }
+
+  componentDidCatch: (error, errorInfo)->
+    # Catch errors in any components below and re-render with error message
+    @setState {
+      error: error,
+      errorInfo: errorInfo
+    }
+
+  render: ->
+    if @state.errorInfo
+      # Error path
+      return (
+        <div>
+          <h2>Something went wrong.</h2>
+          <details style={{ whiteSpace: 'pre-wrap' }}>
+            {@state.error && @state.error.toString()}
+            <br />
+            {@state.errorInfo.componentStack}
+          </details>
+        </div>
+      )
+    return @props.children
 
 class TaskElement extends Component
   @defaultProps: {
@@ -12,7 +41,9 @@ class TaskElement extends Component
     {code} = @props
     return null unless code?
     try
-      children = h(code)
+      children = h ErrorBoundary, [
+        h(code)
+      ]
       return h 'div', {children}
     catch
       return h 'div'
