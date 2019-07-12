@@ -35,6 +35,7 @@ class TaskListItem extends Component
 TaskListSection = (props)->
   {tasks, name} = props
 
+  name ?= "Tasks"
   # Render spec list from runner
   # Find shared starting substring
   arr = tasks.map (d)->d.outfile
