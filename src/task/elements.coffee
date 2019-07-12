@@ -1,6 +1,7 @@
 import {Component} from 'react'
 import h from 'react-hyperscript'
 import {findDOMNode} from 'react-dom'
+import isReact from 'is-react'
 
 class TaskElement extends Component
   @defaultProps: {
@@ -8,10 +9,19 @@ class TaskElement extends Component
     callback: null
   }
   render: ->
-    h 'div'
+    {code} = @props
+    return null unless code?
+    try
+      children = h(code)
+      return h 'div', {children}
+    catch
+      return h 'div'
+
   runTask: =>
     {code, callback} = @props
     return unless code?
+    # React components are handled directly
+    return
     # Here is where we would accept different
     # types of components
     func = code
