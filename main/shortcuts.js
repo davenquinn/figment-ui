@@ -6,29 +6,35 @@ global.toolbar = false;
 
 module.exports = (win)=> {
 
+  const setState = (args)=>{
+    global.appState = {
+      ...appState,
+      ...args
+    };
+    win.webContents.send('update-state', global.appState);
+  };
+
   win.webContents.send('show-toolbar', global.toolbar);
 
   register(win, "CommandOrControl+-", ()=>{
-    global.zoom /= 1.25;
-    win.webContents.send('zoom', zoom);
+    zoomLevel = appState.zoomLevel / 1.25;
+    setState({zoomLevel});
   });
 
   register(win, "CommandOrControl+=", ()=>{
-    global.zoom *= 1.25;
-    win.webContents.send('zoom', zoom);
+    zoomLevel = appState.zoomLevel * 1.25;
+    setState({zoomLevel});
   });
 
   register(win, "CommandOrControl+0", ()=>{
-    global.zoom = 1;
-    win.webContents.send('zoom', zoom);
+    setState({zoomLevel: 1});
   });
 
-  register(win, "CommandOrControl+R", ()=>{
-    win.webContents.send('reload');
-  });
+  //register(win, "CommandOrControl+R", ()=>{
+    //win.webContents.send('reload');
+  //});
 
   register(win, "CommandOrControl+T", ()=>{
-    global.toolbar = !global.toolbar;
-    win.webContents.send('show-toolbar', global.toolbar);
+    setState({toolbarEnabled: !appState.toolbarEnabled});
   });
 }

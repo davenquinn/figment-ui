@@ -3,6 +3,8 @@ const path = require('path');
 const min = require('minimist');
 const {BrowserWindow, app, ipcMain, protocol} = require('electron');
 const readline = require('readline');
+const {REACT_DEVELOPER_TOOLS, default: installExtension} = require('electron-devtools-installer');
+
 
 const shortcuts = require('./shortcuts');
 const {runBundler} = require('../bundler');
@@ -29,11 +31,19 @@ global.options = {
   // Wait between rendering items
   waitForUser: show,
   dpi: parseFloat(argv.dpi) || 300.0,
-  debug: debug || false,
+  debug: debug || true,
   dev: dev || false,
   devToolsEnabled: false,
   reload: argv.reload || argv.debug
 };
+
+global.appState = {
+  toolbarEnabled: true,
+  selectedTask: null,
+  zoomLevel: 1
+};
+
+let bundlerProcess = null;
 
 if (argv['spec-mode']) {
   // Create list of task-runner files to import
@@ -56,6 +66,11 @@ const rl = readline.createInterface({
 const quitApp = function() {
   process.stdout.write("Received signal to terminate");
   app.quit();
+  app.exit(0);
+  if (bundlerProcess) {
+    bundlerProcess.kill(0);
+  }
+  process.exit(0);
 };
 
 process.on('SIGINT', quitApp);
@@ -64,13 +79,14 @@ process.on('SIGHUP', quitApp);
 
 // Set global variables for bundler
 
-const createWindow = function() {
+async function createWindow() {
+  await installExtension(REACT_DEVELOPER_TOOLS);
 
   if (argv['dev']) {
     const fp = path.resolve(__dirname, '..','src','index.html');
     const outDir = path.resolve(__dirname, '..', 'lib');
     const cacheDir = path.resolve(__dirname, '..', '.cache');
-    runBundler(fp, {outDir, cacheDir});
+    bundlerProcess = runBundler(fp, {outDir, cacheDir});
   }
 
   const cb = (request, callback) => {
@@ -90,7 +106,12 @@ const createWindow = function() {
          : "Creating headless renderer"
   );
 
-  let win = new BrowserWindow({show});
+  let win = new BrowserWindow({show, webPreferences: {
+      nodeIntegration: true,
+      webSecurity: false
+    }
+  });
+
   const parentDir = path.resolve(path.join(__dirname,'..'));
   const url = "file://"+path.join(parentDir,'lib', 'index.html');
   win.loadURL(url);
@@ -100,21 +121,27 @@ const createWindow = function() {
     return console.log(options.devToolsEnabled);
   });
 
+  ipcMain.on('update-state', (event, res)=>{
+    global.appState = res;
+  });
+
   ipcMain.on('wait-for-input', (event)=>
     rl.question('Press enter to continue', ans=> event.sender.send('done-waiting'))
   );
 
-  ipcMain.on('bundle-log', (event, line)=>{
-    rl.close()
-    process.stdout.write(line);
-    rl.question("", (val) => {
-      console.log("Answer");
-    })
+  rl.on('SIGINT', ()=>{
+    quitApp();
+  });
 
+  ipcMain.on('bundle-log', (event, line)=>{
+    process.stdout.write(line);
   })
   return win.on('closed', ()=> win = null);
 };
 
-app.on('ready', createWindow);
+app.on('ready', async ()=> {
+  await createWindow();
+});
+
 app.on('window-all-closed', quitApp);
 

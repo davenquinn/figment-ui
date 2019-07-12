@@ -45,6 +45,7 @@ const runBundler = function(inFile, options={}) {
   const opts = JSON.stringify(options);
   const proc = spawn(runner, [bundlerScript, inFile, opts], {
     env: env,
+    detached: false,
     stdio: ['pipe','pipe','inherit','ipc']
   });
   proc.on('message', (bundle)=>{
@@ -53,6 +54,7 @@ const runBundler = function(inFile, options={}) {
   });
   printToStdout(proc);
 
+  console.log(`Started process ${proc.pid}`);
   return proc;
 };
 
