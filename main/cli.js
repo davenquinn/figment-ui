@@ -44,6 +44,7 @@ global.appState = {
 };
 
 let bundlerProcess = null;
+let win = null;
 
 if (argv['spec-mode']) {
   // Create list of task-runner files to import
@@ -64,9 +65,17 @@ const rl = readline.createInterface({
 });
 
 const quitApp = function() {
-  process.stdout.write("Received signal to terminate");
   app.quit();
   app.exit(0);
+  // // https://github.com/fraserxu/electron-pdf/blob/master/lib/exportJob.js#L185
+  // process.stdout.write("Received signal to terminate");
+  // try {
+  //   console.log(`destroying window: ${win.id}`)
+  //   win.close()
+  // } finally {
+  //   win = null
+  // }
+
   if (bundlerProcess) {
     bundlerProcess.kill(0);
   }
@@ -106,7 +115,7 @@ async function createWindow() {
          : "Creating headless renderer"
   );
 
-  let win = new BrowserWindow({show, webPreferences: {
+  win = new BrowserWindow({show, webPreferences: {
       nodeIntegration: true,
       webSecurity: false
     }
@@ -144,4 +153,3 @@ app.on('ready', async ()=> {
 });
 
 app.on('window-all-closed', quitApp);
-
