@@ -26,10 +26,12 @@ html, body, #pdf-printer-figure-container-outer
     */
     position relative !important
 
+button_margin = 3px
+
 #pdf-printer-ui-controls
   position: fixed
   display: flex
-  padding: 2px 1em
+  padding: 2px button_margin
   height: 30px
   width 100%
   align-items: center
@@ -70,6 +72,11 @@ html, body, #pdf-printer-figure-container-outer
     &:hover
       background: lighten(dodgerblue,20%)
       color: white
+
+  .right-buttons
+    button
+      margin-right: button_margin
+    margin-right: button_margin*-1
 
 @media print
   #pdf-printer-ui-controls

@@ -63,7 +63,10 @@ printToPDF = (webview, size)->
     oldDisplay = controls.style.display
     controls.style.display = "none"
 
-    webview.printToPDF opts, (e,data)=>
+    console.log "Printing to PDF"
+    console.log opts
+    window.webContents.printToPDF opts, (e,data)=>
+      console.log e, data
       reject(e) if e?
       resolve(data)
       el.style.transform = null

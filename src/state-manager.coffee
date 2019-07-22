@@ -69,13 +69,12 @@ class AppStateManager extends Component
     selectedTask = @selectedTask()
     value = {
       update: @updateState,
-      printFigureArea,
+      printFigureArea: @printFigureArea,
       methods...
       @state...
       selectedTask
     }
 
-    console.log value
     h AppStateContext.Provider, {value}, @props.children
 
   updateState: (spec)=>
@@ -103,6 +102,10 @@ class AppStateManager extends Component
     ipcRenderer.on 'update-state', (event, state)=>
       console.log "Updating state from main process"
       @setState {state...}
+
+  printFigureArea: =>
+    task = @selectedTask()
+    printFigureArea(task)
 
 
 export {AppStateContext, AppStateManager}
