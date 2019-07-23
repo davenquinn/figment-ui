@@ -47,7 +47,19 @@ async function runBundle(opts) {
   try {
     await bundler.bundle();
   } catch(err) {}
+
+  // process.on("message", msg => {
+  //   if (msg == "stop") {
+  //     console.log "Stopping bundler"
+  //   }
+  // })
+
+  process.on('SIGINT', () => {
+    console.log("Child process recieved SIGINT")
+    bundler.stop()
+  });
 }
 
 runBundle();
 
+// Run bundler.stop on

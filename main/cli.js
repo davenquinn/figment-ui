@@ -1,6 +1,7 @@
 // Headless mode for figure generation
 const path = require('path');
 const min = require('minimist');
+const ps = require("ps-node");
 const {BrowserWindow, app, ipcMain, protocol} = require('electron');
 const readline = require('readline');
 const {REACT_DEVELOPER_TOOLS, default: installExtension} = require('electron-devtools-installer');
@@ -10,7 +11,8 @@ const shortcuts = require('./shortcuts');
 const {runBundler} = require('../bundler');
 
 const argv = min(process.argv.slice(2), {
-  boolean: ['debug', 'spec-mode', 'show', 'dev']
+  boolean: ['debug', 'spec-mode', 'show', 'dev', 'multi-page'],
+  string: ['page-size']
 });
 // Specify --debug to show BrowserWindow
 //   and open devtools
@@ -31,6 +33,8 @@ global.options = {
   // Wait between rendering items
   waitForUser: show,
   dpi: parseFloat(argv.dpi) || 300.0,
+  multiPage: argv['multi-page'] || false,
+  pageSize: argv['page-size'] || null,
   debug: debug || true,
   dev: dev || false,
   devToolsEnabled: false,
@@ -42,6 +46,9 @@ global.appState = {
   selectedTask: null,
   zoomLevel: 1
 };
+
+// this could be better represented as a non-global maybe
+global.pidList = [];
 
 let bundlerProcess = null;
 
@@ -68,7 +75,15 @@ const quitApp = function() {
   app.quit();
   app.exit(0);
   if (bundlerProcess) {
-    bundlerProcess.kill(0);
+    bundlerProcess.send("stop");
+    ps.kill( bundlerProcess.pid, function( err ) {
+      if (err) {
+        throw new Error( err );
+      }
+      else {
+        console.log( 'Process %s has been killed!', pid );
+      }
+    });
   }
   process.exit(0);
 };
@@ -139,8 +154,27 @@ async function createWindow() {
   win.on('closed', ()=> win = null);
 };
 
+ipcMain.on('new-process', (event, pid)=>{
+  global.pidList.push(pid);
+});
+
 app.on('ready', async ()=> {
   await createWindow();
 });
 
 app.on('window-all-closed', quitApp);
+
+// App close handler
+app.on('before-quit', ()=>{
+  global.pidList.forEach(pid => {
+    // A simple pid lookup
+    ps.kill( pid, function( err ) {
+      if (err) {
+        throw new Error( err );
+      }
+      else {
+        console.log( 'Process %s has been killed!', pid );
+      }
+    });
+  });
+});

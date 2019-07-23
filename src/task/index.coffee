@@ -41,6 +41,7 @@ class TaskRenderer extends Component
     outDir = path.join(cacheDir,'build')
 
     @bundler = runBundler(codeFile, {outDir, cacheDir})
+    console.log "Running bundler process with PID #{@bundler.pid}"
     process.on 'exit', =>
       @bundler.kill()
 
