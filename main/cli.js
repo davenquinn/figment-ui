@@ -136,7 +136,7 @@ async function createWindow() {
   ipcMain.on('bundle-log', (event, line)=>{
     process.stdout.write(line);
   })
-  return win.on('closed', ()=> win = null);
+  win.on('closed', ()=> win = null);
 };
 
 app.on('ready', async ()=> {
@@ -144,4 +144,3 @@ app.on('ready', async ()=> {
 });
 
 app.on('window-all-closed', quitApp);
-

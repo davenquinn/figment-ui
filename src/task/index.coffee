@@ -1,6 +1,7 @@
 import {Component} from 'react'
 import h from 'react-hyperscript'
 import {TaskElement, TaskStylesheet} from './elements'
+import {TaskShape} from './types'
 
 path = require 'path'
 fs = require 'fs'
@@ -17,7 +18,7 @@ class TaskRenderer extends Component
   render: ->
     {code, styles} = @state
     if not code? and not styles?
-      h 'div#pdf-printer-progress-indicator', [
+      return h 'div#pdf-printer-progress-indicator', [
         h 'p', "Creating bundle..."
       ]
     h 'div#pdf-printer-figure-container-inner', [

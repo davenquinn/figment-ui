@@ -17,7 +17,6 @@ class AppMain extends Component
   @contextType: AppStateContext
   renderMain: ->
     {taskLists, selectedTask, zoomLevel} = @context
-    console.log selectedTask
     if selectedTask?
       return h FigureContainer, {task: selectedTask, zoomLevel}
     if taskLists?

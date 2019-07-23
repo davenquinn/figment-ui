@@ -42,30 +42,40 @@ generateFigure = (task)->
 pixelsToMicrons = (px)->
   Math.ceil(px/96.0*25400)
 
-printToPDF = (webview, size)->
+printToPDF = (webview, opts)->
   new Promise (resolve, reject)->
     ###
     Print the webview to the callback
     ###
     el = document.querySelector("#pdf-printer-figure-container-inner")
     controls = document.querySelector("#pdf-printer-ui-controls")
+
+    # pageSize can be A3, A4, A5, Legal, Letter, Tabloid or an Object
+    # containing height and width in microns.
+    # (https://electronjs.org/docs/api/web-contents)
+    {pageSize, width, height, scaleFactor} = opts
+    pageSize ?= {
+      height: pixelsToMicrons(height*scaleFactor)
+      width: pixelsToMicrons(width*scaleFactor)
+    }
+
+    pageSize = "Letter"
+
     opts = {
       printBackground: true
-      marginsType: 1
-      pageSize: {
-        height: pixelsToMicrons(size.height*size.scaleFactor)+10
-        width: pixelsToMicrons(size.width*size.scaleFactor)+10
-      }
+      marginsType: 0
+      pageSize
     }
-    el.style.transform = "scale(#{size.scaleFactor})"
+    el.style.transform = "scale(#{scaleFactor})"
     el.style.transformOrigin = "top left"
 
     oldDisplay = controls.style.display
     controls.style.display = "none"
 
-    console.log "Printing to PDF"
+    {webContents: wc} = remote.getCurrentWindow()
+
     console.log opts
-    window.webContents.printToPDF opts, (e,data)=>
+    wc.printToPDF opts, (e,data)=>
       console.log e, data
       reject(e) if e?
       resolve(data)
