@@ -58,5 +58,4 @@ TaskList = ({runners})->
   h 'div', runners.map (d)->
     h TaskListSection, d
 
-export {TaskList}
-
+export {TaskList, TaskListItem}

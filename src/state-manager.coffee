@@ -4,6 +4,7 @@ import update from 'immutability-helper'
 import {remote, ipcRenderer} from 'electron'
 import Promise from 'bluebird'
 {spawn} = require 'child_process'
+import {parse} from 'path'
 
 # This is awful
 import {Printer, printFigureArea} from "./lib.coffee"
@@ -17,6 +18,11 @@ getSpecs = (d)->
     .then (v)->
       v.name = d
       v
+
+nameForTask = (task)->
+  {name, outfile} = task
+  return name if name?
+  return parse(outfile).name
 
 class AppStateManager extends Component
   constructor: (props)->
@@ -33,9 +39,19 @@ class AppStateManager extends Component
 
     @defineTasks options
 
+  shouldListTasks: =>
+    {taskLists} = @state
+    return false unless taskLists?
+    if taskLists.length == 1
+      return taskLists[0].tasks.length != 1
+    return true
+
   selectedTask: =>
     {selectedTaskHash, taskLists} = @state
     return null unless taskLists?
+    if not @shouldListTasks()
+      return taskLists[0].tasks[0]
+
     for taskList in taskLists
       for task in taskList.tasks
         if task.hash == selectedTaskHash
@@ -70,6 +86,8 @@ class AppStateManager extends Component
     value = {
       update: @updateState,
       printFigureArea: @printFigureArea,
+      hasTaskList: @shouldListTasks(),
+      nameForTask
       methods...
       @state...
       selectedTask
