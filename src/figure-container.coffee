@@ -12,7 +12,8 @@ class FigureContainer extends Component
   }
   render: ->
     {zoomLevel, task} = @props
-    {multiPage} = task
+    # We shouldn't have this nested structure, it's confusing
+    {multiPage} = task.opts
     multiPage ?= false
 
     height = if multiPage then null else "100vh"

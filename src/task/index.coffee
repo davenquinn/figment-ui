@@ -1,5 +1,6 @@
 import {Component} from 'react'
-import h from 'react-hyperscript'
+import h from '~/hyper'
+import {Spinner} from '@blueprintjs/core'
 import {TaskElement, TaskStylesheet} from './elements'
 import {TaskShape} from './types'
 
@@ -8,6 +9,9 @@ fs = require 'fs'
 {runBundler} = require '../../bundler'
 
 class TaskRenderer extends Component
+  @propTypes: {
+    task: TaskShape.isRequired
+  }
   constructor: (props)->
     super props
     @bundler = null
@@ -18,10 +22,11 @@ class TaskRenderer extends Component
   render: ->
     {code, styles} = @state
     if not code? and not styles?
-      return h 'div#pdf-printer-progress-indicator', [
-        h 'p', "Creating bundle..."
+      return h 'div.progress', [
+        h Spinner
+        h 'p', "Bundling code"
       ]
-    h 'div#pdf-printer-figure-container-inner', [
+    h 'div.figure-container-inner', [
       h TaskStylesheet, {styles}
       h TaskElement, {code}
     ]

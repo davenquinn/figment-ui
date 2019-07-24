@@ -6,6 +6,8 @@ path = require 'path'
 d3 = require 'd3-selection'
 colors = require 'colors/safe'
 import styles from './main.styl'
+import {assertShape} from '~/types'
+import {TaskShape} from './task/types'
 
 options = remote.getGlobal 'options' or {}
 options.dpi ?= 96
@@ -56,9 +58,7 @@ printToPDF = (webview, opts)->
 
     {webContents: wc} = remote.getCurrentWindow()
 
-    console.log opts
     wc.printToPDF opts, (e,data)=>
-      console.log e, data
       reject(e) if e?
       resolve(data)
       el.style.transform = null
@@ -92,6 +92,8 @@ printFigureArea = (task)->
   # Function to print webpage
   ###
 
+  checkPropTypes({v: TaskShape.isRequired}, {v: task}, "prop", "component")
+
   console.log task
   opts = task.opts or {}
   {scaleFactor} = opts
@@ -115,6 +117,9 @@ printFigureArea = (task)->
     opts.format = ext.slice(1)
     buf = await printToImage(wc, opts)
   else
+    # Set pageSize from task
+    {pageSize} = task.opts
+    opts.pageSize = pageSize
     buf = await printToPDF(wc, opts)
 
   console.log "#{outfile}"
@@ -175,6 +180,7 @@ class Printer
       code: func
       helpers: @options.helpers
       hash: h
+      multiPage: opts.multiPage
       opts: opts
     }
     return @
