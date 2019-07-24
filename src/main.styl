@@ -3,11 +3,92 @@ For some annoying reason this appears to be the only way
 we can get Parcel to do global styles
 */
 :global {
-  @require "./global.styl"
-  // We have to symlink blueprint to make sure
-  // importing happens before style resolution.
+  // We have to symlink blueprint to a stylus file
+  // to make sure importing happens before style
+  // resolution. This can potentially be improved with
+  // a new version of stylus
   @require "../vendor/blueprint.styl"
 }
 
-.testing
-  width: 100px
+html, body, .figure-container-outer
+  margin: 0px
+  width: 100%
+  background-color: white
+  position relative
+
+.figure-container-outer
+  overflow: scroll
+  padding 25px 0px 0px
+
+.figure-container
+  position relative
+  display inline-block
+  margin 0px auto
+  &>*
+    /*
+    This touches user code but it's super-important
+    that no position info bleed through here.
+    This could be revised if needed.
+    */
+    position relative !important
+
+*
+  box-sizing border-box
+
+button_margin = 3px
+
+.ui-controls
+  position: fixed
+  display: flex
+  padding: 2px button_margin
+  height: 30px
+  width 100%
+  align-items: center
+  z-index 1000
+  font-family: "San Francisco", Helvetica, sans-serif;
+  top 0
+  left 0
+  right 0
+  flex-direction row
+  justify-content space-between
+  a
+    text-decoration: none
+    cursor: pointer
+  *
+    font-weight: 400
+  h1
+    margin: 0
+    padding 0
+    font-weight: 500
+    font-size: 0.8em
+    color #444
+    text-transform: uppercase
+    flex 1
+    a
+      color: #444
+      &:hover
+        color: black
+  background-color: #eee
+  border-bottom: 1px solid #ccc
+
+  .buttons a
+    display: inline-block
+    padding: 0.1em 0.3em
+    font-size: 0.8em
+    border-radius 4px
+    background: #ddd
+    border 1px solid #ccc
+    &:hover
+      background: lighten(dodgerblue,20%)
+      color: white
+
+  .right-buttons
+    button
+      margin-right: button_margin
+    margin-right: button_margin*-1
+
+@media print
+  .ui-controls
+    display none
+  .figure-container-outer
+    padding 0 !important

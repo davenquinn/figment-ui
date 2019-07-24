@@ -1,8 +1,8 @@
 import {AnchorButton, Button} from '@blueprintjs/core'
-import h from '@macrostrat/hyper'
 import {Component, useContext} from 'react'
 import {AppStateContext} from './state-manager'
 import {TaskListItem} from './task-list'
+import h from '~/hyper'
 
 ToolButton = (props)->
   h Button, {small: true, props...}
@@ -47,7 +47,7 @@ class UIControls extends Component
   @contextType: AppStateContext
   render: ->
     {hasTaskList, selectedTask} = @context
-    h 'div#pdf-printer-ui-controls', [
+    h 'div.ui-controls', [
       h 'div.left-buttons', [
         h BackButton
         h CurrentTaskName

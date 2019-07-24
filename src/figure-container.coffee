@@ -1,7 +1,6 @@
+import h from '~/hyper'
 import {Component} from 'react'
-import h from 'react-hyperscript'
 import T from 'prop-types'
-
 import {TaskRenderer, TaskShape} from './task'
 
 class FigureContainer extends Component
@@ -25,8 +24,8 @@ class FigureContainer extends Component
       padding: "#{20/zoomLevel}px"
     }
 
-    h 'div#pdf-printer-figure-container-outer', {style: {height}}, [
-      h 'div#pdf-printer-figure-container', {style}, [
+    h 'div.figure-container-outer', {style: {height}}, [
+      h 'div.figure-container', {style}, [
         h TaskRenderer, {task, key: task}
       ]
     ]

@@ -1,9 +1,9 @@
 import {Component} from 'react'
-import h from 'react-hyperscript'
-import {AppStateContext} from './state-manager'
-import {taskListItem} from './global.styl'
+import {AppStateContext} from '../state-manager'
+import {hyperStyled} from '@macrostrat/hyper'
+import styles from './styles.styl'
 
-console.log taskListItem
+h = hyperStyled(styles)
 
 sharedStart = (array) ->
   # From
@@ -43,7 +43,7 @@ TaskListSection = (props)->
 
   prefix = sharedStart(arr)
 
-  h 'div#pdf-printer-task-list', [
+  h 'div.task-list', [
     h 'h2', [
       h 'span.prefix', prefix
       h 'span.name', name.slice(prefix.length)
