@@ -16,9 +16,10 @@ FocusStyleManager.onlyShowFocusOnTabs()
 class AppMain extends Component
   @contextType: AppStateContext
   renderMain: ->
-    {taskLists, selectedTask, zoomLevel} = @context
+    {taskLists, selectedTask, zoomLevel, toolbarEnabled} = @context
+    marginTop = if toolbarEnabled then "30px" else null
     if selectedTask?
-      return h FigureContainer, {task: selectedTask, zoomLevel}
+      return h FigureContainer, {task: selectedTask, zoomLevel, marginTop}
     if taskLists?
       return h TaskList, {runners: taskLists}
     return null

@@ -6,12 +6,14 @@ import {TaskRenderer, TaskShape} from './task'
 class FigureContainer extends Component
   @defaultProps: {
     zoomLevel: 1
+    marginTop: null
   }
   @propTypes: {
     task: TaskShape
+    marginTop: T.integer
   }
   render: ->
-    {zoomLevel, task} = @props
+    {zoomLevel, task, marginTop} = @props
     # We shouldn't have this nested structure, it's confusing
     {multiPage} = task.opts
     multiPage ?= false
@@ -25,7 +27,7 @@ class FigureContainer extends Component
       padding: "#{20/zoomLevel}px"
     }
 
-    h 'div.figure-container-outer', {style: {height}}, [
+    h 'div.figure-container-outer', {style: {height, marginTop}}, [
       h 'div.figure-container', {style}, [
         h TaskRenderer, {task, key: task}
       ]

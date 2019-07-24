@@ -1,4 +1,4 @@
-import {AnchorButton, Button} from '@blueprintjs/core'
+import {AnchorButton, Button, Intent} from '@blueprintjs/core'
 import {Component, useContext} from 'react'
 import {AppStateContext} from './state-manager'
 import {TaskListItem} from './task-list'
@@ -43,10 +43,32 @@ CurrentTaskName = (props)->
   h 'h1.task-name', nameForTask(selectedTask)
 
 
+ToolbarToggleButton = (props)->
+  {update, toolbarEnabled} = useContext(AppStateContext)
+  onClick = -> update {$toggle: ['toolbarEnabled']}
+  intent = null
+  icon = 'menu'
+  if toolbarEnabled
+    icon = 'cross'
+    intent = Intent.DANGER
+  h ToolButton, {
+    minimal: true, icon, intent, onClick,
+    className: 'toolbar-toggle-button',
+    props...
+  }
+
+MinimalUIControls = ->
+  h 'div.ui-controls-hidden', [
+    h ToolbarToggleButton, {small: false}
+  ]
+
 class UIControls extends Component
   @contextType: AppStateContext
   render: ->
-    {hasTaskList, selectedTask} = @context
+    {hasTaskList, selectedTask, toolbarEnabled} = @context
+    if not toolbarEnabled
+      return h MinimalUIControls
+
     h 'div.ui-controls', [
       h 'div.left-buttons', [
         h BackButton
@@ -58,6 +80,8 @@ class UIControls extends Component
           h PrintButton
           h EditorButton
         ]
+        h 'span.separator'
+        h ToolbarToggleButton
       ]
     ]
 

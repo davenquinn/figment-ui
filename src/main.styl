@@ -18,7 +18,7 @@ html, body, .figure-container-outer
 
 .figure-container-outer
   overflow: scroll
-  padding 25px 0px 0px
+  padding 0px 0px
 
 .figure-container-inner
   display: block
@@ -40,10 +40,28 @@ html, body, .figure-container-outer
 
 button_margin = 3px
 
+.ui-controls-hidden
+  position: absolute
+  width: 50px
+  height: 50px
+  top 0
+  right 0
+  z-index: 30
+  .toolbar-toggle-button
+    display: none
+    position absolute
+    top 12px
+    right 12px
+  &:hover .toolbar-toggle-button
+    display: flex
+
+
+
 .ui-controls
   position: fixed
   display: flex
   padding: 2px button_margin
+  padding-right: 12px
   height: 30px
   width 100%
   align-items: center
