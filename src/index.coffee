@@ -1,6 +1,6 @@
 
 import "@babel/polyfill"
-import './style.styl'
+import './main.styl'
 
 import {FocusStyleManager} from '@blueprintjs/core'
 import {Component} from 'react'

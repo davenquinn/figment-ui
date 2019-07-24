@@ -1,0 +1,13 @@
+/*
+For some annoying reason this appears to be the only way
+we can get Parcel to do global styles
+*/
+:global {
+  @require "./global.styl"
+  // We have to symlink blueprint to make sure
+  // importing happens before style resolution.
+  @require "../vendor/blueprint.styl"
+}
+
+.testing
+  width: 100px

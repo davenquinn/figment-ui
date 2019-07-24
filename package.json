@@ -36,6 +36,7 @@
     "loglevel": "^1.4.1",
     "parcel-bundler": "^1.12.3",
     "patch-package": "^6.1.2",
+    "postcss": "^7.0.17",
     "prop-types": "^15.7.2",
     "ps-node": "^0.1.6",
     "react": "^16.8.6",
@@ -47,8 +48,11 @@
   },
   "devDependencies": {
     "@babel/core": "^7.4.5",
+    "autoprefixer": "^9.6.1",
     "chai": "^3.5.0",
     "cssnano": "^4.1.10",
-    "mocha": "^6.1.4"
+    "mocha": "^6.1.4",
+    "postcss-modules": "^1.4.1",
+    "root": "^3.2.0"
   }
 }
