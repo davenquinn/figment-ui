@@ -36,7 +36,6 @@ class AppStateManager extends Component
       options...
       appState...
     }
-
     @defineTasks options
 
   shouldListTasks: =>
@@ -59,12 +58,17 @@ class AppStateManager extends Component
     return null
 
   defineTasks: (options)=>
+    {specs} = options
+    # These should really be applied separately to each part
+    {multiPage, pageSize} = @state
     # If we are in spec mode
-    if options.specs?
-      p = Promise.map options.specs, getSpecs
+    if specs?
+      p = Promise.map specs, getSpecs
     else
       spec = new Printer
-      spec.task options.outfile, options.infile
+      spec.task options.outfile, options.infile, {
+        multiPage, pageSize
+      }
       p = Promise.resolve [spec]
     res = await p
     @updateState {taskLists: {$set: res}}

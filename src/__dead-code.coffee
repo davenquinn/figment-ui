@@ -172,3 +172,22 @@ else
   p.then ->
     console.log "Done!"
     remote.app.quit()
+
+generateFigure = (task)->
+  main = d3.select "#pdf-printer-ui-controls"
+  main.html ""
+  ## Set up a webview
+  webview = main.append "webview"
+    .attr "nodeintegration", true
+    .attr "src", "file://"+require.resolve("../_runner/index.html")
+    .node()
+
+  new Promise (resolve, reject)->
+    webview.addEventListener 'dom-ready', (e)->
+      webview.send "run-task", {
+        code: task.code
+        helpers: task.helpers
+      }
+    webview.addEventListener 'ipc-message', (e)->
+      if event.channel == 'finished'
+        resolve(task)

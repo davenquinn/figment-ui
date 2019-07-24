@@ -5,6 +5,7 @@ fs = require 'fs'
 path = require 'path'
 d3 = require 'd3-selection'
 colors = require 'colors/safe'
+import styles from './main.styl'
 
 options = remote.getGlobal 'options' or {}
 options.dpi ?= 96
@@ -20,25 +21,6 @@ sleep = (data)->
     fn = ->resolve(data)
     setTimeout fn, 1000
 
-generateFigure = (task)->
-  main = d3.select "#pdf-printer-ui-controls"
-  main.html ""
-  ## Set up a webview
-  webview = main.append "webview"
-    .attr "nodeintegration", true
-    .attr "src", "file://"+require.resolve("../_runner/index.html")
-    .node()
-
-  new Promise (resolve, reject)->
-    webview.addEventListener 'dom-ready', (e)->
-      webview.send "run-task", {
-        code: task.code
-        helpers: task.helpers
-      }
-    webview.addEventListener 'ipc-message', (e)->
-      if event.channel == 'finished'
-        resolve(task)
-
 pixelsToMicrons = (px)->
   Math.ceil(px/96.0*25400)
 
@@ -47,8 +29,8 @@ printToPDF = (webview, opts)->
     ###
     Print the webview to the callback
     ###
-    el = document.querySelector("#pdf-printer-figure-container-inner")
-    controls = document.querySelector("#pdf-printer-ui-controls")
+    el = document.getElementsByClassName(styles["figure-container-inner"])[0]
+    controls = document.getElementsByClassName(styles["ui-controls"])[0]
 
     # pageSize can be A3, A4, A5, Legal, Letter, Tabloid or an Object
     # containing height and width in microns.
@@ -59,13 +41,13 @@ printToPDF = (webview, opts)->
       width: pixelsToMicrons(width*scaleFactor)
     }
 
-    pageSize = "Letter"
-
     opts = {
       printBackground: true
       marginsType: 0
       pageSize
     }
+    console.log opts
+
     el.style.transform = "scale(#{scaleFactor})"
     el.style.transformOrigin = "top left"
 
@@ -109,11 +91,13 @@ printFigureArea = (task)->
   ###
   # Function to print webpage
   ###
+
   console.log task
   opts = task.opts or {}
   {scaleFactor} = opts
   scaleFactor ?= 1
-  el = document.querySelector('#pdf-printer-figure-container-inner>*:first-child')
+
+  el = document.querySelector(".#{styles['figure-container-inner']}>*:first-child")
 
   {width, height} = el.getBoundingClientRect()
   opts = {width, height, scaleFactor}
@@ -158,6 +142,7 @@ class Printer
     ###
     opts.dpi ?= 300
 
+
     # Check if we've got a function or string
     if typeof funcOrString == 'function'
       throw "We only support strings now, because we run things in a webview"
@@ -185,32 +170,33 @@ class Printer
           .update(fn)
           .digest('hex')
 
-    @tasks.push
+    @tasks.push {
       outfile: fn
       code: func
       helpers: @options.helpers
       hash: h
       opts: opts
+    }
     return @
 
   run: ->
     # Progress through list of figures, print
     # each one to file
-    __runTask = (t)->
-      console.log "#{t.code} ⇒ #{t.outfile}"
-      p = generateFigure(t)
-
-      if options.waitForUser
-        p = p.then waitForUserInput
-
-      p.then printFigureArea
-        .catch (e)->console.log('Error: '+e)
-
-    Promise
-      .map @tasks, __runTask, concurrency: 1
+    # TODO: fix this mode of operation
+    # __runTask = (t)->
+    #   console.log "#{t.code} ⇒ #{t.outfile}"
+    #   p = generateFigure(t)
+    #
+    #   if options.waitForUser
+    #     p = p.then waitForUserInput
+    #
+    #   p.then printFigureArea
+    #     .catch (e)->console.log('Error: '+e)
+    #
+    # Promise
+    #   .map @tasks, __runTask, concurrency: 1
 
 module.exports = {
   Printer
   printFigureArea
-  generateFigure
 }
