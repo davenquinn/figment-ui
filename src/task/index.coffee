@@ -80,4 +80,4 @@ class TaskRenderer extends Component
     return unless @bundler?
     @bundler.kill(0)
 
-export {TaskRenderer}
+export {TaskRenderer, TaskShape}

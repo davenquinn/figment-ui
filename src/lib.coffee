@@ -92,7 +92,7 @@ printFigureArea = (task)->
   # Function to print webpage
   ###
 
-  checkPropTypes({v: TaskShape.isRequired}, {v: task}, "prop", "component")
+  assertShape(task, TaskShape)
 
   console.log task
   opts = task.opts or {}
