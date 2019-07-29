@@ -43,6 +43,8 @@ global.options = {
 
 global.appState = {
   toolbarEnabled: true,
+  // Shouldn't be enabled by default
+  devToolsEnabled: false,
   selectedTask: null,
   zoomLevel: 1
 };

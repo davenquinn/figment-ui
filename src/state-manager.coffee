@@ -5,6 +5,7 @@ import {remote, ipcRenderer} from 'electron'
 import Promise from 'bluebird'
 {spawn} = require 'child_process'
 import {parse} from 'path'
+import 'devtools-detect'
 
 # This is awful
 import {Printer, printFigureArea} from "./lib.coffee"
@@ -106,10 +107,12 @@ class AppStateManager extends Component
     appState = do -> {
       toolbarEnabled,
       selectedTaskHash,
+      devToolsEnabled
       zoomLevel } = newState
     ipcRenderer.send 'update-state', appState
 
   toggleDevTools: =>
+    @updateState {devToolsEnabled: {$set: true}}
     ipcRenderer.send 'dev-tools'
     win = remote.getCurrentWindow()
     win.openDevTools()
@@ -125,9 +128,12 @@ class AppStateManager extends Component
       console.log "Updating state from main process"
       @setState {state...}
 
+    window.addEventListener 'devtoolschange', (event)=>
+      {isOpen} = event.detail
+      @updateState {devToolsEnabled: {$set: isOpen}}
+
   printFigureArea: =>
     task = @selectedTask()
     printFigureArea(task)
-
 
 export {AppStateContext, AppStateManager}

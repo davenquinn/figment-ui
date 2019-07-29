@@ -33,22 +33,25 @@ html, body, .figure-container-outer
 
 button_margin = 3px
 
-.ui-controls-hidden
-  position: absolute
-  width: 100px
-  height: 100px
+.ui-controls, .ui-controls-hidden
+  position: fixed
+  width: 100vw
   top 0
   right 0
-  z-index: 30
+  left 0
+  z-index 1000
+
+.ui-controls-hidden
+  height: 50px
   .toolbar-toggle-button
     display: none
     position absolute
-    top 12px
-    right 12px
+    top 4px
+    right 4px
   &:hover .toolbar-toggle-button
     display: flex
 
-.ui-controls, .progress, .ui-controls-hiddens
+.ui-controls, .progress, .ui-controls-hidden
   :global
     @require "../vendor/blueprint.styl"
   *
@@ -60,12 +63,8 @@ button_margin = 3px
   padding: 2px button_margin
   padding-right: 12px
   height: 30px
-  width 100%
+  width 100vw
   align-items: center
-  z-index 1000
-  top 0
-  left 0
-  right 0
   flex-direction row
   justify-content space-between
   a

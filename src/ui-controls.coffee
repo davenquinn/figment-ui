@@ -5,13 +5,14 @@ import {TaskListItem} from './task-list'
 import h from '~/hyper'
 
 ToolButton = (props)->
-  h Button, {small: true, props...}
+  h Button, {small: true, minimal: true, props...}
 
 class DevToolsButton extends Component
   @contextType: AppStateContext
   render: ->
     onClick = @context.toggleDevTools
-    h ToolButton, {onClick}, "DevTools"
+    disabled = @context.devToolsEnabled
+    h ToolButton, {onClick, disabled}, "DevTools"
 
 class BackButton extends Component
   @contextType: AppStateContext
@@ -27,7 +28,7 @@ class PrintButton extends Component
     {printFigureArea} = @context
     onClick = ->
       printFigureArea()
-    h ToolButton, {icon: 'print', onClick}, 'Print'
+    h ToolButton, {icon: 'print', onClick, intent: Intent.PRIMARY}, 'Print'
 
 class EditorButton extends Component
   @contextType: AppStateContext
@@ -77,8 +78,8 @@ class UIControls extends Component
       h 'div.right-buttons', [
         h DevToolsButton
         h.if(selectedTask?) [
-          h PrintButton
           h EditorButton
+          h PrintButton
         ]
         h 'span.separator'
         h ToolbarToggleButton
