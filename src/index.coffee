@@ -1,5 +1,6 @@
 
 import "@babel/polyfill"
+
 import './main.styl'
 
 import {FocusStyleManager} from '@blueprintjs/core'

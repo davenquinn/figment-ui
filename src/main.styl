@@ -2,13 +2,6 @@
 For some annoying reason this appears to be the only way
 we can get Parcel to do global styles
 */
-:global {
-  // We have to symlink blueprint to a stylus file
-  // to make sure importing happens before style
-  // resolution. This can potentially be improved with
-  // a new version of stylus
-  @require "../vendor/blueprint.styl"
-}
 
 html, body, .figure-container-outer
   margin: 0px
@@ -42,8 +35,8 @@ button_margin = 3px
 
 .ui-controls-hidden
   position: absolute
-  width: 50px
-  height: 50px
+  width: 100px
+  height: 100px
   top 0
   right 0
   z-index: 30
@@ -55,7 +48,11 @@ button_margin = 3px
   &:hover .toolbar-toggle-button
     display: flex
 
-
+.ui-controls, .progress, .ui-controls-hiddens
+  :global
+    @require "../vendor/blueprint.styl"
+  *
+    font-family: "San Francisco", Helvetica, sans-serif !important
 
 .ui-controls
   position: fixed
@@ -66,7 +63,6 @@ button_margin = 3px
   width 100%
   align-items: center
   z-index 1000
-  font-family: "San Francisco", Helvetica, sans-serif;
   top 0
   left 0
   right 0

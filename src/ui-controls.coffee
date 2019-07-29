@@ -76,7 +76,7 @@ class UIControls extends Component
       ]
       h 'div.right-buttons', [
         h DevToolsButton
-        h.if(selectedTask?), [
+        h.if(selectedTask?) [
           h PrintButton
           h EditorButton
         ]
