@@ -43,6 +43,7 @@ class TaskElement extends Component
     {code} = @props
     return null unless code?
     try
+      console.log "Rendering task"
       children = h ErrorBoundary, [
         h(code)
       ]
@@ -67,7 +68,7 @@ class TaskElement extends Component
   componentDidMount: ->
     @runTask()
   componentDidUpdate: (prevProps)->
-    return if prevProps.code == @props.code
+    #return if prevProps.code == @props.code
     console.log "Code was updated"
     @runTask()
 

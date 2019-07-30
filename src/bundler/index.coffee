@@ -22,8 +22,6 @@ printToStdout = (child)->
 
 runBundler = (inFile, options={})->
 
-  bundlerScript = remote.getGlobal('bundlerScript')
-
   # proc.on 'message', (bundle)=>
   #   if (debug) printLine(bundle)
   bundler = createBundler(inFile, options)
