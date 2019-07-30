@@ -12,7 +12,7 @@ class DevToolsButton extends Component
   render: ->
     onClick = @context.toggleDevTools
     disabled = @context.devToolsEnabled
-    h ToolButton, {onClick, disabled}, "DevTools"
+    h ToolButton, {onClick, disabled, rightIcon: 'code'}, "DevTools"
 
 class BackButton extends Component
   @contextType: AppStateContext
@@ -28,7 +28,7 @@ class PrintButton extends Component
     {printFigureArea} = @context
     onClick = ->
       printFigureArea()
-    h ToolButton, {icon: 'print', onClick, intent: Intent.PRIMARY}, 'Print'
+    h ToolButton, {rightIcon: 'print', onClick, intent: Intent.PRIMARY}, 'Print'
 
 class EditorButton extends Component
   @contextType: AppStateContext
@@ -41,7 +41,7 @@ class EditorButton extends Component
 CurrentTaskName = (props)->
   {selectedTask, nameForTask} = useContext(AppStateContext)
   return null unless selectedTask?
-  h 'h1.task-name', nameForTask(selectedTask)
+  h 'h1.task-name.bp3-text', nameForTask(selectedTask)
 
 
 ToolbarToggleButton = (props)->
@@ -50,8 +50,7 @@ ToolbarToggleButton = (props)->
   intent = null
   icon = 'menu'
   if toolbarEnabled
-    icon = 'cross'
-    intent = Intent.DANGER
+    icon = 'eye-off'
   h ToolButton, {
     minimal: true, icon, intent, onClick,
     className: 'toolbar-toggle-button',
@@ -78,7 +77,6 @@ class UIControls extends Component
       h 'div.right-buttons', [
         h DevToolsButton
         h.if(selectedTask?) [
-          h EditorButton
           h PrintButton
         ]
         h 'span.separator'

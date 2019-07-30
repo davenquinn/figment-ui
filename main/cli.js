@@ -11,16 +11,16 @@ const shortcuts = require('./shortcuts');
 const {runBundler} = require('../bundler');
 
 const argv = min(process.argv.slice(2), {
-  boolean: ['debug', 'spec-mode', 'show', 'dev', 'multi-page'],
+  boolean: ['headless', 'spec-mode', 'show', 'dev', 'multi-page'],
   string: ['page-size']
 });
 // Specify --debug to show BrowserWindow
 //   and open devtools
 // Specify --spec to load from a spec
-const { debug, dev } = argv;
+const { headless, dev } = argv;
 // Option just to show browser window (primarily for
 // debugging taskflow of this module)
-const show = argv.show || debug;
+const show = argv.show || !headless;
 // Set directory to reload if not given
 
 const args = argv._;
@@ -35,10 +35,10 @@ global.options = {
   dpi: parseFloat(argv.dpi) || 300.0,
   multiPage: argv['multi-page'] || false,
   pageSize: argv['page-size'] || null,
-  debug: debug || true,
+  debug: !headless || true,
   dev: dev || false,
   devToolsEnabled: false,
-  reload: argv.reload || argv.debug
+  reload: argv.reload || !argv.headless
 };
 
 global.appState = {
@@ -90,20 +90,18 @@ const quitApp = function() {
   process.exit(0);
 };
 
-process.on('SIGINT', quitApp);
-process.on('SIGTERM', quitApp);
-process.on('SIGHUP', quitApp);
+process.on('exit', quitApp);
 
 // Set global variables for bundler
 
-async function createWindow() {
-  await installExtension(REACT_DEVELOPER_TOOLS);
+function createWindow() {
+  installExtension(REACT_DEVELOPER_TOOLS);
 
-  if (argv['dev']) {
+  if (options.dev) {
     const fp = path.resolve(__dirname, '..','src','index.html');
     const outDir = path.resolve(__dirname, '..', 'lib');
     const cacheDir = path.resolve(__dirname, '..', '.cache');
-    bundlerProcess = runBundler(fp, {outDir, cacheDir});
+    const bundlerProcess = runBundler(fp, {outDir, cacheDir});
   }
 
   const cb = (request, callback) => {
@@ -113,17 +111,14 @@ async function createWindow() {
     return callback({path:pth});
   };
 
-  protocol.registerFileProtocol('app', cb, function(error){
-    if (!error) { return; }
-    return console.error('Failed to register protocol');
-  });
-
-  console.log(debug
+  console.log(!headless
          ? "Creating browser window"
          : "Creating headless renderer"
   );
 
-  let win = new BrowserWindow({show, webPreferences: {
+  let win = new BrowserWindow({show,
+    titleBarStyle: 'hiddenInset',
+    webPreferences: {
       nodeIntegration: true,
       webSecurity: false
     }
@@ -133,10 +128,6 @@ async function createWindow() {
   const url = "file://"+path.join(parentDir,'lib', 'index.html');
   win.loadURL(url);
   shortcuts(win);
-  ipcMain.on('dev-tools', (event)=>{
-    options.devToolsEnabled = !options.devToolsEnabled;
-    return console.log(options.devToolsEnabled);
-  });
 
   ipcMain.on('update-state', (event, res)=>{
     global.appState = res;
@@ -160,8 +151,8 @@ ipcMain.on('new-process', (event, pid)=>{
   global.pidList.push(pid);
 });
 
-app.on('ready', async ()=> {
-  await createWindow();
+app.on('ready', ()=> {
+  createWindow();
 });
 
 app.on('window-all-closed', quitApp);

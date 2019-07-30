@@ -48,14 +48,14 @@ const runBundler = function(inFile, options={}) {
     detached: false,
     stdio: ['pipe','pipe','inherit','ipc']
   });
-  proc.on('message', (bundle)=>{
-    if (!isRenderer) return;
-    if (debug) printLine(bundle);
-  });
-  printToStdout(proc);
 
   // Record PID for later killing
   if (isRenderer) {
+    proc.on('message', (bundle)=>{
+      if (debug) printLine(bundle);
+    });
+    printToStdout(proc);
+
     ipcRenderer.send('new-process', proc.pid);
   } else {
     // This should not directly operate on the PID list

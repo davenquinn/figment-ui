@@ -22,8 +22,9 @@ getSpecs = (d)->
 
 nameForTask = (task)->
   {name, outfile} = task
-  return name if name?
-  return parse(outfile).name
+  if not name?
+    {name} = parse(outfile)
+  name.replace(/[-_]/g," ")
 
 class AppStateManager extends Component
   constructor: (props)->
