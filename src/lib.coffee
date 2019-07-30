@@ -45,7 +45,7 @@ printToPDF = (webview, opts)->
 
     opts = {
       printBackground: true
-      marginsType: 0
+      marginsType: 1
       pageSize
     }
     console.log opts

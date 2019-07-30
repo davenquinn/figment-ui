@@ -5,7 +5,7 @@ const ps = require("ps-node");
 const {BrowserWindow, app, ipcMain, protocol} = require('electron');
 const readline = require('readline');
 const {REACT_DEVELOPER_TOOLS, default: installExtension} = require('electron-devtools-installer');
-
+console.log(REACT_DEVELOPER_TOOLS);
 
 const shortcuts = require('./shortcuts');
 const {runBundler} = require('../bundler');
