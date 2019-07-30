@@ -2,6 +2,7 @@ import h from '~/hyper'
 import {Component} from 'react'
 import T from 'prop-types'
 import {TaskRenderer, TaskShape} from './task'
+import WebView from 'react-electron-web-view'
 
 class FigureContainer extends Component
   @defaultProps: {
