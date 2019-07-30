@@ -13,12 +13,7 @@ function printLine(obj) {
   } else {
     line = JSON.stringify(obj);
   }
-  if (isRenderer) {
-    ipcRenderer.send('bundle-log', line);
-  } else {
-    let newLine = line.replace("✨", "🌸");
-    process.stdout.write(newLine);
-  }
+  ipcRenderer.send('bundle-log', line);
 }
 
 async function printToStdout(child) {
@@ -30,15 +25,11 @@ async function printToStdout(child) {
 
 const runBundler = function(inFile, options={}) {
   let env, runner, bundlerScript;
-  if (isRenderer) {
-    env = Object.create(remote.process.env);
-    runner = remote.process.argv[0];
-    bundlerScript = remote.getGlobal('bundlerScript');
-  } else {
-    env = Object.create(process.env);
-    runner = process.argv[0];
-    bundlerScript = global.bundlerScript;
-  }
+
+  env = Object.create(remote.process.env);
+  runner = process.argv[0];
+  bundlerScript = remote.getGlobal('bundlerScript');
+
   env.ELECTRON_RUN_AS_NODE = '1';
   env.FORCE_COLOR = true;
 
@@ -49,19 +40,13 @@ const runBundler = function(inFile, options={}) {
     stdio: ['pipe','pipe','inherit','ipc']
   });
 
+  proc.on('message', (bundle)=>{
+    if (debug) printLine(bundle);
+  });
+  printToStdout(proc);
+
   // Record PID for later killing
-  if (isRenderer) {
-    proc.on('message', (bundle)=>{
-      if (debug) printLine(bundle);
-    });
-    printToStdout(proc);
-
-    ipcRenderer.send('new-process', proc.pid);
-  } else {
-    // This should not directly operate on the PID list
-    global.pidList.push(proc.pid);
-  }
-
+  ipcRenderer.send('new-process', proc.pid);
   console.log(`Started process ${proc.pid}`);
   return proc;
 };

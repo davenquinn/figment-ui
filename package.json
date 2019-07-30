@@ -9,7 +9,8 @@
     "pdf-printer": "electron bin/cli.js"
   },
   "scripts": {
-    "postinstall": "patch-package"
+    "postinstall": "patch-package",
+    "dev": "node dev-bundler.js"
   },
   "dependencies": {
     "@babel/polyfill": "^7.4.4",
