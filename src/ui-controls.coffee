@@ -28,7 +28,14 @@ class PrintButton extends Component
     {printFigureArea} = @context
     onClick = ->
       printFigureArea()
-    h ToolButton, {rightIcon: 'print', onClick, intent: Intent.PRIMARY}, 'Print'
+    h ToolButton, {rightIcon: 'print', onClick, intent: Intent.SUCCESS}, 'Print'
+
+class ReloadButton extends Component
+  @contextType: AppStateContext
+  render: ->
+    onClick = => #@context.reload null
+    h ToolButton, {rightIcon: 'repeat', onClick, intent: Intent.PRIMARY}, 'Reload'
+
 
 class EditorButton extends Component
   @contextType: AppStateContext
@@ -77,6 +84,7 @@ class UIControls extends Component
       h 'div.right-buttons', [
         h DevToolsButton
         h.if(selectedTask?) [
+          #h ReloadButton
           h PrintButton
         ]
         h 'span.separator'

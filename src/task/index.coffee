@@ -3,7 +3,7 @@ import h from '~/hyper'
 import {Spinner} from '@blueprintjs/core'
 import {TaskElement, TaskStylesheet} from './elements'
 import {TaskShape} from './types'
-import requireString from 'require-from-string'
+import decache from 'decache'
 
 path = require 'path'
 fs = require 'fs'
@@ -68,8 +68,6 @@ class TaskRenderer extends Component
   onBundlingFinished: (bundle, outDir)=>
     console.log bundle
     console.log "Bundling done"
-    console.log "Sleeping for 500 ms"
-    await sleep(500)
 
     if bundle.type != 'js'
       throw "Only javascript output is supported (for now)"
@@ -82,9 +80,9 @@ class TaskRenderer extends Component
 
     compiledCode = bundle.name
     console.log "Requiring compiled code from #{bundle.name}"
-    v = require.resolve(compiledCode)
-    delete require.cache[v]
-    code = require v
+    decache(compiledCode)
+    #debugger
+    code = require compiledCode
     @setState {code, styles}
 
   componentDidMount: ->
