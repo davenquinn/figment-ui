@@ -17,7 +17,7 @@ runBundler = (file, opts)->
     watch: true, # whether to watch the files and rebuild them on change, defaults to process.env.NODE_ENV !== 'production'
     cache: true, # Enabled or disables caching, defaults to true
     cacheDir: '.cache', # The directory cache gets put in, defaults to .cache
-    contentHash: true, # Disable content hash from being included on the filename
+    #contentHash: true, # Disable content hash from being included on the filename
     minify: false, # Minify files, enabled if process.env.NODE_ENV === 'production'
     scopeHoist: false, # turn on experimental scope hoisting/tree shaking flag, for smaller production bundles
     target: 'electron', # browser/node/electron, defaults to browser

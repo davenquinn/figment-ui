@@ -3,7 +3,7 @@ import h from '~/hyper'
 import {Spinner} from '@blueprintjs/core'
 import {TaskElement, TaskStylesheet} from './elements'
 import {TaskShape} from './types'
-import requireString from 'require-from-string'
+import chokidar from 'chokidar'
 
 path = require 'path'
 fs = require 'fs'
@@ -22,6 +22,8 @@ class TaskRenderer extends Component
   constructor: (props)->
     super props
     @bundler = null
+    @currentBundle = null
+    @watcher = null
     @state = {
       code: null
       styles: null
@@ -50,10 +52,7 @@ class TaskRenderer extends Component
     cacheDir = path.join(dn, '.cache')
     outDir = path.join(cacheDir,'build')
 
-    @bundler = runBundler(codeFile, {outDir, cacheDir, cache: true, contentHash: true})
-    console.log "Running bundler process with PID #{@bundler.pid}"
-    process.on 'exit', =>
-      @bundler.kill()
+    @bundler = runBundler(codeFile, {outDir, cacheDir, cache: true})
 
     @bundler.on 'buildStart', (bundle)=>
       @onBundlingStarted(bundle)
@@ -63,13 +62,20 @@ class TaskRenderer extends Component
 
   onBundlingStarted: (bundle)=>
     console.log "Bundling started"
+    @currentBundle = null
     @setState {code: null, styles: null}
 
   onBundlingFinished: (bundle, outDir)=>
     console.log bundle
     console.log "Bundling done"
-    console.log "Sleeping for 500 ms"
-    await sleep(500)
+    @currentBundle = bundle
+    if not @watcher?
+      @watcher = chokidar.watch bundle.name
+        .on 'all', @onUpdateCode
+
+  onUpdateCode: =>
+    return unless @currentBundle?
+    bundle = @currentBundle
 
     if bundle.type != 'js'
       throw "Only javascript output is supported (for now)"
