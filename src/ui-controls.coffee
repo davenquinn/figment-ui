@@ -84,7 +84,7 @@ class UIControls extends Component
       h 'div.right-buttons', [
         h DevToolsButton
         h.if(selectedTask?) [
-          h ReloadButton
+          #h ReloadButton
           h PrintButton
         ]
         h 'span.separator'
