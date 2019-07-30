@@ -1,12 +1,17 @@
 import {Component} from 'react'
-import h from 'react-hyperscript'
+import h from '~/hyper'
+import {Spinner} from '@blueprintjs/core'
 import {TaskElement, TaskStylesheet} from './elements'
+import {TaskShape} from './types'
 
 path = require 'path'
 fs = require 'fs'
 {runBundler} = require '../../bundler'
 
 class TaskRenderer extends Component
+  @propTypes: {
+    task: TaskShape.isRequired
+  }
   constructor: (props)->
     super props
     @bundler = null
@@ -17,10 +22,11 @@ class TaskRenderer extends Component
   render: ->
     {code, styles} = @state
     if not code? and not styles?
-      h 'div#pdf-printer-progress-indicator', [
-        h 'p', "Creating bundle..."
+      return h 'div.progress', [
+        h Spinner
+        h 'p', "Bundling code"
       ]
-    h 'div#pdf-printer-figure-container-inner', [
+    h 'div.figure-container-inner', [
       h TaskStylesheet, {styles}
       h TaskElement, {code}
     ]
@@ -39,25 +45,38 @@ class TaskRenderer extends Component
     cacheDir = path.join(dn, '.cache')
     outDir = path.join(cacheDir,'build')
 
-    @bundler = runBundler(codeFile, {outDir, cacheDir})
+    @bundler = runBundler(codeFile, {outDir, cacheDir, cache: true, contentHash: true})
+    console.log "Running bundler process with PID #{@bundler.pid}"
     process.on 'exit', =>
       @bundler.kill()
 
     @bundler.on 'message', (bundle)=>
-      console.log "Bundling done"
+      if bundle.message == 'buildStart'
+        @onBundlingStarted(bundle)
+      if bundle.message == 'bundled'
+        @onBundlingFinished(bundle, outDir)
 
-      if bundle.type != 'js'
-        throw "Only javascript output is supported (for now)"
+  onBundlingStarted: (bundle)=>
+    console.log "Bundling started"
+    @setState {code: null, styles: null}
 
-      # Get css and javascript
-      cssFile = path.join(outDir, 'index.css')
-      styles = null
-      if fs.existsSync(cssFile)
-        styles = fs.readFileSync(cssFile, 'utf-8')
+  onBundlingFinished: (bundle, outDir)=>
+    console.log "Bundling done"
 
-      compiledCode = bundle.name
-      code = require compiledCode
-      @setState {code, styles}
+    if bundle.type != 'js'
+      throw "Only javascript output is supported (for now)"
+
+    # Get css and javascript
+    cssFile = path.join(outDir, 'index.css')
+    styles = null
+    if fs.existsSync(cssFile)
+      styles = fs.readFileSync(cssFile, 'utf-8')
+
+    compiledCode = bundle.name
+    console.log "Requiring compiled code from #{bundle.name}"
+    delete require.cache[require.resolve(compiledCode)]
+    code = require compiledCode
+    @setState {code, styles}
 
   componentDidMount: ->
     {task} = @props
@@ -73,4 +92,4 @@ class TaskRenderer extends Component
     return unless @bundler?
     @bundler.kill(0)
 
-export {TaskRenderer}
+export {TaskRenderer, TaskShape}

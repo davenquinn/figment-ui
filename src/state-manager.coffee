@@ -4,6 +4,8 @@ import update from 'immutability-helper'
 import {remote, ipcRenderer} from 'electron'
 import Promise from 'bluebird'
 {spawn} = require 'child_process'
+import {parse} from 'path'
+import 'devtools-detect'
 
 # This is awful
 import {Printer, printFigureArea} from "./lib.coffee"
@@ -18,6 +20,11 @@ getSpecs = (d)->
       v.name = d
       v
 
+nameForTask = (task)->
+  {name, outfile} = task
+  return name if name?
+  return parse(outfile).name
+
 class AppStateManager extends Component
   constructor: (props)->
     super props
@@ -30,12 +37,21 @@ class AppStateManager extends Component
       options...
       appState...
     }
-
     @defineTasks options
+
+  shouldListTasks: =>
+    {taskLists} = @state
+    return false unless taskLists?
+    if taskLists.length == 1
+      return taskLists[0].tasks.length != 1
+    return true
 
   selectedTask: =>
     {selectedTaskHash, taskLists} = @state
     return null unless taskLists?
+    if not @shouldListTasks()
+      return taskLists[0].tasks[0]
+
     for taskList in taskLists
       for task in taskList.tasks
         if task.hash == selectedTaskHash
@@ -43,12 +59,17 @@ class AppStateManager extends Component
     return null
 
   defineTasks: (options)=>
+    {specs} = options
+    # These should really be applied separately to each part
+    {multiPage, pageSize} = @state
     # If we are in spec mode
-    if options.specs?
-      p = Promise.map options.specs, getSpecs
+    if specs?
+      p = Promise.map specs, getSpecs
     else
       spec = new Printer
-      spec.task options.outfile, options.infile
+      spec.task options.outfile, options.infile, {
+        multiPage, pageSize
+      }
       p = Promise.resolve [spec]
     res = await p
     @updateState {taskLists: {$set: res}}
@@ -69,13 +90,14 @@ class AppStateManager extends Component
     selectedTask = @selectedTask()
     value = {
       update: @updateState,
-      printFigureArea,
+      printFigureArea: @printFigureArea,
+      hasTaskList: @shouldListTasks(),
+      nameForTask
       methods...
       @state...
       selectedTask
     }
 
-    console.log value
     h AppStateContext.Provider, {value}, @props.children
 
   updateState: (spec)=>
@@ -85,10 +107,12 @@ class AppStateManager extends Component
     appState = do -> {
       toolbarEnabled,
       selectedTaskHash,
+      devToolsEnabled
       zoomLevel } = newState
     ipcRenderer.send 'update-state', appState
 
   toggleDevTools: =>
+    @updateState {devToolsEnabled: {$set: true}}
     ipcRenderer.send 'dev-tools'
     win = remote.getCurrentWindow()
     win.openDevTools()
@@ -104,5 +128,12 @@ class AppStateManager extends Component
       console.log "Updating state from main process"
       @setState {state...}
 
+    window.addEventListener 'devtoolschange', (event)=>
+      {isOpen} = event.detail
+      @updateState {devToolsEnabled: {$set: isOpen}}
+
+  printFigureArea: =>
+    task = @selectedTask()
+    printFigureArea(task)
 
 export {AppStateContext, AppStateManager}

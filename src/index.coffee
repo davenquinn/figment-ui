@@ -1,6 +1,7 @@
 
 import "@babel/polyfill"
-import './style.styl'
+
+import './main.styl'
 
 import {FocusStyleManager} from '@blueprintjs/core'
 import {Component} from 'react'
@@ -16,10 +17,10 @@ FocusStyleManager.onlyShowFocusOnTabs()
 class AppMain extends Component
   @contextType: AppStateContext
   renderMain: ->
-    {taskLists, selectedTask, zoomLevel} = @context
-    console.log selectedTask
+    {taskLists, selectedTask, zoomLevel, toolbarEnabled} = @context
+    marginTop = if toolbarEnabled then "30px" else null
     if selectedTask?
-      return h FigureContainer, {task: selectedTask, zoomLevel}
+      return h FigureContainer, {task: selectedTask, zoomLevel, marginTop}
     if taskLists?
       return h TaskList, {runners: taskLists}
     return null

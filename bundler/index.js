@@ -33,7 +33,7 @@ const runBundler = function(inFile, options={}) {
   if (isRenderer) {
     env = Object.create(remote.process.env);
     runner = remote.process.argv[0];
-    bundlerScript = remote.getGlobal('bundlerScript')
+    bundlerScript = remote.getGlobal('bundlerScript');
   } else {
     env = Object.create(process.env);
     runner = process.argv[0];
@@ -53,6 +53,14 @@ const runBundler = function(inFile, options={}) {
     if (debug) printLine(bundle);
   });
   printToStdout(proc);
+
+  // Record PID for later killing
+  if (isRenderer) {
+    ipcRenderer.send('new-process', proc.pid);
+  } else {
+    // This should not directly operate on the PID list
+    global.pidList.push(proc.pid);
+  }
 
   console.log(`Started process ${proc.pid}`);
   return proc;

@@ -5,6 +5,9 @@ fs = require 'fs'
 path = require 'path'
 d3 = require 'd3-selection'
 colors = require 'colors/safe'
+import styles from './main.styl'
+import {assertShape} from '~/types'
+import {TaskShape} from './task/types'
 
 options = remote.getGlobal 'options' or {}
 options.dpi ?= 96
@@ -20,50 +23,42 @@ sleep = (data)->
     fn = ->resolve(data)
     setTimeout fn, 1000
 
-generateFigure = (task)->
-  main = d3.select "#pdf-printer-ui-controls"
-  main.html ""
-  ## Set up a webview
-  webview = main.append "webview"
-    .attr "nodeintegration", true
-    .attr "src", "file://"+require.resolve("../_runner/index.html")
-    .node()
-
-  new Promise (resolve, reject)->
-    webview.addEventListener 'dom-ready', (e)->
-      webview.send "run-task", {
-        code: task.code
-        helpers: task.helpers
-      }
-    webview.addEventListener 'ipc-message', (e)->
-      if event.channel == 'finished'
-        resolve(task)
-
 pixelsToMicrons = (px)->
   Math.ceil(px/96.0*25400)
 
-printToPDF = (webview, size)->
+printToPDF = (webview, opts)->
   new Promise (resolve, reject)->
     ###
     Print the webview to the callback
     ###
-    el = document.querySelector("#pdf-printer-figure-container-inner")
-    controls = document.querySelector("#pdf-printer-ui-controls")
+    el = document.getElementsByClassName(styles["figure-container-inner"])[0]
+    controls = document.getElementsByClassName(styles["ui-controls"])[0]
+
+    # pageSize can be A3, A4, A5, Legal, Letter, Tabloid or an Object
+    # containing height and width in microns.
+    # (https://electronjs.org/docs/api/web-contents)
+    {pageSize, width, height, scaleFactor} = opts
+    pageSize ?= {
+      height: pixelsToMicrons(height*scaleFactor)
+      width: pixelsToMicrons(width*scaleFactor)
+    }
+
     opts = {
       printBackground: true
-      marginsType: 1
-      pageSize: {
-        height: pixelsToMicrons(size.height*size.scaleFactor)+10
-        width: pixelsToMicrons(size.width*size.scaleFactor)+10
-      }
+      marginsType: 0
+      pageSize
     }
-    el.style.transform = "scale(#{size.scaleFactor})"
+    console.log opts
+
+    el.style.transform = "scale(#{scaleFactor})"
     el.style.transformOrigin = "top left"
 
     oldDisplay = controls.style.display
     controls.style.display = "none"
 
-    webview.printToPDF opts, (e,data)=>
+    {webContents: wc} = remote.getCurrentWindow()
+
+    wc.printToPDF opts, (e,data)=>
       reject(e) if e?
       resolve(data)
       el.style.transform = null
@@ -96,11 +91,15 @@ printFigureArea = (task)->
   ###
   # Function to print webpage
   ###
+
+  assertShape(task, TaskShape)
+
   console.log task
   opts = task.opts or {}
   {scaleFactor} = opts
   scaleFactor ?= 1
-  el = document.querySelector('#pdf-printer-figure-container-inner>*:first-child')
+
+  el = document.querySelector(".#{styles['figure-container-inner']}>*:first-child")
 
   {width, height} = el.getBoundingClientRect()
   opts = {width, height, scaleFactor}
@@ -118,6 +117,9 @@ printFigureArea = (task)->
     opts.format = ext.slice(1)
     buf = await printToImage(wc, opts)
   else
+    # Set pageSize from task
+    {pageSize} = task.opts
+    opts.pageSize = pageSize
     buf = await printToPDF(wc, opts)
 
   console.log "#{outfile}"
@@ -144,6 +146,7 @@ class Printer
     Add a task
     ###
     opts.dpi ?= 300
+
 
     # Check if we've got a function or string
     if typeof funcOrString == 'function'
@@ -172,32 +175,34 @@ class Printer
           .update(fn)
           .digest('hex')
 
-    @tasks.push
+    @tasks.push {
       outfile: fn
       code: func
       helpers: @options.helpers
       hash: h
+      multiPage: opts.multiPage
       opts: opts
+    }
     return @
 
   run: ->
     # Progress through list of figures, print
     # each one to file
-    __runTask = (t)->
-      console.log "#{t.code} ⇒ #{t.outfile}"
-      p = generateFigure(t)
-
-      if options.waitForUser
-        p = p.then waitForUserInput
-
-      p.then printFigureArea
-        .catch (e)->console.log('Error: '+e)
-
-    Promise
-      .map @tasks, __runTask, concurrency: 1
+    # TODO: fix this mode of operation
+    # __runTask = (t)->
+    #   console.log "#{t.code} ⇒ #{t.outfile}"
+    #   p = generateFigure(t)
+    #
+    #   if options.waitForUser
+    #     p = p.then waitForUserInput
+    #
+    #   p.then printFigureArea
+    #     .catch (e)->console.log('Error: '+e)
+    #
+    # Promise
+    #   .map @tasks, __runTask, concurrency: 1
 
 module.exports = {
   Printer
   printFigureArea
-  generateFigure
 }
