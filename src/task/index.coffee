@@ -45,26 +45,38 @@ class TaskRenderer extends Component
     cacheDir = path.join(dn, '.cache')
     outDir = path.join(cacheDir,'build')
 
-    @bundler = runBundler(codeFile, {outDir, cacheDir})
+    @bundler = runBundler(codeFile, {outDir, cacheDir, cache: true, contentHash: true})
     console.log "Running bundler process with PID #{@bundler.pid}"
     process.on 'exit', =>
       @bundler.kill()
 
     @bundler.on 'message', (bundle)=>
-      console.log "Bundling done"
+      if bundle.message == 'buildStart'
+        @onBundlingStarted(bundle)
+      if bundle.message == 'bundled'
+        @onBundlingFinished(bundle, outDir)
 
-      if bundle.type != 'js'
-        throw "Only javascript output is supported (for now)"
+  onBundlingStarted: (bundle)=>
+    console.log "Bundling started"
+    @setState {code: null, styles: null}
 
-      # Get css and javascript
-      cssFile = path.join(outDir, 'index.css')
-      styles = null
-      if fs.existsSync(cssFile)
-        styles = fs.readFileSync(cssFile, 'utf-8')
+  onBundlingFinished: (bundle, outDir)=>
+    console.log "Bundling done"
 
-      compiledCode = bundle.name
-      code = require compiledCode
-      @setState {code, styles}
+    if bundle.type != 'js'
+      throw "Only javascript output is supported (for now)"
+
+    # Get css and javascript
+    cssFile = path.join(outDir, 'index.css')
+    styles = null
+    if fs.existsSync(cssFile)
+      styles = fs.readFileSync(cssFile, 'utf-8')
+
+    compiledCode = bundle.name
+    console.log "Requiring compiled code from #{bundle.name}"
+    delete require.cache[require.resolve(compiledCode)]
+    code = require compiledCode
+    @setState {code, styles}
 
   componentDidMount: ->
     {task} = @props

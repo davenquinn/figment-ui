@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import h from 'react-hyperscript'
-import {findDOMNode} from 'react-dom'
+import {findDOMNode, render} from 'react-dom'
 
 class ErrorBoundary extends React.Component
   constructor: (props)->
@@ -37,33 +37,37 @@ class TaskElement extends Component
     code: null
     callback: null
   }
+  constructor: (props)->
+    super props
   render: ->
     {code} = @props
     return null unless code?
-    try
-      children = h ErrorBoundary, [
-        h(code)
-      ]
-      return h 'div', {children}
-    catch
-      return h 'div'
+    return h 'div'
+    # try
+    #   children = h ErrorBoundary, [
+    #     h(code, {__refresh: })
+    #   ]
+    #   return h 'div', {children}
+    # catch
+    #   return h 'div'
 
   runTask: =>
     {code, callback} = @props
     return unless code?
+    console.log "Running code from bundle"
     # React components are handled directly
-    return
+    #return
     # Here is where we would accept different
     # types of components
-    func = code
     callback ?= ->
 
     el = findDOMNode(@)
-    func el, callback
+    render(h(code), el, callback)
+
   componentDidMount: ->
     @runTask()
   componentDidUpdate: (prevProps)->
-    return if prevProps.code == @props.code
+    #return if prevProps.code == @props.code
     @runTask()
 
 class TaskStylesheet extends Component

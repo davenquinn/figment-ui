@@ -33,8 +33,16 @@ const options = {
 };
 
 const bundler = new Bundler(file, options);
+bundler.on('buildStart', (entryFiles)=>{
+  process.send({
+    message: 'buildStart',
+    entryFiles: entryFiles
+  })
+})
+
 bundler.on('bundled', (bundle)=>{
   let out = {
+    message: 'bundled',
     type: bundle.type,
     name: bundle.name
   };
