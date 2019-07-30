@@ -32,34 +32,21 @@ const options = {
   ...opts
 };
 
-async function runBundle(opts) {
-  // Initializes a bundler using the entrypoint location and options provided
-  const bundler = new Bundler(file, options);
-  bundler.on('bundled', (bundle)=>{
-    let out = {
-      type: bundle.type,
-      name: bundle.name
-    };
-    let {type, name, id, basename} = bundle.entryAsset;
-    out.entryAsset = {type, name, id, basename};
-    process.send(out);
-  });
-  try {
-    await bundler.bundle();
-  } catch(err) {}
+const bundler = new Bundler(file, options);
+bundler.on('bundled', (bundle)=>{
+  let out = {
+    type: bundle.type,
+    name: bundle.name
+  };
+  let {type, name, id, basename} = bundle.entryAsset;
+  out.entryAsset = {type, name, id, basename};
+  process.send(out);
+});
 
-  // process.on("message", msg => {
-  //   if (msg == "stop") {
-  //     console.log "Stopping bundler"
-  //   }
-  // })
+bundler.bundle()
+  .catch(err => console.error(err))
 
-  process.on('SIGINT', () => {
-    console.log("Child process recieved SIGINT")
-    bundler.stop()
-  });
-}
-
-runBundle();
-
-// Run bundler.stop on
+process.on('exit', () => {
+  console.log("Child process recieved SIGINT")
+  bundler.stop()
+});
