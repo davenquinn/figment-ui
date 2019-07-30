@@ -6,7 +6,7 @@ import {TaskShape} from './types'
 
 path = require 'path'
 fs = require 'fs'
-{runBundler} = require '../../bundler'
+{runBundler} = require '../bundler'
 
 class TaskRenderer extends Component
   @propTypes: {
@@ -50,11 +50,11 @@ class TaskRenderer extends Component
     process.on 'exit', =>
       @bundler.kill()
 
-    @bundler.on 'message', (bundle)=>
-      if bundle.message == 'buildStart'
-        @onBundlingStarted(bundle)
-      if bundle.message == 'bundled'
-        @onBundlingFinished(bundle, outDir)
+    @bundler.on 'buildStart', (bundle)=>
+      @onBundlingStarted(bundle)
+
+    @bundler.on 'bundled', (bundle)=>
+      @onBundlingFinished(bundle, outDir)
 
   onBundlingStarted: (bundle)=>
     console.log "Bundling started"
