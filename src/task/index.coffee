@@ -3,10 +3,17 @@ import h from '~/hyper'
 import {Spinner} from '@blueprintjs/core'
 import {TaskElement, TaskStylesheet} from './elements'
 import {TaskShape} from './types'
+import decache from 'decache'
 
 path = require 'path'
 fs = require 'fs'
-{runBundler} = require '../../bundler'
+{runBundler} = require '../bundler'
+
+sleep = (timeout=1000)->
+  new Promise (resolve, reject)->
+    fn = ->resolve()
+    setTimeout fn, timeout
+
 
 class TaskRenderer extends Component
   @propTypes: {
@@ -34,8 +41,6 @@ class TaskRenderer extends Component
     ###
     # This is the function that actually runs a discrete task
     ###
-    @bundler.kill(0) if @bundler?
-
     {task} = @props
     console.log "Running task"
 
@@ -50,31 +55,33 @@ class TaskRenderer extends Component
     process.on 'exit', =>
       @bundler.kill()
 
-    @bundler.on 'message', (bundle)=>
-      if bundle.message == 'buildStart'
-        @onBundlingStarted(bundle)
-      if bundle.message == 'bundled'
-        @onBundlingFinished(bundle, outDir)
+    @bundler.on 'buildStart', (bundle)=>
+      @onBundlingStarted(bundle)
+
+    @bundler.on 'bundled', (bundle)=>
+      @onBundlingFinished(bundle, outDir)
 
   onBundlingStarted: (bundle)=>
     console.log "Bundling started"
     @setState {code: null, styles: null}
 
   onBundlingFinished: (bundle, outDir)=>
+    console.log bundle
     console.log "Bundling done"
 
     if bundle.type != 'js'
       throw "Only javascript output is supported (for now)"
 
+    cssFile = bundle.siblingBundlesMap.get("css").name
     # Get css and javascript
-    cssFile = path.join(outDir, 'index.css')
     styles = null
     if fs.existsSync(cssFile)
       styles = fs.readFileSync(cssFile, 'utf-8')
 
     compiledCode = bundle.name
     console.log "Requiring compiled code from #{bundle.name}"
-    delete require.cache[require.resolve(compiledCode)]
+    decache(compiledCode)
+    #debugger
     code = require compiledCode
     @setState {code, styles}
 
@@ -86,10 +93,10 @@ class TaskRenderer extends Component
   componentDidUpdate: (prevProps)->
     {task} = @props
     return if prevProps.task == task
-    @startBundler task
+    #@startBundler task
 
   componentWillUnmount: ->
     return unless @bundler?
-    @bundler.kill(0)
+    @bundler.stop()
 
 export {TaskRenderer, TaskShape}

@@ -8,16 +8,15 @@ const {REACT_DEVELOPER_TOOLS, default: installExtension} = require('electron-dev
 console.log(REACT_DEVELOPER_TOOLS);
 
 const shortcuts = require('./shortcuts');
-const {runBundler} = require('../bundler');
 
 const argv = min(process.argv.slice(2), {
-  boolean: ['headless', 'spec-mode', 'show', 'dev', 'multi-page'],
+  boolean: ['headless', 'spec-mode', 'show', 'multi-page'],
   string: ['page-size']
 });
 // Specify --debug to show BrowserWindow
 //   and open devtools
 // Specify --spec to load from a spec
-const { headless, dev } = argv;
+const { headless } = argv;
 // Option just to show browser window (primarily for
 // debugging taskflow of this module)
 const show = argv.show || !headless;
@@ -36,7 +35,6 @@ global.options = {
   multiPage: argv['multi-page'] || false,
   pageSize: argv['page-size'] || null,
   debug: !headless || true,
-  dev: dev || false,
   devToolsEnabled: false,
   reload: argv.reload || !argv.headless
 };
@@ -96,13 +94,6 @@ process.on('exit', quitApp);
 
 function createWindow() {
   installExtension(REACT_DEVELOPER_TOOLS);
-
-  if (options.dev) {
-    const fp = path.resolve(__dirname, '..','src','index.html');
-    const outDir = path.resolve(__dirname, '..', 'lib');
-    const cacheDir = path.resolve(__dirname, '..', '.cache');
-    const bundlerProcess = runBundler(fp, {outDir, cacheDir});
-  }
 
   const cb = (request, callback) => {
     const url = request.url.substr(6);

@@ -42,18 +42,19 @@ class TaskElement extends Component
   render: ->
     {code} = @props
     return null unless code?
-    return h 'div'
-    # try
-    #   children = h ErrorBoundary, [
-    #     h(code, {__refresh: })
-    #   ]
-    #   return h 'div', {children}
-    # catch
-    #   return h 'div'
+    try
+      console.log "Rendering task"
+      children = h ErrorBoundary, [
+        h(code)
+      ]
+      return h 'div', {children}
+    catch
+      return h 'div'
 
   runTask: =>
     {code, callback} = @props
     return unless code?
+    return
     console.log "Running code from bundle"
     # React components are handled directly
     #return
@@ -68,6 +69,7 @@ class TaskElement extends Component
     @runTask()
   componentDidUpdate: (prevProps)->
     #return if prevProps.code == @props.code
+    console.log "Code was updated"
     @runTask()
 
 class TaskStylesheet extends Component
