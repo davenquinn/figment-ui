@@ -32,6 +32,10 @@ printToPDF = (webview, opts)->
     Print the webview to the callback
     ###
     el = document.getElementsByClassName(styles["figure-container-inner"])[0]
+    el1 = document.getElementsByClassName(styles["figure-container-outer"])[0]
+    el2 = document.getElementsByClassName(styles["figure-container"])[0]
+
+
     controls = document.getElementsByClassName(styles["ui-controls"])[0]
 
     # pageSize can be A3, A4, A5, Legal, Letter, Tabloid or an Object
@@ -45,13 +49,18 @@ printToPDF = (webview, opts)->
 
     opts = {
       printBackground: true
-      marginsType: 1
+      marginsType: 0
       pageSize
     }
     console.log opts
 
+    # This is really trashy
     el.style.transform = "scale(#{scaleFactor})"
     el.style.transformOrigin = "top left"
+    oldMargin = el1.style.marginTop
+    el1.style.marginTop = "0px"
+    oldPadding = el2.style.padding
+    el2.style.padding = "0px"
 
     oldDisplay = controls.style.display
     controls.style.display = "none"
@@ -63,6 +72,8 @@ printToPDF = (webview, opts)->
       resolve(data)
       el.style.transform = null
       el.style.transformOrigin = null
+      el1.style.marginTop = oldMargin
+      el2.style.padding = oldPadding
       controls.style.display = oldDisplay
 
 
