@@ -1,0 +1,123 @@
+* {
+  box-sizing: border-box;
+}
+html,
+body,
+#pdf-printer-figure-container-outer {
+  margin: 0px;
+  width: 100%;
+  height: 100vh;
+  background-color: #fff;
+  position: relative;
+}
+#pdf-printer-figure-container-outer {
+  overflow: scroll;
+  padding: 25px 0px 0px;
+}
+#pdf-printer-figure-container {
+  position: relative;
+  display: inline-block;
+  margin: 0px auto;
+}
+#pdf-printer-figure-container>* {
+/*
+    This touches user code but it's super-important
+    that no position info bleed through here.
+    This could be revised if needed.
+    */
+  position: relative !important;
+}
+#pdf-printer-ui-controls {
+  position: fixed;
+  display: flex;
+  padding: 2px 1em;
+  height: 25px;
+  width: 100%;
+  align-items: center;
+  z-index: 1000;
+  font-family: "San Francisco", Helvetica, sans-serif;
+  top: 0;
+  left: 0;
+  right: 0;
+  flex-direction: row;
+  justify-content: space-between;
+  background-color: #eee;
+  border-bottom: 1px solid #ccc;
+}
+#pdf-printer-ui-controls a {
+  text-decoration: none;
+  cursor: pointer;
+}
+#pdf-printer-ui-controls * {
+  font-weight: 400;
+}
+#pdf-printer-ui-controls h1 {
+  margin: 0;
+  padding: 0;
+  font-weight: 500;
+  font-size: 0.8em;
+  color: #444;
+  text-transform: uppercase;
+  flex: 1;
+}
+#pdf-printer-ui-controls h1 a {
+  color: #444;
+}
+#pdf-printer-ui-controls h1 a:hover {
+  color: #000;
+}
+#pdf-printer-ui-controls .buttons a {
+  display: inline-block;
+  padding: 0.1em 0.3em;
+  font-size: 0.8em;
+  border-radius: 4px;
+  background: #ddd;
+  border: 1px solid #ccc;
+}
+#pdf-printer-ui-controls .buttons a:hover {
+  background: #4ba6ff;
+  color: #fff;
+}
+@media print {
+  #pdf-printer-ui-controls {
+    display: none;
+  }
+  #pdf-printer-figure-container-outer {
+    padding: 0 !important;
+  }
+}
+#pdf-printer-figure-container .task-list {
+  font-family: "Helvetica Neue", Helvetica, sans-serif;
+  max-width: 90%;
+  width: 50em;
+  margin: 1em auto;
+  margin-top: 1.5em;
+  position: relative;
+  background: #eee;
+  padding: 1em;
+}
+#pdf-printer-figure-container .task-list h2,
+#pdf-printer-figure-container .task-list h5 {
+  font-weight: 400;
+  margin: 0;
+  overflow-wrap: break-word;
+}
+#pdf-printer-figure-container .task-list h5 {
+  color: #aaa;
+}
+#pdf-printer-figure-container .task-list * {
+  font-weight: 300;
+}
+#pdf-printer-figure-container .task-list ul {
+  list-style: none;
+  padding-left: 0;
+}
+#pdf-printer-figure-container .task-list li a {
+  text-decoration: none;
+  display: block;
+  padding: 0.1em 0.5em;
+}
+#pdf-printer-figure-container .task-list li a:hover {
+  background-color: #4ba6ff;
+  color: #fff;
+}
