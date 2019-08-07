@@ -3,6 +3,7 @@ import {Component, useContext} from 'react'
 import {AppStateContext} from './state-manager'
 import {TaskListItem} from './task-list'
 import h from '~/hyper'
+import classNames from 'classnames'
 
 ToolButton = (props)->
   h Button, {small: true, minimal: true, props...}
@@ -76,7 +77,10 @@ class UIControls extends Component
     if not toolbarEnabled
       return h MinimalUIControls
 
-    h 'div.ui-controls', [
+    fullscreen = (window.screenY == 0 and window.screenTop == 0)
+    className = classNames {fullscreen}
+
+    h 'div.ui-controls', {className}, [
       h 'div.left-buttons', [
         h BackButton
         h CurrentTaskName

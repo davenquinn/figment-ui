@@ -1,8 +1,9 @@
 import {Component} from 'react'
 import h from '~/hyper'
-import {Spinner} from '@blueprintjs/core'
+#import {Spinner} from '@blueprintjs/core'
 import {TaskElement, TaskStylesheet} from './elements'
 import {TaskShape} from './types'
+import PacmanLoader from 'react-spinners/PacmanLoader'
 import decache from 'decache'
 
 path = require 'path'
@@ -14,6 +15,8 @@ sleep = (timeout=1000)->
     fn = ->resolve()
     setTimeout fn, timeout
 
+Spinner = ->
+  h PacmanLoader, {size: 20, sizeUnit: 'px', color: '#aaa'}
 
 class TaskRenderer extends Component
   @propTypes: {
@@ -31,7 +34,7 @@ class TaskRenderer extends Component
     if not code? and not styles?
       return h 'div.progress', [
         h Spinner
-        h 'p', "Bundling code"
+        h 'p', "Digesting your code"
       ]
     h 'div.figure-container-inner', [
       h TaskStylesheet, {styles}

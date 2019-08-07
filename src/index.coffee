@@ -1,8 +1,5 @@
-
 import "@babel/polyfill"
 
-import {FocusStyleManager} from '@blueprintjs/core'
-FocusStyleManager.onlyShowFocusOnTabs()
 
 import {Component} from 'react'
 import {render} from 'react-dom'
@@ -11,6 +8,8 @@ import {UIControls} from './ui-controls'
 import {FigureContainer} from './figure-container'
 import {AppStateManager, AppStateContext} from './state-manager'
 import {TaskList} from './task-list'
+import {FocusStyleManager} from '@blueprintjs/core'
+FocusStyleManager.onlyShowFocusOnTabs()
 import './main.styl'
 
 class AppMain extends Component

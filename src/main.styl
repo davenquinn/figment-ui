@@ -58,11 +58,12 @@ button_margin = 6px
     font-family: "San Francisco", Helvetica, sans-serif !important
 
 .progress
-  width: 10em
   margin 2em auto
   text-align center
+  max-width 6em
+  color #aaa
   p
-    margin-top 1em
+    margin-top 2em
 
 .ui-controls
   // Allows dragging the Electron app
@@ -76,20 +77,21 @@ button_margin = 6px
   flex-direction row
   justify-content space-between
   user-select none
+  &.fullscreen
+    .left-buttons
+      margin-left button_margin
   a
     text-decoration: none
     cursor: pointer
   *
     font-weight: 400
   h1
-    margin: 0
-    padding 0
-    margin-left 78px
     font-weight: 500
-    margin-top 2px
-    font-size: 16px
     color #aaa
+    font-size: 14px
     flex 1
+    margin-bottom 0
+    margin-top 0
     a
       color: #444
       &:hover
@@ -97,19 +99,20 @@ button_margin = 6px
   background-color: #eee
   border-bottom: 1px solid #ccc
 
-  .buttons a
-    display: inline-block
-    padding: 0.1em 0.3em
-    font-size: 0.8em
-    border-radius 4px
-    background: #ddd
-    border 1px solid #ccc
-    &:hover
-      background: lighten(dodgerblue,20%)
-      color: white
+  button:focus
+    outline: none
 
   .right-buttons
     button
+      margin-right: button_margin
+    margin-right: button_margin*-1
+
+  .left-buttons
+    display flex
+    margin-left: 80px
+    align-items: baseline
+    &>*
+      display block
       margin-right: button_margin
     margin-right: button_margin*-1
 

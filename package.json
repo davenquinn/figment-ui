@@ -46,6 +46,7 @@
     "react-dom": "^16.8.6",
     "react-electron-web-view": "^2.0.1",
     "react-hyperscript": "^3.2.0",
+    "react-spinners": "^0.5.13",
     "require-from-string": "^2.0.2",
     "stream-to": "^2.0.0",
     "stylus": "^0.54.5",
