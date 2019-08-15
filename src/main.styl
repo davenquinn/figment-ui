@@ -51,11 +51,13 @@ button_margin = 6px
   &:hover .toolbar-toggle-button
     display: flex
 
-.ui-controls, .progress, .ui-controls-hidden
+.ui-controls, .progress, .ui-controls-hidden, .error-overlay
   :global
     @require "../vendor/blueprint.styl"
   *
     font-family: "San Francisco", Helvetica, sans-serif !important
+  pre
+    font-family: monospace !important
 
 .progress
   margin 2em auto
@@ -115,6 +117,12 @@ button_margin = 6px
       display block
       margin-right: button_margin
     margin-right: button_margin*-1
+
+.error
+  .origin
+    text-align right
+  pre
+    color: #A82A2A
 
 @media print
   .ui-controls

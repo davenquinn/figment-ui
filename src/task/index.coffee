@@ -1,11 +1,11 @@
 import {Component} from 'react'
 import h from '~/hyper'
-#import {Spinner} from '@blueprintjs/core'
 import {TaskElement, TaskStylesheet} from './elements'
 import {TaskShape} from './types'
 import PacmanLoader from 'react-spinners/PacmanLoader'
 import decache from 'decache'
 import {createBundler} from '../bundler'
+import {BundlerError} from './error'
 
 path = require 'path'
 fs = require 'fs'
@@ -28,9 +28,12 @@ class TaskRenderer extends Component
     @state = {
       code: null
       styles: null
+      error: null
     }
   render: ->
-    {code, styles} = @state
+    {code, styles, error} = @state
+    if error?
+      return h BundlerError, {error}
     if not code? and not styles?
       return h 'div.progress', [
         h Spinner
@@ -55,6 +58,10 @@ class TaskRenderer extends Component
 
     @bundler = createBundler(codeFile, {outDir, cacheDir})
     console.log "Running bundler process with PID #{@bundler.pid}"
+    @bundler.bundle()
+      .catch @handleBundleError
+
+
     process.on 'exit', =>
       @bundler.kill()
 
@@ -69,7 +76,11 @@ class TaskRenderer extends Component
 
   onBundlingStarted: (bundle)=>
     console.log "Bundling started"
-    @setState {code: null, styles: null}
+    @setState {code: null, styles: null, error: null}
+
+  handleBundleError: (err)=>
+    console.error(err)
+    @setState {error: err}
 
   onBundlingFinished: (bundle, outDir)=>
     console.log bundle
@@ -90,7 +101,7 @@ class TaskRenderer extends Component
     decache(compiledCode)
     #debugger
     code = require compiledCode
-    @setState {code, styles}
+    @setState {code, styles, error: null}
 
   componentDidMount: ->
     {task} = @props

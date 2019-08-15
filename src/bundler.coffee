@@ -32,9 +32,6 @@ createBundler = (file, opts)->
   }
 
   bundler = new Bundler(file, options)
-
-  bundler.bundle()
-    .catch (err) => console.error(err)
   return bundler
 
 export {createBundler}
