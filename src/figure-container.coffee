@@ -30,7 +30,7 @@ class FigureContainer extends Component
 
     h 'div.figure-container-outer', {style: {height, marginTop}}, [
       h 'div.figure-container', {style}, [
-        h.if(task?) TaskRenderer, {task, key: task}
+        h.if(task?) TaskRenderer, {task, key: task, multiPage}
       ]
     ]
 

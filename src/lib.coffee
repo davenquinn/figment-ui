@@ -191,7 +191,7 @@ class Printer
       code: func
       helpers: @options.helpers
       hash: h
-      multiPage: opts.multiPage
+      multiPage: opts.multiPage or false
       opts: opts
     }
     return @
