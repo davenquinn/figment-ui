@@ -8,7 +8,7 @@ import Bundler from 'parcel-bundler'
 #  Bundler options
 
 
-runBundler = (file, opts)->
+createBundler = (file, opts)->
 
   options = {
     hmr: false,
@@ -37,4 +37,4 @@ runBundler = (file, opts)->
     .catch (err) => console.error(err)
   return bundler
 
-export default runBundler
+export {createBundler}

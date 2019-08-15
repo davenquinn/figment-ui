@@ -5,10 +5,10 @@ import {TaskElement, TaskStylesheet} from './elements'
 import {TaskShape} from './types'
 import PacmanLoader from 'react-spinners/PacmanLoader'
 import decache from 'decache'
+import {createBundler} from '../bundler'
 
 path = require 'path'
 fs = require 'fs'
-{runBundler} = require '../bundler'
 
 sleep = (timeout=1000)->
   new Promise (resolve, reject)->
@@ -53,13 +53,16 @@ class TaskRenderer extends Component
     cacheDir = path.join(dn, '.cache')
     outDir = path.join(cacheDir,'build')
 
-    @bundler = runBundler(codeFile, {outDir, cacheDir, cache: true, contentHash: true})
+    @bundler = createBundler(codeFile, {outDir, cacheDir})
     console.log "Running bundler process with PID #{@bundler.pid}"
     process.on 'exit', =>
       @bundler.kill()
 
     @bundler.on 'buildStart', (bundle)=>
       @onBundlingStarted(bundle)
+
+    @bundler.on 'error', (bundle)=>
+      console.log "Bundler error"
 
     @bundler.on 'bundled', (bundle)=>
       @onBundlingFinished(bundle, outDir)
@@ -75,11 +78,12 @@ class TaskRenderer extends Component
     if bundle.type != 'js'
       throw "Only javascript output is supported (for now)"
 
-    cssFile = bundle.siblingBundlesMap.get("css").name
-    # Get css and javascript
+
     styles = null
-    if fs.existsSync(cssFile)
-      styles = fs.readFileSync(cssFile, 'utf-8')
+    cssFile = bundle.siblingBundlesMap.get("css")
+    # Get css and javascript
+    if cssFile? and fs.existsSync(cssFile.name)
+      styles = fs.readFileSync(cssFile.name, 'utf-8')
 
     compiledCode = bundle.name
     console.log "Requiring compiled code from #{bundle.name}"
