@@ -5,9 +5,9 @@ import {Component} from 'react'
 import {render} from 'react-dom'
 import h from 'react-hyperscript'
 import {UIControls} from './ui-controls'
-import {FigureContainer} from './figure-container'
 import {AppStateManager, AppStateContext} from './state-manager'
 import {TaskList} from './task-list'
+import {TaskRenderer} from './task'
 import {FocusStyleManager} from '@blueprintjs/core'
 FocusStyleManager.onlyShowFocusOnTabs()
 import './main.styl'
@@ -18,7 +18,7 @@ class AppMain extends Component
     {taskLists, selectedTask, zoomLevel, toolbarEnabled} = @context
     marginTop = if toolbarEnabled then "30px" else null
     if selectedTask?
-      return h FigureContainer, {task: selectedTask, zoomLevel, marginTop}
+      return h TaskRenderer, {task: selectedTask, zoomLevel, marginTop}
     if taskLists?
       return h TaskList, {runners: taskLists}
     return null

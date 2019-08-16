@@ -3,21 +3,20 @@ import {Component} from 'react'
 import T from 'prop-types'
 import {TaskRenderer, TaskShape} from './task'
 import WebView from 'react-electron-web-view'
+import {MarginType} from '~/types'
 
 class FigureContainer extends Component
   @defaultProps: {
     zoomLevel: 1
-    marginTop: null
+    marginTop: 0
   }
   @propTypes: {
-    task: TaskShape
-    marginTop: T.integer
+    marginTop: MarginType
+    multiPage: T.bool.isRequired
   }
   render: ->
-    {zoomLevel, task, marginTop} = @props
+    {zoomLevel, task, marginTop, multiPage} = @props
     # We shouldn't have this nested structure, it's confusing
-    {multiPage} = task.opts
-    multiPage ?= false
 
     height = if multiPage then null else "100vh"
 
@@ -28,9 +27,10 @@ class FigureContainer extends Component
       padding: "#{20/zoomLevel}px"
     }
 
-    h 'div.figure-container-outer', {style: {height, marginTop}}, [
+    h 'div.figure-container-outer', {style: {height, paddingTop: marginTop}}, [
       h 'div.figure-container', {style}, [
-        h.if(task?) TaskRenderer, {task, key: task, multiPage}
+        h 'div.figure-container-inner', null, @props.children
+        #h.if(task?) TaskRenderer, {task, key: task, multiPage}
       ]
     ]
 

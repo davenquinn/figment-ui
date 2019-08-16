@@ -57,7 +57,7 @@ printToPDF = (webview, opts)->
     # This is really trashy
     el.style.transform = "scale(#{scaleFactor})"
     el.style.transformOrigin = "top left"
-    oldMargin = el1.style.marginTop
+    oldPaddingOuter = el1.style.paddingTop
     el1.style.marginTop = "0px"
     oldPadding = el2.style.padding
     el2.style.padding = "0px"
@@ -72,7 +72,7 @@ printToPDF = (webview, opts)->
       resolve(data)
       el.style.transform = null
       el.style.transformOrigin = null
-      el1.style.marginTop = oldMargin
+      el1.style.paddingTop = oldPaddingOuter
       el2.style.padding = oldPadding
       controls.style.display = oldDisplay
 

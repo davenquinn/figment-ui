@@ -6,6 +6,9 @@ import PacmanLoader from 'react-spinners/PacmanLoader'
 import decache from 'decache'
 import {createBundler} from '../bundler'
 import {BundlerError} from './error'
+import {FigureContainer} from '../figure-container'
+import T from 'prop-types'
+import {MarginType} from '~/types'
 
 path = require 'path'
 fs = require 'fs'
@@ -20,7 +23,9 @@ Spinner = ->
 
 class TaskRenderer extends Component
   @propTypes: {
-    task: TaskShape.isRequired
+    task: TaskShape
+    marginTop: MarginType
+    zoomLevel: T.number
   }
   constructor: (props)->
     super props
@@ -31,7 +36,13 @@ class TaskRenderer extends Component
       error: null
     }
   render: ->
+    {task, zoomLevel, marginTop} = @props
+    {multiPage} = task.opts
+    multiPage ?= false
+
     {code, styles, error} = @state
+    if not task?
+      return null
     if error?
       return h BundlerError, {error}
     if not code? and not styles?
@@ -39,7 +50,7 @@ class TaskRenderer extends Component
         h Spinner
         h 'p', "Digesting your code"
       ]
-    h 'div.figure-container-inner', [
+    h FigureContainer, {marginTop, zoomLevel, multiPage},  [
       h TaskStylesheet, {styles}
       h TaskElement, {code}
     ]
