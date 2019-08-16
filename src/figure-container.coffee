@@ -24,6 +24,7 @@ class FigureContainer extends Component
       transform: z
       transformOrigin: "0px 0px"
       padding: "#{20/zoomLevel}px"
+      top: '38px'
     }
 
     h 'div.figure-container-outer', {style: {height, paddingTop: marginTop}}, [

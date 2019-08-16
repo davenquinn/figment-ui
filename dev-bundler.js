@@ -1,6 +1,8 @@
 // Bundles electron code for production
 const Bundler = require('parcel-bundler');
 
+const shouldWatch = process.argv.includes("--watch");
+
 // Entrypoint file location
 const file = "src/index.html";
 
@@ -9,7 +11,7 @@ const options = {
   hmr: false,
   publicUrl: './',
   outDir: 'lib', // The out directory to put the build files in, defaults to dist
-  watch: true, // whether to watch the files and rebuild them on change, defaults to process.env.NODE_ENV !== 'production'
+  watch: shouldWatch, // whether to watch the files and rebuild them on change, defaults to process.env.NODE_ENV !== 'production'
   cache: false, // Enabled or disables caching, defaults to true
   contentHash: false, // Disable content hash from being included on the filename
   minify: false, // Minify files, enabled if process.env.NODE_ENV === 'production'

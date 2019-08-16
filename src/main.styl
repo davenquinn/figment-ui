@@ -10,16 +10,20 @@ html, body, .figure-container-outer
   position relative
 
 .figure-container-outer
-  overflow: scroll
   padding 0px 0px
+  height 100vh
 
 .figure-container-inner
   display: block
   margin 0 auto
 
 .figure-container
-  position relative
+  position absolute
+  bottom 0
+  left 0
+  right 0
   margin 0px auto
+  overflow: scroll
   &>*
     /*
     This touches user code but it's super-important

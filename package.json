@@ -1,7 +1,7 @@
 {
   "name": "figurate",
   "version": "1.0.0",
-  "description": "Printing figures to files",
+  "description": "Prints figures to files",
   "main": "index.coffee",
   "author": "Daven Quinn",
   "license": "ISC",
@@ -9,8 +9,10 @@
     "figurate": "bin/cli.js"
   },
   "scripts": {
-    "postinstall": "patch-package",
-    "dev": "node dev-bundler.js"
+    "postinstall": "patch-package; npm run build",
+    "dev": "node dev-bundler.js --watch",
+    "build": "node dev-bundler.js",
+    "prepare": "npm run build"
   },
   "dependencies": {
     "@babel/polyfill": "^7.4.4",

@@ -15,7 +15,7 @@ class AppMain extends Component
   @contextType: AppStateContext
   renderMain: ->
     {taskLists, selectedTask, zoomLevel, toolbarEnabled} = @context
-    marginTop = if toolbarEnabled then "30px" else null
+    marginTop = if toolbarEnabled then "38px" else null
     if selectedTask?
       return h TaskRenderer, {task: selectedTask, zoomLevel, marginTop}
     if taskLists?
