@@ -1,12 +1,12 @@
 {
-  "name": "pdf-printer",
+  "name": "figurate",
   "version": "1.0.0",
   "description": "Printing figures to files",
   "main": "index.coffee",
   "author": "Daven Quinn",
   "license": "ISC",
   "bin": {
-    "pdf-printer": "electron bin/cli.js"
+    "figurate": "bin/cli.js"
   },
   "scripts": {
     "postinstall": "patch-package",
@@ -44,7 +44,6 @@
     "ps-node": "^0.1.6",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
-    "react-electron-web-view": "^2.0.1",
     "react-hyperscript": "^3.2.0",
     "react-spinners": "^0.5.13",
     "require-from-string": "^2.0.2",

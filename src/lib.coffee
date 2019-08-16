@@ -110,9 +110,10 @@ printFigureArea = (task)->
   {scaleFactor} = opts
   scaleFactor ?= 1
 
-  el = document.querySelector(".#{styles['figure-container-inner']}>*:first-child")
+  el = document.querySelector(".#{styles['figure-container-inner']}")
 
   {width, height} = el.getBoundingClientRect()
+
   opts = {width, height, scaleFactor}
 
   {outfile} = task
@@ -133,7 +134,6 @@ printFigureArea = (task)->
     opts.pageSize = pageSize
     buf = await printToPDF(wc, opts)
 
-  console.log "#{outfile}"
   fs.writeFileSync outfile, buf
   console.log "Finished task"
 
@@ -195,23 +195,6 @@ class Printer
       opts: opts
     }
     return @
-
-  run: ->
-    # Progress through list of figures, print
-    # each one to file
-    # TODO: fix this mode of operation
-    # __runTask = (t)->
-    #   console.log "#{t.code} ⇒ #{t.outfile}"
-    #   p = generateFigure(t)
-    #
-    #   if options.waitForUser
-    #     p = p.then waitForUserInput
-    #
-    #   p.then printFigureArea
-    #     .catch (e)->console.log('Error: '+e)
-    #
-    # Promise
-    #   .map @tasks, __runTask, concurrency: 1
 
 module.exports = {
   Printer

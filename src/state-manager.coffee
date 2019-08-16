@@ -35,6 +35,7 @@ class AppStateManager extends Component
     @state = {
       taskLists: null
       # We should improve this
+      isPrinting: false
       options...
       appState...
     }
@@ -67,7 +68,7 @@ class AppStateManager extends Component
     if specs?
       p = Promise.map specs, getSpecs
     else
-      spec = new Printer
+      spec = new Printer()
       spec.task options.outfile, options.infile, {
         multiPage, pageSize
       }
@@ -135,6 +136,11 @@ class AppStateManager extends Component
 
   printFigureArea: =>
     task = @selectedTask()
-    printFigureArea(task)
+    @updateState {isPrinting: {$set: true}}
+    try
+      await printFigureArea(task)
+    catch err
+      console.err err
+    @updateState {isPrinting: {$set: false}}
 
 export {AppStateContext, AppStateManager}

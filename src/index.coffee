@@ -1,6 +1,5 @@
 import "@babel/polyfill"
 
-
 import {Component} from 'react'
 import {render} from 'react-dom'
 import h from 'react-hyperscript'

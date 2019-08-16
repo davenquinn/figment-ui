@@ -2,7 +2,6 @@ import h from '~/hyper'
 import {Component} from 'react'
 import T from 'prop-types'
 import {TaskRenderer, TaskShape} from './task'
-import WebView from 'react-electron-web-view'
 import {MarginType} from '~/types'
 
 class FigureContainer extends Component
@@ -30,7 +29,6 @@ class FigureContainer extends Component
     h 'div.figure-container-outer', {style: {height, paddingTop: marginTop}}, [
       h 'div.figure-container', {style}, [
         h 'div.figure-container-inner', null, @props.children
-        #h.if(task?) TaskRenderer, {task, key: task, multiPage}
       ]
     ]
 
