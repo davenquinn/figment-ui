@@ -123,6 +123,19 @@ button_margin = 6px
     text-align right
   pre
     color: #A82A2A
+  details
+    summary
+      color #A82A2A
+      font-weight 600
+      cursor pointer
+      padding 0.2em 0.4em
+      border-radius 0.2em
+      user-select false
+      &:hover
+        background-color lighten(#FF7373, 20%)
+      &:focus
+        outline: none
+
 
 @media print
   .ui-controls

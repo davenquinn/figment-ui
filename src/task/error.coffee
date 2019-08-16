@@ -6,7 +6,7 @@ ErrorLines = (p)->
   h 'span.lines', [
     h 'span.start', "#{p.first_line+1}:#{p.first_column+1}"
     h.if(renderEnd) [
-      "—"
+      "-"
       h 'span.end', "#{p.last_line+1}:#{p.last_column+1}"
     ]
   ]
@@ -20,7 +20,10 @@ ErrorLocation = (props)->
     h ErrorLines, location
   ]
 
-ErrorTitle = (error)->
+ErrorTitle = (props)->
+  {error} = props
+  if typeof error is 'string'
+    return h 'span', error
   h [
     h 'span', error.name
     ": "
@@ -29,19 +32,30 @@ ErrorTitle = (error)->
 
 
 Error = (props)->
-  {error, origin} = props
+  {error, origin, details} = props
   {fileName, location} = error
+  if details?
+    {componentStack} = details
+  else
+    componentStack = null
 
   h Callout, {
     className: 'error',
     intent: Intent.DANGER,
     icon: 'error'
-    title: h ErrorTitle, error
+    title: h ErrorTitle, {error}
   }, [
-    h ErrorLocation, {fileName, location}
-    h 'pre.stack.bp3-code-block', error.stack
+    h.if(fileName?) ErrorLocation, {fileName, location}
+    h.if(error.stack?) 'pre.stack.bp3-code-block', error.stack
     h.if(origin?) 'h6.bp3-text.origin', error.origin
-    #h 'pre.code', error.code
+    h.if(error.code?) 'details', [
+      h 'summary', "Code"
+      h 'pre.code.bp3-code-block', error.code
+    ]
+    h.if(componentStack?) 'details', [
+      h 'summary', "Component stack"
+      h 'pre.stack.bp3-code-block', componentStack
+    ]
   ]
 
 BundlerError = (props)->

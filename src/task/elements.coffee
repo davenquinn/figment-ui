@@ -1,5 +1,6 @@
 import React, {Component} from 'react'
-import h from 'react-hyperscript'
+import h from '~/hyper'
+import {BundlerError} from './error'
 import {findDOMNode, render} from 'react-dom'
 
 class ErrorBoundary extends React.Component
@@ -18,18 +19,11 @@ class ErrorBoundary extends React.Component
     }
 
   render: ->
-    if @state.errorInfo
+    {error, errorInfo} = @state
+    if error?
       # Error path
-      return (
-        <div>
-          <h2>Something went wrong.</h2>
-          <details style={{ whiteSpace: 'pre-wrap' }}>
-            {@state.error && @state.error.toString()}
-            <br />
-            {@state.errorInfo.componentStack}
-          </details>
-        </div>
-      )
+      console.log error, errorInfo
+      return h BundlerError, {error, details: errorInfo}
     return @props.children
 
 class TaskElement extends Component

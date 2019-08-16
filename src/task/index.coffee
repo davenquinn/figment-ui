@@ -59,7 +59,7 @@ class TaskRenderer extends Component
     @bundler = createBundler(codeFile, {outDir, cacheDir})
     console.log "Running bundler process with PID #{@bundler.pid}"
     @bundler.bundle()
-      .catch @handleBundleError
+      .catch (e)=> console.error e
 
 
     process.on 'exit', =>
@@ -68,8 +68,8 @@ class TaskRenderer extends Component
     @bundler.on 'buildStart', (bundle)=>
       @onBundlingStarted(bundle)
 
-    @bundler.on 'error', (bundle)=>
-      console.log "Bundler error"
+    @bundler.on 'buildError', (error)=>
+      @handleBundleError(error)
 
     @bundler.on 'bundled', (bundle)=>
       @onBundlingFinished(bundle, outDir)
