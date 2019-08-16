@@ -46,7 +46,7 @@ class TaskRenderer extends Component
     if error?
       return h BundlerError, {error}
     if not code? and not styles?
-      return h 'div.progress', [
+      return h 'div.progress', {style: {marginTop}}, [
         h Spinner
         h 'p', "Digesting your code"
       ]
