@@ -136,11 +136,11 @@ class AppStateManager extends Component
 
   printFigureArea: =>
     task = @selectedTask()
-    @updateState {isPrinting: {$set: true}}
+    @setState {isPrinting: true}
     try
       await printFigureArea(task)
     catch err
-      console.err err
-    @updateState {isPrinting: {$set: false}}
+      console.error err
+    @setState {isPrinting: false}
 
 export {AppStateContext, AppStateManager}

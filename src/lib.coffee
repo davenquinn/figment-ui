@@ -42,6 +42,8 @@ printToPDF = (webview, opts)->
     # containing height and width in microns.
     # (https://electronjs.org/docs/api/web-contents)
     {pageSize, width, height, scaleFactor} = opts
+    width = 1800
+    height = 1800
     pageSize ?= {
       height: pixelsToMicrons(height*scaleFactor)
       width: pixelsToMicrons(width*scaleFactor)
@@ -54,28 +56,11 @@ printToPDF = (webview, opts)->
     }
     console.log opts
 
-    # This is really trashy
-    el.style.transform = "scale(#{scaleFactor})"
-    el.style.transformOrigin = "top left"
-    oldPaddingOuter = el1.style.paddingTop
-    el1.style.marginTop = "0px"
-    oldPadding = el2.style.padding
-    el2.style.padding = "0px"
-
-    oldDisplay = controls.style.display
-    controls.style.display = "none"
-
     {webContents: wc} = remote.getCurrentWindow()
 
     wc.printToPDF opts, (e,data)=>
       reject(e) if e?
       resolve(data)
-      el.style.transform = null
-      el.style.transformOrigin = null
-      el1.style.paddingTop = oldPaddingOuter
-      el2.style.padding = oldPadding
-      controls.style.display = oldDisplay
-
 
 printToImage = (webview, opts)->
   new Promise (resolve, reject)->

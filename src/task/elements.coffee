@@ -38,10 +38,9 @@ class TaskElement extends Component
     return null unless code?
     try
       console.log "Rendering task"
-      children = h ErrorBoundary, [
+      return h ErrorBoundary, [
         h(code)
       ]
-      return h 'div', {children}
     catch
       return h 'div'
 

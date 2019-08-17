@@ -12,16 +12,23 @@ html, body, .figure-container-outer
 .figure-container-outer
   padding 0px 0px
   height 100vh
+  &.is-printing
+    margin-top 0px
+    padding-top 0px
 
 .figure-container-inner
   display: block
   margin 0 auto
+  &.is-printing
+    transform-origin top left
 
 .figure-container
   position absolute
   bottom 0
   left 0
   right 0
+  &.is-printing
+    position relative
   margin 0px auto
   overflow: scroll
   &>*
