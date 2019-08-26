@@ -19,25 +19,21 @@ html, body, .figure-container-outer
 .figure-container-inner
   display: block
   margin 0 auto
-  &.is-printing
-    transform-origin top left
+  transform-origin 0px 0px
 
 .figure-container
   position absolute
   bottom 0
   left 0
   right 0
+  top 38px
+  padding 20px
   &.is-printing
+    top 0
+    padding 0
     position relative
   margin 0px auto
   overflow: scroll
-  &>*
-    /*
-    This touches user code but it's super-important
-    that no position info bleed through here.
-    This could be revised if needed.
-    */
-    position relative !important
 
 *
   box-sizing border-box
