@@ -1,9 +1,10 @@
-import React, {Component} from 'react'
+import React, {Component, createRef} from 'react'
 import h from '~/hyper'
 import {BundlerError} from './error'
 import {findDOMNode, render} from 'react-dom'
 import WebView from 'react-electron-web-view'
 import {resolve} from 'path'
+import styles from '../main.styl'
 
 class ErrorBoundary extends React.Component
   constructor: (props)->
@@ -35,21 +36,31 @@ class TaskElement extends Component
   }
   constructor: (props)->
     super props
+    @webview = createRef()
   render: ->
     {code} = @props
 
     h 'div', [
       h WebView, {
+        ref: @webview
+        src: "https://www.google.com"
         className: 'figure-container-webview',
         disablewebsecurity: true
+        nodeintegration: true
+        #devToolsEnabled: true
+        style: {
+          width: '100%'
+          height: '500px'
+        }
       }
-      h WebView, {className: 'figure-container-devtools'}
+      #h WebView, {className: 'figure-container-devtools'}
     ]
 
   componentDidMount: ->
     el = findDOMNode(@)
-    browserView = el.querySelector('.figure-container-webview')
-    devtoolsView = el.querySelector('.figure-container-devtools')
+    return
+    browserView = el.querySelector("."+styles["figure-container-webview"])
+    devtoolsView = el.querySelector("."+styles['figure-container-devtools'])
     browserView.addEventListener 'dom-ready', =>
       browser = browserView.getWebContents()
       browser.setDevToolsWebContents(devtoolsView.getWebContents())
@@ -58,8 +69,9 @@ class TaskElement extends Component
   runTask: =>
     {code, callback} = @props
     return unless code?
-    return
     console.log "Running code from bundle"
+    @webview.current.executeJavascript("require('#{code}')")
+    return
     # React components are handled directly
     #return
     # Here is where we would accept different

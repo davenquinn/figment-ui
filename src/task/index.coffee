@@ -102,7 +102,7 @@ class TaskRenderer extends Component
   onBundlingFinished: (bundle, outDir)=>
     console.log bundle
     console.log "Bundling done"
-    console.clear()
+    #console.clear()
 
     #if bundle.type != 'js'
     #  throw "Only javascript output is supported (for now)"
