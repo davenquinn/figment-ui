@@ -2,7 +2,6 @@
 require './large-svg.styl'
 
 module.exports = (el_, callback)->
-
   # Create our svg
   el = select el_
     .append 'svg'
@@ -17,5 +16,6 @@ module.exports = (el_, callback)->
   el.append 'text'
     .text 'Test PDF creation'
     .attr 'y', 50
+  throw "Halp!"
 
   callback()
