@@ -23,7 +23,7 @@ class AppMain extends Component
     return null
 
   render: ->
-    h 'div#app-main', [
+    h 'div.app-main', [
       h UIControls
       @renderMain()
     ]

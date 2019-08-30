@@ -42,8 +42,6 @@ printToPDF = (webview, opts)->
     # containing height and width in microns.
     # (https://electronjs.org/docs/api/web-contents)
     {pageSize, width, height, scaleFactor} = opts
-    width = 1800
-    height = 1800
     pageSize ?= {
       height: pixelsToMicrons(height*scaleFactor)
       width: pixelsToMicrons(width*scaleFactor)
@@ -95,7 +93,7 @@ printFigureArea = (task)->
   {scaleFactor} = opts
   scaleFactor ?= 1
 
-  el = document.querySelector(".#{styles['figure-container-inner']}")
+  el = document.querySelector(".#{styles['element-container']}")
 
   {width, height} = el.getBoundingClientRect()
 

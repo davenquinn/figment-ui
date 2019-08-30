@@ -12,14 +12,22 @@ html, body, .figure-container-outer
 .figure-container-outer
   padding 0px 0px
   height 100vh
+  width 100vw
   &.is-printing
     margin-top 0px
     padding-top 0px
+
+.app-main
+  display flex
+  flex-direction column
+  height 100vh
+  width 100vw
 
 .figure-container-inner
   display: block
   margin 0 auto
   transform-origin 0px 0px
+  overflow auto
 
 .figure-container
   position absolute
@@ -47,6 +55,8 @@ button_margin = 6px
   right 0
   left 0
   z-index 1000
+  &.is-printing
+    display none
 
 .ui-controls-hidden
   height: 50px
@@ -78,7 +88,6 @@ button_margin = 6px
 .ui-controls
   // Allows dragging the Electron app
   -webkit-app-region: drag
-  position: fixed
   display: flex
   padding-right: 12px
   height:38px
@@ -126,6 +135,10 @@ button_margin = 6px
       margin-right: button_margin
     margin-right: button_margin*-1
 
+.element-container
+  width 100%
+  overflow auto
+
 .error
   .origin
     text-align right
@@ -153,3 +166,5 @@ button_margin = 6px
     display none
   .figure-container-outer
     padding 0 !important
+  @page
+    margin 0px

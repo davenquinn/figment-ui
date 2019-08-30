@@ -34,13 +34,18 @@ class TaskRenderer extends Component
       code: null
       styles: null
       error: null
+      size: null
     }
   render: ->
     {task, zoomLevel, marginTop} = @props
     {multiPage} = task.opts
     multiPage ?= false
 
-    {code, styles, error} = @state
+    {code, styles, error, size} = @state
+    width = null
+    if size?
+      width = size.width
+
     if not task?
       return null
     if error?
@@ -50,10 +55,14 @@ class TaskRenderer extends Component
         h Spinner
         h 'p', "Digesting your code"
       ]
-    h FigureContainer, {marginTop, zoomLevel, multiPage},  [
+    h FigureContainer, {marginTop, zoomLevel, multiPage, width},  [
       h TaskStylesheet, {styles}
-      h TaskElement, {code}
+      h TaskElement, {code, recordSize: @recordSize}
     ]
+
+  recordSize: ({width, height})=>
+    @setState {size: {width, height}}
+
   startBundler: =>
     ###
     # This is the function that actually runs a discrete task

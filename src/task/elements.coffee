@@ -35,10 +35,12 @@ class TaskElement extends Component
     console.log "Rendering"
     if isValidElement(code)
       try
-        return h(code)
+        return h 'div.element-container', [
+          h(code)
+        ]
       catch
         return null
-    return h 'div'
+    return h 'div.element-container'
 
   runTask: =>
     {code, callback} = @props
@@ -55,12 +57,20 @@ class TaskElement extends Component
     catch err
       @setState {error: err}
 
+  computeWidth: ->
+    el = findDOMNode(@)
+    rect = el.firstChild.getBoundingClientRect()
+    @props.recordSize rect
+
   componentDidMount: ->
     @runTask()
+    @computeWidth()
+
   componentDidUpdate: (prevProps)->
-    #return if prevProps.code == @props.code
+    return if prevProps.code == @props.code
     console.log "Code was updated"
     @runTask()
+    @computeWidth()
 
 class TaskStylesheet extends Component
   render: ->

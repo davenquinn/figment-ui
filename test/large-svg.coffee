@@ -16,6 +16,5 @@ module.exports = (el_, callback)->
   el.append 'text'
     .text 'Test PDF creation'
     .attr 'y', 50
-  throw "Halp!"
 
   callback()
