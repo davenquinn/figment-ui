@@ -111,7 +111,8 @@ function createWindow() {
     titleBarStyle: 'hiddenInset',
     webPreferences: {
       nodeIntegration: true,
-      webSecurity: false
+      webSecurity: false,
+      webviewTag: true
     }
   });
 

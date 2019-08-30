@@ -50,10 +50,10 @@ class TaskRenderer extends Component
         h Spinner
         h 'p', "Digesting your code"
       ]
-    h FigureContainer, {marginTop, zoomLevel, multiPage},  [
-      h TaskStylesheet, {styles}
-      h TaskElement, {code}
-    ]
+    # h FigureContainer, {marginTop, zoomLevel, multiPage},  [
+    #   h TaskStylesheet, {styles}
+    h TaskElement, {code}
+
   startBundler: =>
     ###
     # This is the function that actually runs a discrete task
@@ -67,9 +67,13 @@ class TaskRenderer extends Component
     cacheDir = path.join(dn, '.cache')
     outDir = path.join(cacheDir,'build')
 
-    document.head.innerHTML = document.head.innerHTML + "<base href='#{outDir}/' />"
+    #document.head.innerHTML = document.head.innerHTML + "<base href='#{outDir}/' />"
 
-    @bundler = createBundler(codeFile, {outDir, cacheDir})
+    containerFile = require.resolve("../webview-contents/index.coffee")
+    console.log codeFile, containerFile
+    #debugger
+
+    @bundler = createBundler(containerFile, {outDir, cacheDir})
     console.log "Running bundler process with PID #{@bundler.pid}"
     @bundler.bundle()
       .catch (e)=> console.error e
@@ -100,8 +104,8 @@ class TaskRenderer extends Component
     console.log "Bundling done"
     console.clear()
 
-    if bundle.type != 'js'
-      throw "Only javascript output is supported (for now)"
+    #if bundle.type != 'js'
+    #  throw "Only javascript output is supported (for now)"
 
 
     styles = null
@@ -111,11 +115,11 @@ class TaskRenderer extends Component
       styles = fs.readFileSync(cssFile.name, 'utf-8')
 
     compiledCode = bundle.name
-    console.log "Requiring compiled code from #{bundle.name}"
-    decache(compiledCode)
+    #console.log "Requiring compiled code from #{bundle.name}"
+    #decache(compiledCode)
     #debugger
-    code = require compiledCode
-    @setState {code, styles, error: null}
+    #code = require compiledCode
+    @setState {code: compiledCode, styles, error: null}
 
   componentDidMount: ->
     {task} = @props

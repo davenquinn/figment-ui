@@ -2,6 +2,8 @@ import React, {Component} from 'react'
 import h from '~/hyper'
 import {BundlerError} from './error'
 import {findDOMNode, render} from 'react-dom'
+import WebView from 'react-electron-web-view'
+import {resolve} from 'path'
 
 class ErrorBoundary extends React.Component
   constructor: (props)->
@@ -35,14 +37,23 @@ class TaskElement extends Component
     super props
   render: ->
     {code} = @props
-    return null unless code?
-    try
-      console.log "Rendering task"
-      return h ErrorBoundary, [
-        h(code)
-      ]
-    catch
-      return h 'div'
+
+    h 'div', [
+      h WebView, {
+        className: 'figure-container-webview',
+        disablewebsecurity: true
+      }
+      h WebView, {className: 'figure-container-devtools'}
+    ]
+
+  componentDidMount: ->
+    el = findDOMNode(@)
+    browserView = el.querySelector('.figure-container-webview')
+    devtoolsView = el.querySelector('.figure-container-devtools')
+    browserView.addEventListener 'dom-ready', =>
+      browser = browserView.getWebContents()
+      browser.setDevToolsWebContents(devtoolsView.getWebContents())
+      browser.openDevTools()
 
   runTask: =>
     {code, callback} = @props
@@ -58,12 +69,20 @@ class TaskElement extends Component
     el = findDOMNode(@)
     render(h(code), el, callback)
 
-  componentDidMount: ->
-    @runTask()
-  componentDidUpdate: (prevProps)->
-    #return if prevProps.code == @props.code
-    console.log "Code was updated"
-    @runTask()
+# return null unless code?
+# try
+#   console.log "Rendering task"
+#   return h ErrorBoundary, [
+#     h(code)
+#   ]
+# catch
+#   return h 'div'
+# componentDidMount: ->
+#   @runTask()
+# componentDidUpdate: (prevProps)->
+#   #return if prevProps.code == @props.code
+#   console.log "Code was updated"
+#   @runTask()
 
 class TaskStylesheet extends Component
   render: ->
