@@ -67,13 +67,11 @@ class TaskRenderer extends Component
     cacheDir = path.join(dn, '.cache')
     outDir = path.join(cacheDir,'build')
 
-    document.head.innerHTML = document.head.innerHTML + "<base href='#{outDir}/' />"
-
+    #document.head.innerHTML = document.head.innerHTML + "<base href='#{outDir}/' />"
     @bundler = createBundler(codeFile, {outDir, cacheDir})
     console.log "Running bundler process with PID #{@bundler.pid}"
     @bundler.bundle()
       .catch (e)=> console.error e
-
 
     process.on 'exit', =>
       @bundler.kill()
@@ -98,11 +96,10 @@ class TaskRenderer extends Component
   onBundlingFinished: (bundle, outDir)=>
     console.log bundle
     console.log "Bundling done"
-    console.clear()
+    #console.clear()
 
     if bundle.type != 'js'
       throw "Only javascript output is supported (for now)"
-
 
     styles = null
     cssFile = bundle.siblingBundlesMap.get("css")
@@ -111,9 +108,9 @@ class TaskRenderer extends Component
       styles = fs.readFileSync(cssFile.name, 'utf-8')
 
     compiledCode = bundle.name
+
     console.log "Requiring compiled code from #{bundle.name}"
     decache(compiledCode)
-    #debugger
     code = require compiledCode
     @setState {code, styles, error: null}
 

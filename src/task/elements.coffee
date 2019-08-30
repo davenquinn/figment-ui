@@ -1,4 +1,4 @@
-import React, {Component} from 'react'
+import React, {Component, isValidElement} from 'react'
 import h from '~/hyper'
 import {BundlerError} from './error'
 import {findDOMNode, render} from 'react-dom'
@@ -24,7 +24,10 @@ class ErrorBoundary extends React.Component
       # Error path
       console.log error, errorInfo
       return h BundlerError, {error, details: errorInfo}
-    return @props.children
+    try
+      return @props.children
+    catch
+      return null
 
 class TaskElement extends Component
   @defaultProps: {
@@ -33,30 +36,49 @@ class TaskElement extends Component
   }
   constructor: (props)->
     super props
+    @state = {
+      error: null
+      errorInfo: null
+    }
+
+  componentDidCatch: (error, errorInfo)->
+    # Catch errors in any components below and re-render with error message
+    @setState {
+      error: error,
+      errorInfo: errorInfo
+    }
+
   render: ->
     {code} = @props
     return null unless code?
-    try
-      console.log "Rendering task"
-      return h ErrorBoundary, [
-        h(code)
-      ]
-    catch
-      return h 'div'
+
+    {error, errorInfo} = @state
+    if error?
+      # Error path
+      console.log error, errorInfo
+      return h BundlerError, {error, details: errorInfo}
+
+    console.log "Rendering"
+    if isValidElement(code)
+      try
+        return h(code)
+      catch
+        return null
+    return h 'div'
 
   runTask: =>
     {code, callback} = @props
     return unless code?
-    return
+    return if isValidElement(code)
     console.log "Running code from bundle"
-    # React components are handled directly
-    #return
-    # Here is where we would accept different
-    # types of components
+
     callback ?= ->
 
     el = findDOMNode(@)
-    render(h(code), el, callback)
+    try
+      code(el, callback)
+    catch
+      return
 
   componentDidMount: ->
     @runTask()
