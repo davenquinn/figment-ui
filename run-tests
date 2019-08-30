@@ -7,4 +7,5 @@ cd test
 rm -rf output
 
 echo "Simple spec"
-../bin/cli.js --debug --dev --spec-mode example-spec.js
+#../bin/cli.js --spec-mode example-spec.js
+../bin/cli.js react-element.coffee output/react-element.pdf
