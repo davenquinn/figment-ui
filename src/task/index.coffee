@@ -76,6 +76,8 @@ class TaskRenderer extends Component
     cacheDir = path.join(dn, '.cache')
     outDir = path.join(cacheDir,'build')
 
+    process.chdir(dn)
+
     #document.head.innerHTML = document.head.innerHTML + "<base href='#{outDir}/' />"
     @bundler = createBundler(codeFile, {outDir, cacheDir})
     console.log "Running bundler process with PID #{@bundler.pid}"

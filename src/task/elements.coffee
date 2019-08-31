@@ -36,7 +36,7 @@ class TaskElement extends Component
     if isValidElement(code)
       try
         return h 'div.element-container', [
-          h(code)
+          code
         ]
       catch
         return null
