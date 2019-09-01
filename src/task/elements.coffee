@@ -17,6 +17,7 @@ class TaskElement extends Component
 
   componentDidCatch: (error, errorInfo)->
     # Catch errors in any components below and re-render with error message
+    console.log "We caught an error!"
     @setState {
       error: error,
       errorInfo: errorInfo
@@ -29,18 +30,19 @@ class TaskElement extends Component
     {error, errorInfo} = @state
     if error?
       # Error path
-      console.log error, errorInfo
+      #console.log error, errorInfo
       return h BundlerError, {error, details: errorInfo}
 
     console.log "Rendering"
-    if isValidElement(code)
-      try
-        return h 'div.element-container', [
-          code
-        ]
-      catch
-        return null
-    return h 'div.element-container'
+    try
+      if isValidElement(code)
+        return h 'div.element-container', [code]
+      el = h code
+      if isValidElement(el)
+        return h 'div.element-container', [el]
+      return h 'div.element-container'
+    catch
+      return null
 
   runTask: =>
     {code, callback} = @props
@@ -59,6 +61,8 @@ class TaskElement extends Component
 
   computeWidth: ->
     el = findDOMNode(@)
+    return if not el?
+    return if not el.firstChild?
     rect = el.firstChild.getBoundingClientRect()
     @props.recordSize rect
 

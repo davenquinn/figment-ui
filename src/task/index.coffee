@@ -72,6 +72,7 @@ class TaskRenderer extends Component
 
     {code: codeFile} = task # The file that has the code in it...
     dn = path.dirname(path.resolve(codeFile))
+    console.log dn
 
     cacheDir = path.join(dn, '.cache')
     outDir = path.join(cacheDir,'build')
