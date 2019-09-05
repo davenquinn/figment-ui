@@ -38,7 +38,8 @@ class TaskRenderer extends Component
     }
   render: ->
     {task, zoomLevel, marginTop} = @props
-    {multiPage} = task.opts
+    {opts} = task
+    {multiPage} = opts
     multiPage ?= false
 
     {code, styles, error, size} = @state
@@ -57,7 +58,7 @@ class TaskRenderer extends Component
       ]
     h FigureContainer, {marginTop, zoomLevel, multiPage, width},  [
       h TaskStylesheet, {styles}
-      h TaskElement, {code, recordSize: @recordSize}
+      h TaskElement, {code, recordSize: @recordSize, opts}
     ]
 
   recordSize: ({width, height})=>

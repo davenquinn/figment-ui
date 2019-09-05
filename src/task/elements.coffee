@@ -6,6 +6,7 @@ import {findDOMNode, render} from 'react-dom'
 class TaskElement extends Component
   @defaultProps: {
     code: null
+    opts: {}
     callback: null
   }
   constructor: (props)->
@@ -24,7 +25,7 @@ class TaskElement extends Component
     }
 
   render: ->
-    {code} = @props
+    {code, opts} = @props
     return null unless code?
 
     {error, errorInfo} = @state
@@ -37,7 +38,7 @@ class TaskElement extends Component
     try
       if isValidElement(code)
         return h 'div.element-container', [code]
-      el = h code
+      el = h code, opts
       if isValidElement(el)
         return h 'div.element-container', [el]
       return h 'div.element-container'
@@ -45,7 +46,7 @@ class TaskElement extends Component
       return null
 
   runTask: =>
-    {code, callback} = @props
+    {code, opts, callback} = @props
     return unless code?
     return if @state.error?
     return if isValidElement(code)
@@ -55,7 +56,7 @@ class TaskElement extends Component
 
     el = findDOMNode(@)
     try
-      code(el, callback)
+      code(el, opts, callback)
     catch err
       @setState {error: err}
 
