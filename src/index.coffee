@@ -21,8 +21,8 @@ NoTaskError = ->
       h 'div.usage', [
         h "h3", "Usage"
         h "div.scripts", [
-          h "pre.bp3-code-block", "vizza entry.js figure.pdf"
-          h "pre.bp3-code-block", "vizza --spec spec1.js [...]"
+          h "pre.bp3-code-block", "vizzy entry.js figure.pdf"
+          h "pre.bp3-code-block", "vizzy --spec spec1.js [...]"
         ]
       ]
     ]
