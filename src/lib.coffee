@@ -6,6 +6,7 @@ path = require 'path'
 import styles from './main.styl'
 import {assertShape} from '~/types'
 import {TaskShape} from './task/types'
+import {AppToaster} from '~/toaster'
 
 options = remote.getGlobal 'options' or {}
 options.dpi ?= 96
@@ -117,6 +118,7 @@ printFigureArea = (task)->
 
   fs.writeFileSync outfile, buf
   console.log "Finished task"
+  AppToaster.show {message: "Printed figure!", intent: 'primary', icon: 'print', timeout: 2000}
 
 # Initialize renderer
 class Printer
@@ -124,7 +126,6 @@ class Printer
     ###
     Setup a rendering object
     ###
-    console.log arguments[0]
     @cliOptions = {}
     console.log "Started renderer"
 
