@@ -13,12 +13,7 @@ window.Printer = Printer
 
 AppStateContext = createContext {}
 
-getSpecs = (d)->
-  res = require(d)
-  Promise.resolve res
-    .then (v)->
-      v.name = d
-      v
+getSpecs =
 
 nameForTask = (task)->
   {name, outfile} = task
@@ -60,20 +55,29 @@ class AppStateManager extends Component
           return task
     return null
 
-  defineTasks: (options)=>
-    {specs} = options
+  __createSpec: (options)=>
     # These should really be applied separately to each part
     {multiPage, pageSize} = @state
+    spec = new Printer()
+    spec.task options.outfile, options.infile, {
+      multiPage, pageSize
+    }
+    return Promise.resolve [spec]
+
+  __getSpecs: (options)=>
+    {specs} = options
     # If we are in spec mode
-    if specs?
-      p = Promise.map specs, getSpecs
-    else
-      spec = new Printer()
-      spec.task options.outfile, options.infile, {
-        multiPage, pageSize
-      }
-      p = Promise.resolve [spec]
-    res = await p
+    if not specs?
+      return @__createSpec(options)
+    Promise.map specs, (d)->
+      res = require(d)
+      Promise.resolve res
+        .then (v)->
+          v.name = d
+          return v
+
+  defineTasks: (options)=>
+    res = await @__getSpecs(options)
     @updateState {taskLists: {$set: res}}
 
   openEditor: =>
