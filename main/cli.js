@@ -9,7 +9,7 @@ const {REACT_DEVELOPER_TOOLS, default: installExtension} = require('electron-dev
 const shortcuts = require('./shortcuts');
 
 const argv = min(process.argv.slice(2), {
-  boolean: ['headless', 'spec-mode', 'show', 'multi-page', 'reinstall-devtools'],
+  boolean: ['headless', 'spec', 'show', 'multi-page', 'reinstall-devtools'],
   string: ['page-size']
 });
 // Specify --debug to show BrowserWindow
@@ -51,7 +51,7 @@ global.pidList = [];
 
 let bundlerProcess = null;
 
-if (argv['spec-mode']) {
+if (argv['spec']) {
   // Create list of task-runner files to import
   // Each argument should be a javascript or coffeescript
   // file exporting a renderer object

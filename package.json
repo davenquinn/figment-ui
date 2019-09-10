@@ -1,12 +1,12 @@
 {
-  "name": "figurate",
+  "name": "vizzy",
   "version": "1.0.0",
-  "description": "Prints figures to files",
+  "description": "Javascript visualizations for the print medium.",
   "main": "index.coffee",
   "author": "Daven Quinn",
   "license": "ISC",
   "bin": {
-    "figurate": "bin/cli.js"
+    "vizzy": "bin/cli.js"
   },
   "scripts": {
     "postinstall": "patch-package; npm run build",
