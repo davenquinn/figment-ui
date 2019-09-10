@@ -15,6 +15,7 @@ class TaskElement extends Component
       error: null
       errorInfo: null
     }
+    @isReact = false
 
   componentDidCatch: (error, errorInfo)->
     # Catch errors in any components below and re-render with error message
@@ -27,29 +28,34 @@ class TaskElement extends Component
   render: ->
     {code, opts} = @props
     return null unless code?
+    if code.__esModule? and code.__esModule
+      code = code.default
 
     {error, errorInfo} = @state
+    @isReact = false
     if error?
       # Error path
       #console.log error, errorInfo
       return h BundlerError, {error, details: errorInfo}
-
-    console.log "Rendering"
-    try
-      if isValidElement(code)
-        return h 'div.element-container', [code]
-      el = h code, opts
-      if isValidElement(el)
-        return h 'div.element-container', [el]
-      return h 'div.element-container'
-    catch
-      return null
+    if isValidElement(code)
+      @isReact = true
+      return h 'div.element-container', [code]
+    el = h code, opts
+    if code.propTypes?
+      console.log "React component"
+      @isReact = true
+      # We must have a React component
+      return h 'div.element-container', [el]
+    return h 'div.element-container'
 
   runTask: =>
     {code, opts, callback} = @props
     return unless code?
     return if @state.error?
-    return if isValidElement(code)
+    return if @isReact
+    if code.__esModule? and code.__esModule
+      code = code.default
+
     console.log "Running code from bundle"
 
     callback ?= ->

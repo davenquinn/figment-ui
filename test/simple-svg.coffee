@@ -1,6 +1,6 @@
 {select} = require 'd3-selection'
 
-module.exports = (el_, callback)->
+module.exports = (el_, opts, callback)->
 
   # Create our svg
   el = select el_
@@ -13,4 +13,3 @@ module.exports = (el_, callback)->
     .attr 'y', 50
 
   callback()
-
