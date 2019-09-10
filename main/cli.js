@@ -5,12 +5,11 @@ const ps = require("ps-node");
 const {BrowserWindow, app, ipcMain, protocol} = require('electron');
 const readline = require('readline');
 const {REACT_DEVELOPER_TOOLS, default: installExtension} = require('electron-devtools-installer');
-console.log(REACT_DEVELOPER_TOOLS);
 
 const shortcuts = require('./shortcuts');
 
 const argv = min(process.argv.slice(2), {
-  boolean: ['headless', 'spec-mode', 'show', 'multi-page'],
+  boolean: ['headless', 'spec-mode', 'show', 'multi-page', 'reinstall-devtools'],
   string: ['page-size']
 });
 // Specify --debug to show BrowserWindow
@@ -93,7 +92,7 @@ process.on('exit', quitApp);
 // Set global variables for bundler
 
 function createWindow() {
-  installExtension(REACT_DEVELOPER_TOOLS);
+  installExtension(REACT_DEVELOPER_TOOLS, argv['reinstall-devtools']);
 
   const cb = (request, callback) => {
     const url = request.url.substr(6);
