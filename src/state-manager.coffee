@@ -31,6 +31,7 @@ class AppStateManager extends Component
       taskLists: null
       # We should improve this
       isPrinting: false
+      error: null
       options...
       appState...
     }
@@ -70,14 +71,21 @@ class AppStateManager extends Component
     if not specs?
       return @__createSpec(options)
     Promise.map specs, (d)->
-      res = require(d)
-      Promise.resolve res
-        .then (v)->
-          v.name = d
-          return v
+      try
+        res = require(d)
+        return Promise.resolve res
+          .then (v)->
+            v.name = d
+            return v
+      catch err
+        return Promise.reject(err)
+
 
   defineTasks: (options)=>
-    res = await @__getSpecs(options)
+    try
+      res = await @__getSpecs(options)
+    catch err
+      @updateState {error: {$set: err}}
     @updateState {taskLists: {$set: res}}
 
   openEditor: =>
