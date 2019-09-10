@@ -7,4 +7,7 @@ cd test
 rm -rf output
 
 echo "Simple spec"
-../bin/cli.js --debug --dev --spec-mode example-spec.js
+../bin/cli.js --spec-mode example-spec.js
+
+echo "Syntax error spec"
+../bin/cli.js --spec-mode syntax-error-spec.js
