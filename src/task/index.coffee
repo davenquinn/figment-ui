@@ -34,13 +34,19 @@ class TaskRenderer extends Component
       code: null
       styles: null
       error: null
+      size: null
     }
   render: ->
     {task, zoomLevel, marginTop} = @props
-    {multiPage} = task.opts
+    {opts} = task
+    {multiPage} = opts
     multiPage ?= false
 
-    {code, styles, error} = @state
+    {code, styles, error, size} = @state
+    width = null
+    if size?
+      width = size.width
+
     if not task?
       return null
     if error?
@@ -50,9 +56,13 @@ class TaskRenderer extends Component
         h Spinner
         h 'p', "Digesting your code"
       ]
-    # h FigureContainer, {marginTop, zoomLevel, multiPage},  [
-    #   h TaskStylesheet, {styles}
-    h TaskElement, {code}
+    h FigureContainer, {marginTop, zoomLevel, multiPage, width},  [
+      h TaskStylesheet, {styles}
+      h TaskElement, {code, recordSize: @recordSize, opts}
+    ]
+
+  recordSize: ({width, height})=>
+    @setState {size: {width, height}}
 
   startBundler: =>
     ###
@@ -63,21 +73,20 @@ class TaskRenderer extends Component
 
     {code: codeFile} = task # The file that has the code in it...
     dn = path.dirname(path.resolve(codeFile))
+    console.log dn
 
     cacheDir = path.join(dn, '.cache')
     outDir = path.join(cacheDir,'build')
 
-    #document.head.innerHTML = document.head.innerHTML + "<base href='#{outDir}/' />"
 
     containerFile = require.resolve("../webview-contents/index.coffee")
     console.log codeFile, containerFile
-    #debugger
+    process.chdir(dn)
 
     @bundler = createBundler(containerFile, {outDir, cacheDir})
     console.log "Running bundler process with PID #{@bundler.pid}"
     @bundler.bundle()
       .catch (e)=> console.error e
-
 
     process.on 'exit', =>
       @bundler.kill()
@@ -100,13 +109,11 @@ class TaskRenderer extends Component
     @setState {error: err}
 
   onBundlingFinished: (bundle, outDir)=>
-    console.log bundle
     console.log "Bundling done"
     #console.clear()
 
     #if bundle.type != 'js'
     #  throw "Only javascript output is supported (for now)"
-
 
     styles = null
     cssFile = bundle.siblingBundlesMap.get("css")

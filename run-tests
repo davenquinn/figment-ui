@@ -7,5 +7,7 @@ cd test
 rm -rf output
 
 echo "Simple spec"
-#../bin/cli.js --spec-mode example-spec.js
-../bin/cli.js react-element.coffee output/react-element.pdf
+../bin/cli.js --spec example-spec.js
+
+echo "Syntax error spec"
+../bin/cli.js --spec syntax-error-spec.js

@@ -17,10 +17,11 @@ class FigureContainer extends Component
     marginTop: MarginType
     multiPage: T.bool.isRequired
     scaleFactor: T.number
+    width: T.number
   }
   render: ->
     {zoomLevel, task, marginTop,
-     multiPage, scaleFactor} = @props
+     multiPage, scaleFactor, width} = @props
     {isPrinting} = @context
     # We shouldn't have this nested structure, it's confusing
 
@@ -29,12 +30,16 @@ class FigureContainer extends Component
     z = if (zoomLevel == 1 or isPrinting) then null else "scale(#{zoomLevel})"
     style = {
       transform: z
+      width
     }
 
     className = classNames {'is-printing': isPrinting}
+    padding = 20
+    if isPrinting
+      padding = 0
 
     h 'div.figure-container-outer', {style: {height, paddingTop: marginTop}, className}, [
-      h 'div.figure-container', {className}, [
+      h 'div.figure-container', {className, style: {padding, width: width+2*padding}}, [
         h 'div.figure-container-inner', {
           className
           style

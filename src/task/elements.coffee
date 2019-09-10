@@ -1,4 +1,4 @@
-import React, {Component, createRef} from 'react'
+import React, {Component, isValidElement, createRef} from 'react'
 import h from '~/hyper'
 import {BundlerError} from './error'
 import {findDOMNode, render} from 'react-dom'
@@ -6,26 +6,39 @@ import WebView from 'react-electron-web-view'
 import {resolve} from 'path'
 import styles from '../main.styl'
 
-class ErrorBoundary extends React.Component
+class TaskElement extends Component
+  @defaultProps: {
+    code: null
+    opts: {}
+    callback: null
+  }
   constructor: (props)->
     super props
     @state = {
       error: null
       errorInfo: null
     }
+    @isReact = false
 
   componentDidCatch: (error, errorInfo)->
     # Catch errors in any components below and re-render with error message
+    console.log "We caught an error!"
     @setState {
       error: error,
       errorInfo: errorInfo
     }
 
   render: ->
+    {code, opts} = @props
+    return null unless code?
+    if code.__esModule? and code.__esModule
+      code = code.default
+
     {error, errorInfo} = @state
+    @isReact = false
     if error?
       # Error path
-      console.log error, errorInfo
+      #console.log error, errorInfo
       return h BundlerError, {error, details: errorInfo}
     return @props.children
 
@@ -67,7 +80,7 @@ class TaskElement extends Component
       browser.openDevTools()
 
   runTask: =>
-    {code, callback} = @props
+    {code, opts, callback} = @props
     return unless code?
     console.log "Running code from bundle"
     @webview.current.executeJavascript("require('#{code}')")
@@ -79,7 +92,17 @@ class TaskElement extends Component
     callback ?= ->
 
     el = findDOMNode(@)
-    render(h(code), el, callback)
+    try
+      code(el, opts, callback)
+    catch err
+      @setState {error: err}
+
+  computeWidth: ->
+    el = findDOMNode(@)
+    return if not el?
+    return if not el.firstChild?
+    rect = el.firstChild.getBoundingClientRect()
+    @props.recordSize rect
 
 # return null unless code?
 # try
