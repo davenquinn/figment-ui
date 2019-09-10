@@ -1,16 +1,32 @@
 import "@babel/polyfill"
+import {FocusStyleManager} from '@blueprintjs/core'
+FocusStyleManager.onlyShowFocusOnTabs()
 
 import {Component} from 'react'
 import {render} from 'react-dom'
-import h from 'react-hyperscript'
+import h from '~/hyper'
 import {UIControls} from './ui-controls'
 import {AppStateManager, AppStateContext} from './state-manager'
 import {TaskList} from './task-list'
 import {TaskRenderer} from './task'
 import {BundlerError} from './task/error'
-import {FocusStyleManager} from '@blueprintjs/core'
-FocusStyleManager.onlyShowFocusOnTabs()
+import {NonIdealState, Intent} from '@blueprintjs/core'
 import './main.styl'
+
+NoTaskError = ->
+  h 'div.error-overlay.no-task', [
+    h 'div.bp3-ui-text.entry', [
+      h "h1", "Vizzy"
+      h "h2", "No task defined"
+      h 'div.usage', [
+        h "h3", "Usage"
+        h "div.scripts", [
+          h "pre.bp3-code-block", "vizza entry.js figure.pdf"
+          h "pre.bp3-code-block", "vizza --spec spec1.js [...]"
+        ]
+      ]
+    ]
+  ]
 
 class AppMain extends Component
   @contextType: AppStateContext
@@ -23,7 +39,7 @@ class AppMain extends Component
       return h TaskRenderer, {task: selectedTask, zoomLevel, marginTop}
     if taskLists?
       return h TaskList, {runners: taskLists}
-    return null
+    return h NoTaskError
 
   render: ->
     h 'div.app-main', [

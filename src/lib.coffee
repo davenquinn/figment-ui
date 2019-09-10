@@ -124,7 +124,6 @@ class Printer
     ###
     Setup a rendering object
     ###
-    console.log arguments[0]
     @cliOptions = {}
     console.log "Started renderer"
 
