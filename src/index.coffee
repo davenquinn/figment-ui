@@ -11,6 +11,7 @@ import {TaskList} from './task-list'
 import {TaskRenderer} from './task'
 import {BundlerError} from './task/error'
 import {NonIdealState, Intent} from '@blueprintjs/core'
+import {AppToaster} from './toaster'
 import './main.styl'
 
 NoTaskError = ->

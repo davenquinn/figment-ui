@@ -9,6 +9,7 @@ import {BundlerError} from './error'
 import {FigureContainer} from '../figure-container'
 import T from 'prop-types'
 import {MarginType} from '~/types'
+import {AppToaster} from '~/toaster'
 
 path = require 'path'
 fs = require 'fs'
@@ -80,7 +81,6 @@ class TaskRenderer extends Component
 
     process.chdir(dn)
 
-    #document.head.innerHTML = document.head.innerHTML + "<base href='#{outDir}/' />"
     @bundler = createBundler(codeFile, {outDir, cacheDir})
     console.log "Running bundler process with PID #{@bundler.pid}"
     @bundler.bundle()
@@ -109,6 +109,9 @@ class TaskRenderer extends Component
   onBundlingFinished: (bundle, outDir)=>
     console.log "Bundling done"
     console.clear()
+    msg = "Built in #{bundle.bundleTime}ms"
+    console.log(msg)
+    AppToaster.show({message: msg, intent: "success", icon: 'clean', timeout: 2000})
 
     if bundle.type != 'js'
       throw "Only javascript output is supported (for now)"

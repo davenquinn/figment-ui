@@ -25,7 +25,7 @@ html, body, .figure-container-outer
 
 .figure-container-inner
   display: block
-  margin 0 auto
+  margin 0
   transform-origin 0px 0px
   overflow auto
 
@@ -40,7 +40,7 @@ html, body, .figure-container-outer
     top 0
     padding 0
     position relative
-  margin 0px auto
+  margin 0px
   overflow: scroll
 
 *
@@ -79,7 +79,7 @@ button_margin = 6px
   &:hover .toolbar-toggle-button
     display: flex
 
-.ui-controls, .progress, .ui-controls-hidden, .error-overlay
+.ui-controls, .progress, .ui-controls-hidden, .error-overlay, .app-toaster
   :global
     @require "../vendor/blueprint.styl"
   *
@@ -177,8 +177,17 @@ button_margin = 6px
       &:focus
         outline: none
 
-.toaster
-  margin-top 35px
+.app-toaster
+  margin-top 38px
+  position fixed
+  right 0px
+  top 0px
+  width 20em
+  padding 12px
+  &>:first-child
+    margin-top 0
+  &>*
+    margin-top 5px
 
 @media print
   .ui-controls
