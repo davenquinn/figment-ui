@@ -1,12 +1,12 @@
 {
-  "name": "vizvig",
+  "name": "figment-ui",
   "version": "1.0.0",
   "description": "Javascript visualizations for the print medium.",
   "main": "lib/index.js",
   "author": "Daven Quinn",
   "license": "ISC",
   "bin": {
-    "vizvig": "bin/cli.js"
+    "figment": "bin/cli.js"
   },
   "scripts": {
     "postinstall": "patch-package; npm run build",

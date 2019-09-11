@@ -18,13 +18,13 @@ import './main.styl'
 NoTaskError = ->
   h 'div.error-overlay.no-task', [
     h 'div.bp3-ui-text.entry', [
-      h "h1", "Vizvig"
+      h "h1", "Figment"
       h "h2", "No task defined"
       h 'div.usage', [
         h "h3", "Usage"
         h "div.scripts", [
-          h "pre.bp3-code-block", "vizvig entry.js figure.pdf"
-          h "pre.bp3-code-block", "vizvig --spec spec1.js [...]"
+          h "pre.bp3-code-block", "figment entry.js figure.pdf"
+          h "pre.bp3-code-block", "figment --spec spec1.js [...]"
         ]
       ]
     ]

@@ -47,7 +47,7 @@ class EditorButton extends Component
     }, 'Open editor'
 
 AppTitle = ->
-  h 'h1.bp3-text', 'Vizvig'
+  h 'h1.bp3-text', 'Figment'
 
 CurrentTaskName = (props)->
   {selectedTask, nameForTask} = useContext(AppStateContext)
