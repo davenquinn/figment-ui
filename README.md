@@ -1,11 +1,29 @@
-# pdf-printer
+# Figment
 
-A package for building static data visualizations and
-printing them to PDF files.
+**Figment** is a development environment for complex static graphics,
+enabling use of the Javascript web visualization pipeline to quickly
+and reproducibly generate static graphics. The code-bundling and PDF-generation
+features are designed for smooth creation of data-rich scientific figures
+using Webkit's powerful DOM and SVG-generation ability.
+Ultimately, make building complex figures in Javascript
 
-This package is similar in many respects to
+
+Although visualization-creation code runs in the browser environment, it is
+executed *on your local system*, with the full power of [NodeJS](https://nodejs.org)
+APIs directly available. Thus, visualizations can be built from local resources
+such as modeling pipelines, database connections, and file resources that are not
+exposed via an HTTP API for typical browser use.
+
+This package combines the static-PDF generation capabilities
+of  rendering engines such as
 [electron-pdf](https://github.com/fraserxu/electron-pdf),
-but works at a higher level, and for a more specific purpose.
+the code-generation capabilities of Javascript bundlers such as
+[Parcel](https://parceljs.org) and
+[Webpack](https://webpack.js.org),  Since the entire stack
+runs on [Electron](https://electronjs.org), it can be
+
+
+but works at a higher level, and strives purpose.
 It is designed to make the
 DOM, its SVG extensions, and the universe of awesome
 tools that have been designed for it (e.g. `d3`),
@@ -106,10 +124,9 @@ Compilation can be run with `npm start`.
 
 ## TODO
 
-- Support more formats
+- [ ] Support non-Javascript **Parcel** entrypoints
+- [-] Support more formats. *png and jpeg support are half-baked but important*
 - Create a dependency on `electron-pdf`?
 - Make helpers definable in CLI
 - Remove `coffeescript` and `stylus` defaults
 - Allow testing on multiple figures at once
-
-
