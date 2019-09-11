@@ -118,7 +118,7 @@ printFigureArea = (task)->
 
   fs.writeFileSync outfile, buf
   console.log "Finished task"
-  AppToaster.show {message: "Printed figure!", intent: 'primary', icon: 'print', timeout: 2000}
+  AppToaster.show {message: "Printed figure!", intent: 'primary', icon: 'print', timeout: 4000}
 
 # Initialize renderer
 class Printer
@@ -150,7 +150,8 @@ class Printer
       # but do it later so errors can be accurately
       # traced
       if not path.isAbsolute(funcOrString)
-        func = path.join process.cwd(), funcOrString
+        workingDirectory = remote.getGlobal('workingDirectory')
+        func = path.join workingDirectory, funcOrString
       else
         func = funcOrString
       #f = require fn

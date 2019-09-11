@@ -24,6 +24,7 @@ const show = argv.show || !headless;
 const args = argv._;
 global.args = args;
 global.specMode = argv['spec-mode'];
+global.workingDirectory = process.cwd();
 
 global.bundlerScript = path.resolve(__dirname, '..', 'bundler', 'dev-bundler.js');
 

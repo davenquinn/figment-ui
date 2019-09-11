@@ -79,7 +79,11 @@ class TaskRenderer extends Component
     cacheDir = path.join(dn, '.cache')
     outDir = path.join(cacheDir,'build')
 
-    process.chdir(dn)
+    try
+      process.chdir(dn)
+    catch err
+      @setState {error: err}
+      return
 
     @bundler = createBundler(codeFile, {outDir, cacheDir})
     console.log "Running bundler process with PID #{@bundler.pid}"
@@ -111,7 +115,7 @@ class TaskRenderer extends Component
     console.clear()
     msg = "Built in #{bundle.bundleTime}ms"
     console.log(msg)
-    AppToaster.show({message: msg, intent: "success", icon: 'clean', timeout: 2000})
+    AppToaster.show({message: msg, intent: "success", icon: 'clean', timeout: 4000})
 
     if bundle.type != 'js'
       throw "Only javascript output is supported (for now)"

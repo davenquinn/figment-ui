@@ -1,5 +1,5 @@
 {
-  "name": "vizzy",
+  "name": "vizzy-gui",
   "version": "1.0.0",
   "description": "Javascript visualizations for the print medium.",
   "main": "index.coffee",
