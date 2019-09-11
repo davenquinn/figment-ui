@@ -12,6 +12,7 @@ import {TaskRenderer} from './task'
 import {BundlerError} from './task/error'
 import {NonIdealState, Intent} from '@blueprintjs/core'
 import {AppToaster} from './toaster'
+import classNames from 'classnames'
 import './main.styl'
 
 NoTaskError = ->
@@ -43,7 +44,10 @@ class AppMain extends Component
     return h NoTaskError
 
   render: ->
-    h 'div.app-main', [
+    {toolbarEnabled} = @context
+    className = classNames {'toolbar-disabled': not toolbarEnabled}
+
+    h 'div.app-main', {className}, [
       h UIControls
       @renderMain()
     ]
