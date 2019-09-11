@@ -5,6 +5,11 @@
   "main": "lib/index.js",
   "author": "Daven Quinn",
   "license": "ISC",
+  "homepage": "https://github.com/davenquinn/figment",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/davenquinn/figment.git"
+  },
   "bin": {
     "figment": "bin/cli.js"
   },
@@ -22,11 +27,10 @@
     "classnames": "^2.2.6",
     "decache": "^4.5.1",
     "devtools-detect": "^3.0.0",
+    "electron": "^6.0.8",
     "electron-devtools-installer": "^2.2.4",
     "electron-localshortcut": "^1.0.0",
     "immutability-helper": "^3.0.0",
-    "check-prop-types": "^1.1.2",
-
     "loglevel": "^1.4.1",
     "parcel-bundler": "^1.12.3",
     "prop-types": "^15.7.2",
