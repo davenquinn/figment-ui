@@ -1,6 +1,6 @@
 {
   "name": "figment-ui",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "Javascript visualizations for the print medium.",
   "main": "lib/index.js",
   "author": "Daven Quinn",
@@ -25,8 +25,6 @@
     "immutability-helper": "^3.0.0",
     "loglevel": "^1.4.1",
     "parcel-bundler": "^1.12.3",
-    "patch-package": "^6.1.2",
-    "postcss": "^7.0.17",
     "prop-types": "^15.7.2",
     "ps-node": "^0.1.6",
     "react": "^16.8.6",
@@ -46,6 +44,8 @@
     "d3-selection": "^1.0.3",
     "react-hyperscript": "^3.2.0",
     "coffeescript": "^2.4.1",
-    "stylus": "^0.54.5"
+    "stylus": "^0.54.5",
+    "patch-package": "^6.1.2",
+    "postcss": "^7.0.17"
   }
 }
