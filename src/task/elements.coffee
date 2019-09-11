@@ -3,6 +3,20 @@ import h from '~/hyper'
 import {BundlerError} from './error'
 import {findDOMNode, render} from 'react-dom'
 
+unwrapESModule = (code)->
+  if code.__esModule? and code.__esModule
+    return code.default
+  return code
+
+isReactComponent = (fn)->
+  return false unless typeof fn == 'function'
+  # We can guarantee that something is a React component if any of these
+  # conditions are met
+  return true if fn.propTypes?
+  return true if fn::isReactComponent? and fn::isReactComponent
+  return true if fn.isReactComponent? and fn.isReactComponent
+  return false
+
 class TaskElement extends Component
   @defaultProps: {
     code: null
@@ -15,7 +29,6 @@ class TaskElement extends Component
       error: null
       errorInfo: null
     }
-    @isReact = false
 
   componentDidCatch: (error, errorInfo)->
     # Catch errors in any components below and re-render with error message
@@ -28,8 +41,7 @@ class TaskElement extends Component
   render: ->
     {code, opts} = @props
     return null unless code?
-    if code.__esModule? and code.__esModule
-      code = code.default
+    code = unwrapESModule(code)
 
     {error, errorInfo} = @state
     @isReact = false
@@ -38,23 +50,20 @@ class TaskElement extends Component
       #console.log error, errorInfo
       return h BundlerError, {error, details: errorInfo}
     if isValidElement(code)
-      @isReact = true
       return h 'div.element-container', [code]
-    el = h code, opts
-    if code.propTypes?
-      console.log "React component"
-      @isReact = true
+    if isReactComponent(code)
       # We must have a React component
-      return h 'div.element-container', [el]
+      return h 'div.element-container', [
+        h code, opts
+      ]
     return h 'div.element-container'
 
   runTask: =>
     {code, opts, callback} = @props
     return unless code?
     return if @state.error?
-    return if @isReact
-    if code.__esModule? and code.__esModule
-      code = code.default
+    code = unwrapESModule(code)
+    return if isValidElement(code) or isReactComponent(code)
 
     console.log "Running code from bundle"
 
