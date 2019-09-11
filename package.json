@@ -9,10 +9,9 @@
     "figment": "bin/cli.js"
   },
   "scripts": {
-    "postinstall": "patch-package; npm run build",
     "dev": "node dev-bundler.js --watch",
     "build": "node dev-bundler.js",
-    "prepare": "npm run build"
+    "prepare": "patch-package; npm run build"
   },
   "dependencies": {
     "@blueprintjs/core": "^3.17.1",
@@ -32,7 +31,7 @@
     "ps-node": "^0.1.6",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
-    "react-spinners": "^0.5.13"
+    "react-spinners": "^0.6.1"
   },
   "devDependencies": {
     "@babel/core": "^7.4.5",
