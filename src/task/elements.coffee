@@ -2,11 +2,7 @@ import React, {Component, isValidElement} from 'react'
 import h from '~/hyper'
 import {BundlerError} from './error'
 import {findDOMNode, render} from 'react-dom'
-
-unwrapESModule = (code)->
-  if code.__esModule? and code.__esModule
-    return code.default
-  return code
+import {unwrapESModule} from '~/util'
 
 isReactComponent = (fn)->
   return false unless typeof fn == 'function'

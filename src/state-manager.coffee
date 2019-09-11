@@ -1,5 +1,5 @@
 import {Component, createContext} from 'react'
-import h from 'react-hyperscript'
+import h from '~/hyper'
 import update from 'immutability-helper'
 import {remote, ipcRenderer} from 'electron'
 import Promise from 'bluebird'
@@ -72,6 +72,7 @@ class AppStateManager extends Component
       return @__createSpec(options)
     Promise.map specs, (d)->
       try
+        # Require using ESM module
         res = require(d)
         return Promise.resolve res
           .then (v)->
