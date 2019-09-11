@@ -46,9 +46,12 @@ class EditorButton extends Component
       onClick: @context.openEditor
     }, 'Open editor'
 
+AppTitle = ->
+  h 'h1.bp3-text', 'Vizvig'
+
 CurrentTaskName = (props)->
   {selectedTask, nameForTask} = useContext(AppStateContext)
-  return null unless selectedTask?
+  return h(AppTitle) unless selectedTask?
   h 'h1.task-name.bp3-text', nameForTask(selectedTask)
 
 
