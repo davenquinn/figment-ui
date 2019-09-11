@@ -1,19 +1,18 @@
 import {Component, createContext} from 'react'
-import h from 'react-hyperscript'
+import h from '~/hyper'
 import update from 'immutability-helper'
 import {remote, ipcRenderer} from 'electron'
 import Promise from 'bluebird'
 {spawn} = require 'child_process'
 import {parse} from 'path'
 import 'devtools-detect'
+import {printFigureArea} from './print'
+import Visualizer from "./index"
 
-# This is awful
-import {Printer, printFigureArea} from "./lib.coffee"
-window.Printer = Printer
+# For backwards compatibility
+global.Printer = Visualizer
 
 AppStateContext = createContext {}
-
-getSpecs =
 
 nameForTask = (task)->
   {name, outfile} = task
@@ -59,7 +58,7 @@ class AppStateManager extends Component
   __createSpec: (options)=>
     # These should really be applied separately to each part
     {multiPage, pageSize} = @state
-    spec = new Printer()
+    spec = new Visualizer()
     spec.task options.outfile, options.infile, {
       multiPage, pageSize
     }
@@ -72,6 +71,7 @@ class AppStateManager extends Component
       return @__createSpec(options)
     Promise.map specs, (d)->
       try
+        # Require using ESM module
         res = require(d)
         return Promise.resolve res
           .then (v)->

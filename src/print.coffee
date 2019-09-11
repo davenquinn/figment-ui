@@ -30,13 +30,6 @@ printToPDF = (webview, opts)->
     ###
     Print the webview to the callback
     ###
-    el = document.getElementsByClassName(styles["figure-container-inner"])[0]
-    el1 = document.getElementsByClassName(styles["figure-container-outer"])[0]
-    el2 = document.getElementsByClassName(styles["figure-container"])[0]
-
-
-    controls = document.getElementsByClassName(styles["ui-controls"])[0]
-
     # pageSize can be A3, A4, A5, Legal, Letter, Tabloid or an Object
     # containing height and width in microns.
     # (https://electronjs.org/docs/api/web-contents)
@@ -51,7 +44,6 @@ printToPDF = (webview, opts)->
       marginsType: 0
       pageSize
     }
-    console.log opts
 
     {webContents: wc} = remote.getCurrentWindow()
 
@@ -120,66 +112,6 @@ printFigureArea = (task)->
   console.log "Finished task"
   AppToaster.show {message: "Printed figure!", intent: 'primary', icon: 'print', timeout: 4000}
 
-# Initialize renderer
-class Printer
-  constructor: (options={})->
-    ###
-    Setup a rendering object
-    ###
-    @cliOptions = {}
-    console.log "Started renderer"
-
-    @options = options
-    @options.buildDir ?= ''
-    @tasks = []
-
-
-  task: (fn, funcOrString, opts={})->
-    ###
-    Add a task
-    ###
-    opts.dpi ?= 300
-
-
-    # Check if we've got a function or string
-    if typeof funcOrString == 'function'
-      throw "We only support strings now, because we run things in a webview"
-      func = funcOrString
-    else
-      # Require relative to parent module,
-      # but do it later so errors can be accurately
-      # traced
-      if not path.isAbsolute(funcOrString)
-        workingDirectory = remote.getGlobal('workingDirectory')
-        func = path.join workingDirectory, funcOrString
-      else
-        func = funcOrString
-      #f = require fn
-      #f(el, cb)
-
-    console.log @options
-    # Apply build directory
-    if fn?
-      if not path.isAbsolute(fn)
-        fn = path.join(@options.buildDir,fn)
-    else
-      fn = ""
-
-    h = createHash('md5')
-          .update(fn)
-          .digest('hex')
-
-    @tasks.push {
-      outfile: fn
-      code: func
-      helpers: @options.helpers
-      hash: h
-      multiPage: opts.multiPage or false
-      opts: opts
-    }
-    return @
-
 module.exports = {
-  Printer
   printFigureArea
 }
