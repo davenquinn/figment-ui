@@ -1,55 +1,81 @@
-import "@babel/polyfill"
-import {FocusStyleManager} from '@blueprintjs/core'
-FocusStyleManager.onlyShowFocusOnTabs()
+Promise = require 'bluebird'
+fs = require 'fs'
+{remote, ipcRenderer} = require 'electron'
+{createHash} = require 'crypto'
+path = require 'path'
+import {TaskShape} from './task/types'
 
-import {Component} from 'react'
-import {render} from 'react-dom'
-import h from '~/hyper'
-import {UIControls} from './ui-controls'
-import {AppStateManager, AppStateContext} from './state-manager'
-import {TaskList} from './task-list'
-import {TaskRenderer} from './task'
-import {BundlerError} from './task/error'
-import {NonIdealState, Intent} from '@blueprintjs/core'
-import {AppToaster} from './toaster'
-import './main.styl'
+options = remote.getGlobal 'options' or {}
+options.dpi ?= 96
+options.log = false
 
-NoTaskError = ->
-  h 'div.error-overlay.no-task', [
-    h 'div.bp3-ui-text.entry', [
-      h "h1", "Vizzy"
-      h "h2", "No task defined"
-      h 'div.usage', [
-        h "h3", "Usage"
-        h "div.scripts", [
-          h "pre.bp3-code-block", "vizzy entry.js figure.pdf"
-          h "pre.bp3-code-block", "vizzy --spec spec1.js [...]"
-        ]
-      ]
-    ]
-  ]
+waitForUserInput = (data)->
+  new Promise (resolve, reject)->
+    ipcRenderer.once 'done-waiting', ->resolve(data)
+    ipcRenderer.send 'wait-for-input'
 
-class AppMain extends Component
-  @contextType: AppStateContext
-  renderMain: ->
-    {taskLists, selectedTask, zoomLevel, toolbarEnabled, error} = @context
-    marginTop = if toolbarEnabled then "38px" else null
-    if error?
-      return h BundlerError, {error}
-    if selectedTask?
-      return h TaskRenderer, {task: selectedTask, zoomLevel, marginTop}
-    if taskLists?
-      return h TaskList, {runners: taskLists}
-    return h NoTaskError
+sleep = (data)->
+  new Promise (resolve, reject)->
+    fn = ->resolve(data)
+    setTimeout fn, 1000
 
-  render: ->
-    h 'div.app-main', [
-      h UIControls
-      @renderMain()
-    ]
+# Initialize renderer
+class Visualizer
+  constructor: (options={})->
+    ###
+    Setup a rendering object
+    ###
+    @cliOptions = {}
+    console.log "Started renderer"
 
-App = ->
-  h AppStateManager, null, h(AppMain)
+    @options = options
+    @options.buildDir ?= ''
+    @tasks = []
 
-el = document.querySelector("#app")
-render(h(App),el)
+
+  task: (fn, funcOrString, opts={})->
+    ###
+    Add a task
+    ###
+    opts.dpi ?= 300
+
+
+    # Check if we've got a function or string
+    if typeof funcOrString == 'function'
+      throw "We only support strings now, because we run things in a webview"
+      func = funcOrString
+    else
+      # Require relative to parent module,
+      # but do it later so errors can be accurately
+      # traced
+      if not path.isAbsolute(funcOrString)
+        workingDirectory = remote.getGlobal('workingDirectory')
+        func = path.join workingDirectory, funcOrString
+      else
+        func = funcOrString
+      #f = require fn
+      #f(el, cb)
+
+    console.log @options
+    # Apply build directory
+    if fn?
+      if not path.isAbsolute(fn)
+        fn = path.join(@options.buildDir,fn)
+    else
+      fn = ""
+
+    h = createHash('md5')
+          .update(fn)
+          .digest('hex')
+
+    @tasks.push {
+      outfile: fn
+      code: func
+      helpers: @options.helpers
+      hash: h
+      multiPage: opts.multiPage or false
+      opts: opts
+    }
+    return @
+
+export default Visualizer

@@ -3,9 +3,6 @@ const Bundler = require('parcel-bundler');
 
 const shouldWatch = process.argv.includes("--watch");
 
-// Entrypoint file location
-const file = "src/index.html";
-
 // Bundler options
 const options = {
   hmr: false,
@@ -20,6 +17,6 @@ const options = {
   bundleNodeModules: false
 };
 
-const bundler = new Bundler(file, options);
+const bundler = new Bundler(["src/index.html", "src/index.coffee"], options);
 
 bundler.bundle().catch(err => console.error(err))

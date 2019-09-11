@@ -1,12 +1,12 @@
 {
-  "name": "vizzy-gui",
+  "name": "vizvig",
   "version": "1.0.0",
   "description": "Javascript visualizations for the print medium.",
-  "main": "index.coffee",
+  "main": "lib/index.js",
   "author": "Daven Quinn",
   "license": "ISC",
   "bin": {
-    "vizzy": "bin/cli.js"
+    "vizvig": "bin/cli.js"
   },
   "scripts": {
     "postinstall": "patch-package; npm run build",
