@@ -3,20 +3,14 @@ import h from '~/hyper'
 import {TaskElement, TaskStylesheet} from './elements'
 import {TaskShape} from './types'
 import PacmanLoader from 'react-spinners/PacmanLoader'
-requireFromString = require('require-from-string')
-requireBridge = require('./require-bridge')
-
-import path from 'path'
-import decache from 'decache'
 import {BundlerError} from './error'
 import {FigureContainer} from '../figure-container'
 import T from 'prop-types'
 import {MarginType} from '~/types'
 import {AppToaster} from '~/toaster'
 import Bundler from 'parcel-bundler'
-
-vm = require 'vm'
-fs = require 'fs'
+import path from 'path'
+import decache from 'decache'
 
 createBundler = (file, opts)->
 
@@ -159,13 +153,12 @@ class TaskRenderer extends Component
     console.clear()
     console.log "Requiring compiled code from '#{bundle.name}'"
 
-    compiledCode = bundle.name
+    # Reset require paths for imported module
     # https://tech.wayfair.com/2018/06/custom-module-loading-in-a-node-js-environment/
-    # codeData = fs.readFileSync(bundle.name, 'utf-8')
     fn = path.basename(bundle.name)
     dn = path.dirname(bundle.name)
 
-    decache(compiledCode)
+    decache(bundle.name)
     oldPaths = [global.require.main.paths...]
     # Add new paths to require
     dirnamePaths = []
@@ -173,10 +166,9 @@ class TaskRenderer extends Component
     until _dir == "/"
       dirnamePaths.push(path.join(_dir, "node_modules"))
       _dir = path.resolve(path.join(_dir, ".."))
-
+    # Monkey-patch the global require
     global.require.main.paths = [dn, dirnamePaths..., oldPaths...]
-
-    code = require(compiledCode)
+    code = require(bundle.name)
     global.require.main.paths = oldPaths
     @setState {code, styles, error: null}
 
