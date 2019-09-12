@@ -11,6 +11,7 @@ import {AppToaster} from '~/toaster'
 import Bundler from 'parcel-bundler'
 import path from 'path'
 import decache from 'decache'
+import fs from 'fs'
 
 createBundler = (file, opts)->
 
