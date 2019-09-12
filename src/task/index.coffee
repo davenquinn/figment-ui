@@ -3,6 +3,8 @@ import h from '~/hyper'
 import {TaskElement, TaskStylesheet} from './elements'
 import {TaskShape} from './types'
 import PacmanLoader from 'react-spinners/PacmanLoader'
+requireFromString = require('require-from-string')
+
 import decache from 'decache'
 import {createBundler} from '../bundler'
 import {BundlerError} from './error'
@@ -11,6 +13,8 @@ import T from 'prop-types'
 import {MarginType} from '~/types'
 import {AppToaster} from '~/toaster'
 
+
+vm = require 'vm'
 path = require 'path'
 fs = require 'fs'
 
@@ -112,7 +116,6 @@ class TaskRenderer extends Component
 
   onBundlingFinished: (bundle, outDir)=>
     console.log "Bundling done"
-    console.clear()
     msg = "Built in #{bundle.bundleTime}ms"
     console.log(msg)
     AppToaster.show({message: msg, intent: "success", icon: 'clean', timeout: 4000})
@@ -126,11 +129,30 @@ class TaskRenderer extends Component
     if cssFile? and fs.existsSync(cssFile.name)
       styles = fs.readFileSync(cssFile.name, 'utf-8')
 
-    compiledCode = bundle.name
-
+    console.clear()
     console.log "Requiring compiled code from #{bundle.name}"
-    decache(compiledCode)
-    code = require compiledCode
+
+    # https://tech.wayfair.com/2018/06/custom-module-loading-in-a-node-js-environment/
+    codeData = fs.readFileSync(bundle.name, 'utf-8')
+    fn = path.basename(bundle.name)
+    dn = path.dirname(bundle.name)
+
+    code = ->
+      console.log(codeData)
+      wrapped = """(function (exports, require, module, __filename, __dirname) {
+        #{codeData}
+      })"""
+      compiled = vm.runInThisContext(wrapped, fn)
+      exports = {}
+      # this is OUR require, completely
+      # independent of the built-in node require
+      module = {exports}
+      compiled(exports, require, module, bundle.name, dn)
+      return module.exports
+
+    #debugger
+    #decache(compiledCode)
+    #code = require compiledCode
     @setState {code, styles, error: null}
 
   componentDidMount: ->
