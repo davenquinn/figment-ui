@@ -3,13 +3,32 @@ const vm = require('vm');
 const path = require('path');
 const Module = require('module');
 const fs = require('fs');
+const isWindows = false;
 
-function makeRequireFunction() {
+function _resolveLookupPaths(request) {
+
+  let dirnamePaths = [];
+
+  let dirname = path.dirname(request);
+  while (dirname != "/") {
+    dirnamePaths.push(path.join(dirname, "node_modules"));
+    dirname = path.resolve(path.join(dirname, ".."));
+  }
+
+  const mainPaths = ['.'].concat(Module._nodeModulePaths('.'), dirnamePaths);
+  return mainPaths;
+
+  // Add electron path
+  // "/usr/local/var/nodenv/versions/9.11.2/lib/node_modules/electron/dist/Electron.app/Contents/Resources/electron.asar/renderer/api/exports"
+
+};
+
+function makeRequireFunction(mod) {
 
   function require(path) {
     try {
       exports.requireDepth += 1;
-      return Module.prototype.require(path);
+      return mod.require(path);
     } finally {
       exports.requireDepth -= 1;
     }
@@ -28,7 +47,7 @@ function makeRequireFunction() {
     if (typeof request !== 'string') {
       throw new ERR_INVALID_ARG_TYPE('request', 'string', request);
     }
-    return Module._resolveLookupPaths(request, mod, true);
+    return _resolveLookupPaths(request);
   }
 
   resolve.paths = paths;
@@ -48,21 +67,20 @@ module.exports = function(filename) {
   // create wrapper function
   var content = fs.readFileSync(filename, 'utf8');
 
-
-
   var wrapper = Module.wrap(content);
 
-  var compiledWrapper = vm.runInNewContext(wrapper, {}, {});
+  var mod = new Module(filename);
+
+  var compiledWrapper = vm.runInThisContext(wrapper, filename);
 
   var dirname = path.dirname(filename);
-  var require = makeRequireFunction();
-  var result;
+  var require = makeRequireFunction(mod);
 
-  var exports = {};
-  var mod = {exports};
+  console.log(require.resolve.paths('.'));
 
-  compiledWrapper(exports, require, mod,
-                                filename, dirname, process, global, Buffer);
+  mod.exports = {};
+
+  compiledWrapper(exports, require, mod, filename, dirname, process, global, Buffer);
 
   return mod.exports;
 };
