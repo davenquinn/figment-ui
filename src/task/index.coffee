@@ -4,6 +4,7 @@ import {TaskElement, TaskStylesheet} from './elements'
 import {TaskShape} from './types'
 import PacmanLoader from 'react-spinners/PacmanLoader'
 requireFromString = require('require-from-string')
+requireBridge = require('./require-bridge')
 
 import decache from 'decache'
 import {createBundler} from '../bundler'
@@ -12,7 +13,6 @@ import {FigureContainer} from '../figure-container'
 import T from 'prop-types'
 import {MarginType} from '~/types'
 import {AppToaster} from '~/toaster'
-
 
 vm = require 'vm'
 path = require 'path'
@@ -130,29 +130,16 @@ class TaskRenderer extends Component
       styles = fs.readFileSync(cssFile.name, 'utf-8')
 
     console.clear()
-    console.log "Requiring compiled code from #{bundle.name}"
+    console.log "Requiring compiled code from '#{bundle.name}'"
 
+    compiledCode = bundle.name
     # https://tech.wayfair.com/2018/06/custom-module-loading-in-a-node-js-environment/
-    codeData = fs.readFileSync(bundle.name, 'utf-8')
-    fn = path.basename(bundle.name)
-    dn = path.dirname(bundle.name)
+    # codeData = fs.readFileSync(bundle.name, 'utf-8')
+    # fn = path.basename(bundle.name)
+    # dn = path.dirname(bundle.name)
 
-    code = ->
-      console.log(codeData)
-      wrapped = """(function (exports, require, module, __filename, __dirname) {
-        #{codeData}
-      })"""
-      compiled = vm.runInThisContext(wrapped, fn)
-      exports = {}
-      # this is OUR require, completely
-      # independent of the built-in node require
-      module = {exports}
-      compiled(exports, require, module, bundle.name, dn)
-      return module.exports
-
-    #debugger
-    #decache(compiledCode)
-    #code = require compiledCode
+    decache(compiledCode)
+    code = requireBridge(compiledCode)
     @setState {code, styles, error: null}
 
   componentDidMount: ->
