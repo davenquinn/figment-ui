@@ -66,15 +66,15 @@ module.exports = function(filename) {
 
   // create wrapper function
   var content = fs.readFileSync(filename, 'utf8');
+  var dirname = path.dirname(filename);
 
   var wrapper = Module.wrap(content);
 
   var mod = new Module(filename);
 
-  var compiledWrapper = vm.runInThisContext(wrapper, filename);
-
-  var dirname = path.dirname(filename);
   var require = makeRequireFunction(mod);
+
+  var compiledWrapper = vm.runInThisContext(wrapper, filename);
 
   console.log(require.resolve.paths('.'));
 

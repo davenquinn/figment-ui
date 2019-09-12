@@ -14,7 +14,8 @@ const options = {
   minify: false, // Minify files, enabled if process.env.NODE_ENV === 'production'
   target: 'electron', // browser/node/electron, defaults to browser
   sourceMaps: true, // Enable or disable sourcemaps, defaults to enabled (not supported in minified builds yet)
-  bundleNodeModules: false
+  bundleNodeModules: false,
+  scopeHoist: false
 };
 
 const bundler = new Bundler(["src/index.html", "src/index.coffee"], options);
