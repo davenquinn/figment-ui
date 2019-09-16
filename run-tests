@@ -1,7 +1,13 @@
 #!/bin/bash
 
+cd "$(git rev-parse --show-toplevel)"
+
 echo "Removing previous test output"
-rm -rf test/output
+cd test
+rm -rf output
 
 echo "Simple spec"
-./cli.js $@ -- test/example-spec.coffee
+../bin/cli.js --spec example-spec.js
+
+echo "Syntax error spec"
+../bin/cli.js --spec syntax-error-spec.js
