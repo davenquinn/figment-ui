@@ -37,7 +37,8 @@
     "ps-node": "^0.1.6",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
-    "react-spinners": "^0.6.1"
+    "react-spinners": "^0.6.1",
+    "run-electron": "^1.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.4.5",
