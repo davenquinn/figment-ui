@@ -47,11 +47,6 @@ global.appState = {
   zoomLevel: 1
 };
 
-// this could be better represented as a non-global maybe
-global.pidList = [];
-
-let bundlerProcess = null;
-
 if (argv['spec']) {
   // Create list of task-runner files to import
   // Each argument should be a javascript or coffeescript
@@ -71,24 +66,11 @@ const rl = readline.createInterface({
 });
 
 const quitApp = function() {
-  process.stdout.write("Received signal to terminate");
+  process.stdout.write("Figment is shutting down.");
   app.quit();
   app.exit(0);
-  if (bundlerProcess) {
-    bundlerProcess.send("stop");
-    ps.kill( bundlerProcess.pid, function( err ) {
-      if (err) {
-        throw new Error( err );
-      }
-      else {
-        console.log( 'Process %s has been killed!', pid );
-      }
-    });
-  }
   process.exit(0);
 };
-
-process.on('exit', quitApp);
 
 // Set global variables for bundler
 
@@ -138,27 +120,9 @@ function createWindow() {
   win.on('closed', ()=> win = null);
 };
 
-ipcMain.on('new-process', (event, pid)=>{
-  global.pidList.push(pid);
-});
-
 app.on('ready', ()=> {
   createWindow();
 });
 
 app.on('window-all-closed', quitApp);
 
-// App close handler
-app.on('before-quit', ()=>{
-  global.pidList.forEach(pid => {
-    // A simple pid lookup
-    ps.kill( pid, function( err ) {
-      if (err) {
-        throw new Error( err );
-      }
-      else {
-        console.log( 'Process %s has been killed!', pid );
-      }
-    });
-  });
-});

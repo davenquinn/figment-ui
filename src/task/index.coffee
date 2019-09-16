@@ -116,9 +116,6 @@ class TaskRenderer extends Component
     @bundler.bundle()
       .catch (e)=> console.error e
 
-    process.on 'exit', =>
-      @bundler.kill()
-
     @bundler.on 'buildStart', (bundle)=>
       @onBundlingStarted(bundle)
 
