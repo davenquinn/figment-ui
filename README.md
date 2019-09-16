@@ -5,18 +5,17 @@ using Javascript and the web
 visualization pipeline.
 It is intended to support the iterative and reproducible production of graphics using cutting-edge web tooling.
 It was originally created to produce beautiful and
-data-dense scientific figures.
+data-dense scientific figures with [D3](https://d3js.org), without the complexity of a full web application.
+
+![Model timeline](showcase/model-timeline.png)
+*Model tracers for the western North American mantle lithosphere.*
 
 **Figment** seamlessly bundles code to Javascript,
 renders a SVG or HTML document, and prints the output to a PDF. It combines the code-generation and
-iterative development capabilities of Javascript bundlers such as
-[Parcel](https://parceljs.org) and
-[Webpack](https://webpack.js.org) with the
-rendering capabilities of [Electron](https://electronjs.org) static-PDF rendering  capabilities
-of  rendering engines such as
-[electron-pdf](https://github.com/fraserxu/electron-pdf),
-The Since the entire stack
-runs on [Electron](https://electronjs.org), it can be
+iterative development capabilities of the
+[Parcel](https://parceljs.org) Javascript bundler
+with the
+rendering capabilities of [Electron](https://electronjs.org).
 
 
 ## Motivation
@@ -116,7 +115,8 @@ quality static figures.
 
 ## CLI usage
 
-A simple UNIXy CLI is available by default:
+A simple command-line interface is available by
+default:
 
 ```
 > pdf-printer [opts] [--] <script> <out.pdf>
@@ -148,9 +148,9 @@ before proceeding.
 
 `--reload <dir>`: Set a directory to reload from (for testing)
 
-`--spec-mode`: Reload from a specification file (using the
+`--spec`: Reload from a specification file (using the
 API below) instead of file parameters at the CLI. The
-calling signature then becomes `pdf-printer --spec-mode -- <specfile>`.
+calling signature then becomes `pdf-printer --spec <specfile>`.
 
 ## Compile-time helpers
 
@@ -200,3 +200,12 @@ Compilation can be run with `npm start`.
 - Make helpers definable in CLI
 - Remove `coffeescript` and `stylus` defaults
 - Allow testing on multiple figures at once
+
+**Figment** seamlessly bundles code to Javascript,
+renders a SVG or HTML document, and prints the output to a PDF. It combines the code-generation and
+iterative development capabilities of Javascript bundlers such as
+[Parcel](https://parceljs.org) and
+[Webpack](https://webpack.js.org) with the
+rendering capabilities of [Electron](https://electronjs.org) and PDF rendering of
+[electron-pdf](https://github.com/fraserxu/electron-pdf). The entire stack
+runs on [Electron](https://electronjs.org).
