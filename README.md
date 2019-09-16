@@ -1,8 +1,8 @@
 # Figment UI
 
-<a href="https://www.npmjs.com/package/figment-ui">
+<p><a href="https://www.npmjs.com/package/figment-ui">
 <img src="https://badge.fury.io/js/figment-ui.svg" alt="figment-ui" />
-</a>
+</a></p>
 
 **Figment** renders static figures and graphics to PDF
 using Javascript and the web
@@ -22,11 +22,9 @@ With **Figment**, graphics can be produced using any browser-based tools;
 however, special functionality is included for graphics packaged
 as [React](https://reactjs.org) components.
 
-The program can be built and installed using
-`npm install --global figment-ui`, which installs
-the `figment` executable. A prepackaged binary
-distribution is not yet implemented. Contributions of code
-and suggested functionality are welcome.
+**Installation and usage:** `npm install --global figment-ui` installs
+the `figment` executable. Running `figment <entry.js> <output.pdf>` creates
+a UI for figure development and user-controlled rendering to PDF.
 
 ## Examples
 
@@ -304,7 +302,7 @@ module.exports = v
 
 - **DP Quinn** and **BL Ehlmann**, *A PCA-based framework for determining remotely-sensed geological surface orientations and their statistical quality* (2019), Earth and Space Science, doi: [10.1029/2018EA000416](https://dx.doi.org/10.1029/2018EA000416).
 - **DP Quinn** and **BL Ehlmann**, *The deposition and alteration history of the northeast Syrtis layered sulfates* (2019), Journal of Geophysical Research–Planets, doi: [10.1029/2018JE005706](https://dx.doi.org/10.1029/2018JE005706).
-- **DP Quinn**, **JS Saleeby**, **MN Ducea**, **P Lu�ffi**, and **PD Asimow**, *Late-Cretaceous construction of the mantle lithosphere beneath the central California coast revealed by Crystal Knob xenoliths* (2018), Geochemistry, Geophysics, Geosystems, 19, doi: [10.1029/2017GC007260](https://dx.doi.org/10.1029/2017GC007260).
+- **DP Quinn**, **JS Saleeby**, **MN Ducea**, **P Luffi**, and **PD Asimow**, *Late-Cretaceous construction of the mantle lithosphere beneath the central California coast revealed by Crystal Knob xenoliths* (2018), Geochemistry, Geophysics, Geosystems, 19, doi: [10.1029/2017GC007260](https://dx.doi.org/10.1029/2017GC007260).
 
 ## Development
 
@@ -327,6 +325,8 @@ This code is compiled to Javascript with Parcel using `npm run build`;
 - [ ] Allow options to be controlled at runtime for React components
 - [ ] Re-enable headless graphics generation (requires more thought on when
   React components are "done" rendering)
+- [ ] Create a prepackaged binaray distribution.
+- [ ] Change "Print" button to "Render"; might be less confusing.
 - [x] ~~Create a dependency on `electron-pdf`?~~ *The parts of [`electron-pdf`](https://github.com/fraserxu/electron-pdf) that are valuable in this context are straightforward using just Electron.*
 - [x] ~~Make helpers definable in CLI.~~
   *Now that we are using Parcel, all usable filetypes are bundled by default.*
