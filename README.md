@@ -1,5 +1,9 @@
 # Figment UI
 
+<a href="https://www.npmjs.com/package/figment-ui">
+<img src="https://badge.fury.io/js/figment-ui.svg" alt="figment-ui" />
+</a>
+
 **Figment** renders static figures and graphics to PDF
 using Javascript and the web
 visualization pipeline.
@@ -140,7 +144,7 @@ quality static figures.
   (pictured above).
   - `pdf-printer --debug empty-file.js`
   - This could be a good opportunity to
-    add annotations with [d3-annotation](https://github.com/susielu/d3-annotation).
+    add annotations with .
 - Print programmatically from the command line!
 
 -->
@@ -283,10 +287,12 @@ module.exports = v
 #### Useful companion tools for figure generation
 
 - **[React](https://reactjs.org)**: Component-based UI library
-- **[Stylus](https://stylus-lang.org)**: Terser CSS styling
+- **[D3](https://d3js.org)**: "Data-driven-documents"
+- **[Stylus](https://stylus-lang.org)**: "Expressive, dynamic, robust CSS"
 - **[Coffeescript](https://coffeescript.org)**: "a little language that compiles into JavaScript."
 - **[Pg-promise](https://github.com/vitaly-t/pg-promise)**: Interact with Postgres
   databases in Node.js
+- **[d3-annotation](https://github.com/susielu/d3-annotation)**: Create text annotations and callouts
 
 
 #### Prior art
