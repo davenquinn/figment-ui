@@ -149,7 +149,7 @@ quality static figures.
 
 -->
 
-# Usage
+## Usage
 
 After installation (`npm install --global figment-ui`), the `figment` command-line
 interface should be available on your path.
