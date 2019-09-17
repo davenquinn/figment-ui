@@ -55,7 +55,9 @@ if (argv['spec']) {
   console.log("Working in spec mode");
   options.specs = args.map(d=> path.resolve(d));
 } else {
-  [options.infile, options.outfile] = Array.from(args);
+  [inFile, outFile] = Array.from(args);
+  options.infile = path.resolve(inFile);
+  options.outfile = path.resolve(outFile);
 }
 
 /* Setup IPC */
@@ -125,4 +127,3 @@ app.on('ready', ()=> {
 });
 
 app.on('window-all-closed', quitApp);
-
