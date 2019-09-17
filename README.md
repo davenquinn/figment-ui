@@ -1,13 +1,17 @@
 # Figment UI
 
-[![npm version](https://badge.fury.io/js/figment-ui.svg)](https://badge.fury.io/js/figment-ui)
+<p><a href="https://www.npmjs.com/package/figment-ui">
+<img src="https://badge.fury.io/js/figment-ui.svg" alt="figment-ui" />
+</a></p>
 
 **Figment** renders static figures and graphics to PDF
 using Javascript and the web
 visualization pipeline.
-It is intended to support iterative and reproducible graphics production using cutting-edge web tooling.
-It has been used to produce beautiful and
-data-dense scientific figures with [D3](https://d3js.org), without the complexity of a full web application.
+It bundles code and renders the output, supporting iterative and reproducible
+graphics production.
+It has been used along with [D3](https://d3js.org) to make beautiful and
+data-dense scientific figures, harnessing cutting-edge web tooling without
+the complexity of a full web application.
 
 **Figment** seamlessly bundles Javascript,
 runs the code to generate a SVG or HTML document,
@@ -20,20 +24,18 @@ With **Figment**, graphics can be produced using any browser-based tools;
 however, special functionality is included for graphics packaged
 as [React](https://reactjs.org) components.
 
-The program can be built and installed using
-`npm install --global figment-ui`, which installs
-the `figment` executable. A prepackaged binary
-distribution is not yet implemented. Contributions of code
-and suggested functionality are welcome.
+**Installation and usage:** `npm install --global figment-ui` installs
+the `figment` executable. Running `figment <entry.js> <output.pdf>` creates
+a UI for figure development and user-controlled rendering to PDF.
 
 ## Examples
 
 ![Model tracers](showcase/model-timeline.png)
-*Model tracers for the western North American mantle lithosphere: finite-element modeling using [FiPy](https://www.ctcms.nist.gov/fipy/), saved in PostgreSQL,
-and rendered to PDF in **Figment** using [D3](https://d3js.org) — [Quinn et al., 2018](https://dx.doi.org/10.1029/2017GC007260), Figure 20.*
+*Model tracers for the western North American mantle lithosphere: results of finite-element modeling in [FiPy](https://www.ctcms.nist.gov/fipy/), cached in PostgreSQL,
+and rendered using [D3](https://d3js.org) and **Figment** — [Quinn et al., 2018](https://dx.doi.org/10.1029/2017GC007260), Figure 20.*
 
 ![Model time slices](showcase/model-time-slices.png)
-*Time slices for the same mantle lithosphere model, rendered in HTML and SVG using **Figment** — [Quinn et al., 2018](https://dx.doi.org/10.1029/2017GC007260), Figure 21.*
+*Time slices for the same mantle lithosphere model, rendered in HTML and SVG using **Figment**. This would have been time-consuming to produce in Adobe Illustrator... — [Quinn et al., 2018](https://dx.doi.org/10.1029/2017GC007260), Figure 21.*
 
 ## Motivation
 
@@ -115,39 +117,7 @@ using React. The result is a small and flexible tool with a
 forward-looking codebase — hopefully, this architecture will be easy to
 maintain and extend going forward.
 
-
-<!--
-
-and reproducibly generate static graphics. The code-bundling and PDF-generation
-features are designed for smooth creation of data-rich scientific figures
-using Webkit's powerful DOM and SVG-generation ability.
-Ultimately, make building complex figures in Javascript
-
-
-but works at a higher level, and strives purpose.
-It is designed to make the
-DOM, its SVG extensions, and the universe of awesome
-tools that have been designed for it (e.g. `d3`),
-a first-class graphics environment for creating high
-quality static figures.
-
-## Workflow
-
-![PDF Printer debug mode](pdf-printer-debug-mode.png)
-
-- Make a figure!
-  - Use HTML/Javascript/SVG/CSS (and preprocessors if needed)
-  - Call system APIs, run SQL locally, etc.
-- Debug or fiddle with your creation in debug mode
-  (pictured above).
-  - `pdf-printer --debug empty-file.js`
-  - This could be a good opportunity to
-    add annotations with [d3-annotation](https://github.com/susielu/d3-annotation).
-- Print programmatically from the command line!
-
--->
-
-# Usage
+## Usage
 
 After installation (`npm install --global figment-ui`), the `figment` command-line
 interface should be available on your path.
@@ -243,7 +213,7 @@ createFigure.propTypes = {};
 export default createFigure;
 ```
 
-## Spec Mode
+## Spec mode
 
 A "specification" can be passed into the CLI using the signature `figment --spec spec.js`. This
 Javascript file defines a set of tasks to be exposed in the user interface.
@@ -285,11 +255,12 @@ module.exports = v
 #### Useful companion tools for figure generation
 
 - **[React](https://reactjs.org)**: Component-based UI library
-- **[Stylus](https://stylus-lang.org)**: Terser CSS styling
+- **[D3](https://d3js.org)**: "Data-driven-documents"
+- **[Stylus](https://stylus-lang.org)**: "Expressive, dynamic, robust CSS"
 - **[Coffeescript](https://coffeescript.org)**: "a little language that compiles into JavaScript."
 - **[Pg-promise](https://github.com/vitaly-t/pg-promise)**: Interact with Postgres
   databases in Node.js
-
+- **[d3-annotation](https://github.com/susielu/d3-annotation)**: Create text annotations and callouts
 
 #### Prior art
 
@@ -300,7 +271,7 @@ module.exports = v
 
 - **DP Quinn** and **BL Ehlmann**, *A PCA-based framework for determining remotely-sensed geological surface orientations and their statistical quality* (2019), Earth and Space Science, doi: [10.1029/2018EA000416](https://dx.doi.org/10.1029/2018EA000416).
 - **DP Quinn** and **BL Ehlmann**, *The deposition and alteration history of the northeast Syrtis layered sulfates* (2019), Journal of Geophysical Research–Planets, doi: [10.1029/2018JE005706](https://dx.doi.org/10.1029/2018JE005706).
-- **DP Quinn**, **JS Saleeby**, **MN Ducea**, **P Lu ffi**, and **PD Asimow**, *Late-Cretaceous construction of the mantle lithosphere beneath the central California coast revealed by Crystal Knob xenoliths* (2018), Geochemistry, Geophysics, Geosystems, 19, doi: [10.1029/2017GC007260](https://dx.doi.org/10.1029/2017GC007260).
+- **DP Quinn**, **JS Saleeby**, **MN Ducea**, **P Luffi**, and **PD Asimow**, *Late-Cretaceous construction of the mantle lithosphere beneath the central California coast revealed by Crystal Knob xenoliths* (2018), Geochemistry, Geophysics, Geosystems, 19, doi: [10.1029/2017GC007260](https://dx.doi.org/10.1029/2017GC007260).
 
 ## Development
 
@@ -323,6 +294,8 @@ This code is compiled to Javascript with Parcel using `npm run build`;
 - [ ] Allow options to be controlled at runtime for React components
 - [ ] Re-enable headless graphics generation (requires more thought on when
   React components are "done" rendering)
+- [ ] Create a prepackaged binaray distribution.
+- [ ] Change "Print" button to "Render"; might be less confusing.
 - [x] ~~Create a dependency on `electron-pdf`?~~ *The parts of [`electron-pdf`](https://github.com/fraserxu/electron-pdf) that are valuable in this context are straightforward using just Electron.*
 - [x] ~~Make helpers definable in CLI.~~
   *Now that we are using Parcel, all usable filetypes are bundled by default.*
