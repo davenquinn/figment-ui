@@ -93,7 +93,7 @@ is executed with the full power and system access of the
 resources such as modeling pipelines, database connections, and files that are
 not exposed via an HTTP API for typical browser use.
 
-Another key capability of **Figment** is code
+**Figment** also handles code
 transformation. Modern web software is typically assembled from
 a variety of functional units (e.g. application code, Javascript libraries, CSS)
 which must be bundled together into a
