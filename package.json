@@ -38,7 +38,8 @@
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
     "react-spinners": "^0.6.1",
-    "run-electron": "^1.0.0"
+    "run-electron": "^1.0.0",
+    "webpack": "^4.40.2"
   },
   "devDependencies": {
     "@babel/core": "^7.4.5",

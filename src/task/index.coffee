@@ -12,9 +12,10 @@ import Bundler from 'parcel-bundler'
 import path from 'path'
 import decache from 'decache'
 import fs from 'fs'
+import webpack from 'webpack'
 
 createBundler = (file, opts)->
-
+  # // Create the Parcel bundler
   options = {
     hmr: false,
     outDir: 'dist', # The out directory to put the build files in, defaults to dist
@@ -48,7 +49,22 @@ sleep = (timeout=1000)->
 Spinner = ->
   h PacmanLoader, {size: 20, sizeUnit: 'px', color: '#aaa'}
 
-class TaskRenderer extends Component
+global.requireInDir = (file, extraPaths=[])->
+  oldPaths = [global.require.main.paths...]
+  # Add new paths to require
+  dirnamePaths = []
+  baseDir = path.dirname(path.resolve(file))
+  __dir = baseDir
+  until __dir == "/"
+    dirnamePaths.push(path.join(__dir, "node_modules"))
+    __dir = path.resolve(path.join(__dir, ".."))
+  # Monkey-patch the global require
+  global.require.main.paths = [baseDir, dirnamePaths...]
+  code = require(file)
+  global.require.main.paths = oldPaths
+  return code
+
+class ParcelTaskRenderer extends Component
   @propTypes: {
     task: TaskShape
     marginTop: MarginType
@@ -183,5 +199,62 @@ class TaskRenderer extends Component
   componentWillUnmount: ->
     return unless @bundler?
     @bundler.stop()
+
+class WebpackTaskRenderer extends Component
+  render: ->
+    console.log "Targeting webpack"
+    h 'div', 'Targeting webpack'
+
+    {task, zoomLevel, marginTop} = @props
+
+    h FigureContainer, {marginTop, zoomLevel},  [
+      h 'h1', 'Targeting webpack'
+    ]
+
+  handleBundleError: (err)=>
+    console.error(err)
+    @setState {error: err}
+
+  startBundler: =>
+    {webpackConfig, task} = @props
+    cfg = requireInDir(webpackConfig)
+    cfg.entry = task.code
+    codeDir = path.dirname(task.code)
+    cfg.output = {
+      filename: '[name].js',
+      path: path.join(codeDir, '.cache', 'webpack')
+    }
+
+    console.log cfg
+    @webpack = webpack(cfg)
+    onBundle = (err, res)=>
+      if err?
+        return @handleBundleError(err)
+      return @onBundlingFinished(res)
+
+    @watcher = @webpack.watch({}, onBundle)
+    console.log "Starting webpack watcher"
+
+  onBundlingFinished: (res)=>
+    console.log res
+
+  componentDidMount: ->
+    {task} = @props
+    return unless task?
+    @startBundler task
+
+  componentWillUnmount: ->
+    return unless @watcher?
+    @watcher.close()
+
+class TaskRenderer extends Component
+  render: ->
+    entryFile = @props.task.code
+    entryDir = path.dirname(entryFile)
+    webpackConfig = path.resolve(path.join(entryDir, 'webpack.config.js'))
+    if fs.existsSync(webpackConfig)
+      return h WebpackTaskRenderer, {webpackConfig, @props...}
+    else
+      return h ParcelTaskRenderer, @props
 
 export {TaskRenderer, TaskShape}
