@@ -9,7 +9,7 @@ isReactComponent = (fn)->
   # We can guarantee that something is a React component if any of these
   # conditions are met
   return true if fn.propTypes?
-  return true if fn::isReactComponent? and fn::isReactComponent
+  return true if fn.prototype? and fn::isReactComponent? and fn::isReactComponent
   return true if fn.isReactComponent? and fn.isReactComponent
   return false
 

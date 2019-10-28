@@ -148,6 +148,13 @@ a graphic. `<output.pdf>` is the intended destination for the compiled PDF.
 
 `--reinstall-devtools`: Reinstall the React DevTools extension.
 
+## Building native node modules
+
+Native Node modules are often not compiled for Electron by
+default, and rebuilding them for the proper Electron version is required
+to make them work. Figment includes a `figment install` helper
+that wraps `npm install` but with command-line flags set to
+build for the Electron used in `figment`.
 
 ## Entry signature
 

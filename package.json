@@ -1,6 +1,6 @@
 {
   "name": "figment-ui",
-  "version": "0.1.10",
+  "version": "0.1.11",
   "description": "Javascript visualizations for the print medium.",
   "main": "lib/index.js",
   "author": "Daven Quinn",
@@ -27,7 +27,7 @@
     "classnames": "^2.2.6",
     "decache": "^4.5.1",
     "devtools-detect": "^3.0.0",
-    "electron": "^6.0.8",
+    "electron": "6.0.8",
     "electron-devtools-installer": "^2.2.4",
     "electron-localshortcut": "^1.0.0",
     "immutability-helper": "^3.0.0",
