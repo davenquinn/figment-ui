@@ -12,6 +12,7 @@ import Bundler from 'parcel-bundler'
 import path from 'path'
 import decache from 'decache'
 import fs from 'fs'
+import requireStack from 'require-stack'
 
 createBundler = (file, opts)->
 
@@ -134,9 +135,11 @@ class TaskRenderer extends Component
     @setState {error: err}
 
   onBundlingFinished: (bundle, outDir)=>
+    if @state.error?
+      return
+    console.clear()
     console.log "Bundling done"
     msg = "Built in #{bundle.bundleTime}ms"
-    console.log(msg)
     AppToaster.show({message: msg, intent: "success", icon: 'clean', timeout: 4000})
 
     if bundle.type != 'js'
@@ -148,7 +151,6 @@ class TaskRenderer extends Component
     if cssFile? and fs.existsSync(cssFile.name)
       styles = fs.readFileSync(cssFile.name, 'utf-8')
 
-    console.clear()
     console.log "Requiring compiled code from '#{bundle.name}'"
 
     # Reset require paths for imported module
