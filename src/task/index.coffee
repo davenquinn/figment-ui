@@ -159,7 +159,7 @@ class TaskRenderer extends Component
     dn = path.dirname(bundle.name)
 
     decache(bundle.name)
-    oldPaths = [global.require.main.paths...]
+    oldPathFn = global.require.resolve.paths
     # Add new paths to require
     dirnamePaths = []
     _dir = dn
@@ -167,9 +167,10 @@ class TaskRenderer extends Component
       dirnamePaths.push(path.join(_dir, "node_modules"))
       _dir = path.resolve(path.join(_dir, ".."))
     # Monkey-patch the global require
-    global.require.main.paths = [dn, dirnamePaths..., oldPaths...]
+    global.require.resolve.paths = (fn)->
+      [dn, dirnamePaths...]
     code = require(bundle.name)
-    global.require.main.paths = oldPaths
+    global.require.resolve.paths = oldPathFn
     @setState {code, styles, error: null}
 
   componentDidMount: ->

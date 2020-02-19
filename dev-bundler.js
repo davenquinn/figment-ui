@@ -1,5 +1,5 @@
 // Bundles electron code for production
-const Bundler = require('parcel-bundler');
+const Parcel = require('@parcel/core').default
 
 const shouldWatch = process.argv.includes("--watch");
 
@@ -18,6 +18,6 @@ const options = {
   scopeHoist: false
 };
 
-const bundler = new Bundler(["src/index.html", "src/index.coffee"], options);
+const bundler = new Parcel(["src/index.html", "src/index.coffee"], options);
 
 bundler.bundle().catch(err => console.error(err))
