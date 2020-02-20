@@ -230,7 +230,7 @@ class WebpackTaskRenderer extends Component
     if not task?
       return null
     if errors?
-      return h "div.errors", errors.map (error)->
+      return h "div.errors", [errors[0]].map (error)->
         h BundlerError, {error}
     if not code? and not styles?
       return h 'div.progress', {style: {marginTop}}, [
@@ -250,7 +250,11 @@ class WebpackTaskRenderer extends Component
 
   startBundler: =>
     {webpackConfig, task} = @props
-    cfg = requireInDir(webpackConfig)
+    if path.isAbsolute(webpackConfig)
+      cfg = require(webpackConfig)
+    else
+      cfg = requireInDir(webpackConfig)
+
     cfg.entry = task.code
     codeDir = path.dirname(task.code)
     cfg.output = {
