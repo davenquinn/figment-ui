@@ -13,6 +13,7 @@ import path from 'path'
 import decache from 'decache'
 import fs from 'fs'
 import requireStack from 'require-stack'
+import webpack from 'webpack'
 
 createBundler = (file, opts)->
   # // Create the Parcel bundler
@@ -202,14 +203,45 @@ class ParcelTaskRenderer extends Component
     @bundler.stop()
 
 class WebpackTaskRenderer extends Component
+  constructor: (props)->
+    super props
+    @bundler = null
+    @state = {
+      code: null
+      styles: null
+      errors: null
+      size: null
+    }
+
+  recordSize: ({width, height})=>
+    @setState {size: {width, height}}
+
   render: ->
-    console.log "Targeting webpack"
-    h 'div', 'Targeting webpack'
-
     {task, zoomLevel, marginTop} = @props
+    {opts} = task
+    {multiPage} = opts
+    multiPage ?= false
 
-    h FigureContainer, {marginTop, zoomLevel},  [
-      h 'h1', 'Targeting webpack'
+    {code, styles, errors, size} = @state
+    width = null
+    if size?
+      width = size.width
+
+    if not task?
+      return null
+    if errors?
+      return h "div.errors", errors.map (error)->
+        h BundlerError, {error}
+    if not code? and not styles?
+      return h 'div.progress', {style: {marginTop}}, [
+        h Spinner
+        h 'p', [
+          "Digesting your code with "
+          h "b", "Webpack"
+        ]
+      ]
+    h FigureContainer, {marginTop, zoomLevel, multiPage, width},  [
+      h TaskElement, {code, recordSize: @recordSize, opts}
     ]
 
   handleBundleError: (err)=>
@@ -223,9 +255,12 @@ class WebpackTaskRenderer extends Component
     codeDir = path.dirname(task.code)
     cfg.output = {
       filename: '[name].js',
+      libraryTarget: 'commonjs2',
       path: path.join(codeDir, '.cache', 'webpack')
     }
+    cfg.target = 'electron-renderer'
 
+    console.clear()
     console.log cfg
     @webpack = webpack(cfg)
     onBundle = (err, res)=>
@@ -237,7 +272,41 @@ class WebpackTaskRenderer extends Component
     console.log "Starting webpack watcher"
 
   onBundlingFinished: (res)=>
-    console.log res
+    if @state.errors?
+      return
+    if res.compilation.errors.length > 0
+      @setState {errors: res.compilation.errors}
+      return
+
+    console.log(res)
+    console.log "Bundling done"
+
+    bundleTime = res.endTime-res.startTime
+    msg = "Built in #{bundleTime}ms"
+    AppToaster.show({message: msg, intent: "success", icon: 'clean', timeout: 4000})
+
+    bundleName = res.compilation.assets['main.js'].existsAt
+
+    console.log "Requiring compiled code from '#{bundleName}'"
+
+    # Reset require paths for imported module
+    # https://tech.wayfair.com/2018/06/custom-module-loading-in-a-node-js-environment/
+    fn = path.basename(bundleName)
+    dn = path.dirname(bundleName)
+
+    decache(bundleName)
+    oldPaths = [global.require.main.paths...]
+    # Add new paths to require
+    dirnamePaths = []
+    _dir = dn
+    until _dir == "/"
+      dirnamePaths.push(path.join(_dir, "node_modules"))
+      _dir = path.resolve(path.join(_dir, ".."))
+    # Monkey-patch the global require
+    global.require.main.paths = [dn, dirnamePaths..., oldPaths...]
+    code = require(bundleName)
+    global.require.main.paths = oldPaths
+    @setState {code, errors: null}
 
   componentDidMount: ->
     {task} = @props
@@ -252,10 +321,12 @@ class TaskRenderer extends Component
   render: ->
     entryFile = @props.task.code
     entryDir = path.dirname(entryFile)
-    webpackConfig = path.resolve(path.join(entryDir, 'webpack.config.js'))
-    if fs.existsSync(webpackConfig)
+    {webpackConfig} = @props.task.opts
+    if webpackConfig?
+      webpackConfig = path.resolve(path.join(entryDir, webpackConfig))
+      #if fs.existsSync(webpackConfig)
+      console.log("Bundling with webpack")
       return h WebpackTaskRenderer, {webpackConfig, @props...}
-    else
-      return h ParcelTaskRenderer, @props
+    return h ParcelTaskRenderer, @props
 
 export {TaskRenderer, TaskShape}

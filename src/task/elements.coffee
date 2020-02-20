@@ -58,6 +58,7 @@ class TaskElement extends Component
     {code, opts, callback} = @props
     return unless code?
     return if @state.error?
+    console.log(code)
     code = unwrapESModule(code)
     return if isValidElement(code) or isReactComponent(code)
 
