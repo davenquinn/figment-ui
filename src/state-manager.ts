@@ -15,7 +15,7 @@ const {spawn} = require('child_process');
 import {parse} from 'path';
 import 'devtools-detect';
 import {printFigureArea} from './print';
-import Visualizer from "./index";
+import Visualizer from "./visualizer";
 
 // For backwards compatibility
 global.Printer = Visualizer;
@@ -108,7 +108,7 @@ class AppStateManager extends Component {
     return Promise.map(specs, function(d){
       try {
         // Require using ESM module
-        const res = require(d);
+        const res = require(`${d}`);
         return Promise.resolve(res)
           .then(function(v){
             v.name = d;

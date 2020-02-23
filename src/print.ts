@@ -125,6 +125,6 @@ const printFigureArea = async function(task){
   return AppToaster.show({message: "Printed figure!", intent: 'primary', icon: 'print', timeout: 4000});
 };
 
-module.exports = {
+export {
   printFigureArea
 };
