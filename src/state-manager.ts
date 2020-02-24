@@ -15,10 +15,10 @@ const {spawn} = require('child_process');
 import {parse} from 'path';
 import 'devtools-detect';
 import {printFigureArea} from './print';
-import Visualizer from "./visualizer";
+import Figment from "./index";
 
 // For backwards compatibility
-global.Printer = Visualizer;
+global.Printer = Figment;
 
 const AppStateContext = createContext({});
 

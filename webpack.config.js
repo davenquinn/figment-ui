@@ -39,6 +39,7 @@ module.exports = {
     }
   },
   entry: {
+    main: './src/main.ts',
     index: './src/index.ts'
   },
   output: {
