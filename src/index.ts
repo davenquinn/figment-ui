@@ -69,8 +69,12 @@ AppMain.initClass();
 
 const App = () => h(AppStateManager, null, h(AppMain));
 
-console.log("Hello, world!")
-const el = document.querySelector("#app");
+let el = document.createElement('div');
+el.id = 'app';
+document.body.appendChild(el);
+
+//const el = document.querySelector("#app");
 render(h(App),el);
 
-export default App
+import Figment from './visualizer'
+export default Figment

@@ -70,7 +70,7 @@ global.requireInDir = function(file, extraPaths=[]){
   }
   // Monkey-patch the global require
   global.require.main.paths = [baseDir, ...dirnamePaths];
-  const code = require(`${file}`);
+  const code = __non_webpack_require__(`${file}`);
   global.require.main.paths = oldPaths;
   return code;
 };
@@ -228,7 +228,7 @@ class ParcelTaskRenderer extends Component {
     }
     // Monkey-patch the global require
     global.require.main.paths = [dn, ...dirnamePaths, ...oldPaths];
-    const code = require(`${bundle.name}`);
+    const code = __non_webpack_require__(`${bundle.name}`);
     global.require.main.paths = oldPaths;
     return this.setState({code, styles, error: null});
   }
@@ -322,7 +322,7 @@ class WebpackTaskRenderer extends Component {
     let cfg;
     const {webpackConfig, task} = this.props;
     if (path.isAbsolute(webpackConfig)) {
-      cfg = require(`${webpackConfig}`);
+      cfg = __non_webpack_require__(webpackConfig);
     } else {
       cfg = requireInDir(webpackConfig);
     }
@@ -386,7 +386,7 @@ class WebpackTaskRenderer extends Component {
     }
     // Monkey-patch the global require
     global.require.main.paths = [dn, ...dirnamePaths, ...oldPaths];
-    const code = require(`${bundleName}`);
+    const code = __non_webpack_require__(bundleName);
     global.require.main.paths = oldPaths;
     return this.setState({code, errors: null});
   }

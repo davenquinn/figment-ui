@@ -14,19 +14,10 @@
     "figment": "bin/cli.js"
   },
   "scripts": {
-    "dev": "electron-webpack dev --spec test/example-spec.js",
-    "build": "electron-webpack",
+    "dev": "webpack --watch",
+    "build": "webpack",
     "prepare": "patch-package; npm run build",
     "dist": "npm run build && electron-builder"
-  },
-  "electronWebpack": {
-    "main": {
-      "sourceDirectory": "main"
-    },
-    "renderer": {
-      "sourceDirectory": "src",
-      "webpackConfig": "webpack.renderer.js"
-    }
   },
   "dependencies": {
     "@babel/polyfill": "^7.4.4",
@@ -49,8 +40,7 @@
     "react-dom": "^16.8.6",
     "react-spinners": "^0.6.1",
     "require-stack": "^1.0.2",
-    "run-electron": "^1.0.0",
-    "webpack-node-externals": "^1.7.2"
+    "run-electron": "^1.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.4.5",
@@ -78,6 +68,7 @@
     "stylus": "^0.54.5",
     "stylus-loader": "^3.0.2",
     "typescript": "^3.8.2",
-    "webpack": "^4.41.6"
+    "webpack": "^4.41.6",
+    "webpack-node-externals": "^1.7.2"
   }
 }

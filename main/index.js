@@ -107,7 +107,7 @@ function createWindow() {
   });
 
   const parentDir = path.resolve(path.join(__dirname,'..'));
-  const url = "file://"+path.join(parentDir,'dist', 'renderer', 'index.html');
+  const url = "file://"+path.join(parentDir, 'lib', 'index.html');
   win.loadURL(url);
   shortcuts(win);
 

@@ -32,13 +32,7 @@ const nameForTask = function(task){
 
 class AppStateManager extends Component {
   constructor(props){
-    {
-      // Hack: trick Babel/TypeScript into allowing this before super.
-      if (false) { super(); }
-      let thisFn = (() => { return this; }).toString();
-      let thisName = thisFn.match(/return (?:_assertThisInitialized\()*(\w+)\)*;/)[1];
-      eval(`${thisName} = this;`);
-    }
+    super(props);
     this.shouldListTasks = this.shouldListTasks.bind(this);
     this.selectedTask = this.selectedTask.bind(this);
     this.__createSpec = this.__createSpec.bind(this);
@@ -48,7 +42,7 @@ class AppStateManager extends Component {
     this.updateState = this.updateState.bind(this);
     this.toggleDevTools = this.toggleDevTools.bind(this);
     this.componentDidMount = this.componentDidMount.bind(this);
-    super(props);
+
     const options = remote.getGlobal('options');
     const appState = remote.getGlobal('appState');
 
@@ -108,7 +102,7 @@ class AppStateManager extends Component {
     return Promise.map(specs, function(d){
       try {
         // Require using ESM module
-        const res = require(`${d}`);
+        const res = __non_webpack_require__(`${d}`);
         return Promise.resolve(res)
           .then(function(v){
             v.name = d;

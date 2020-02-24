@@ -2,4 +2,4 @@ node_modules
 test/output
 .cache
 build
-dist
+lib
