@@ -30,15 +30,8 @@ const sharedStart = function(array) {
 
 class TaskListItem extends Component {
   constructor(...args) {
-    {
-      // Hack: trick Babel/TypeScript into allowing this before super.
-      if (false) { super(); }
-      let thisFn = (() => { return this; }).toString();
-      let thisName = thisFn.match(/return (?:_assertThisInitialized\()*(\w+)\)*;/)[1];
-      eval(`${thisName} = this;`);
-    }
-    this.onClick = this.onClick.bind(this);
     super(...args);
+    this.onClick = this.onClick.bind(this);
   }
 
   static initClass() {

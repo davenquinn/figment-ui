@@ -102,9 +102,10 @@ class AppStateManager extends Component {
     return Promise.map(specs, function(d){
       try {
         // Require using ESM module
-        const res = __non_webpack_require__(`${d}`);
+        const res = __non_webpack_require__(d);
         return Promise.resolve(res)
           .then(function(v){
+            console.log(v)
             v.name = d;
             return v;
         });

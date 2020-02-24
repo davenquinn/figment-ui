@@ -31,15 +31,8 @@ class TaskElement extends Component {
     };
   }
   constructor(props){
-    {
-      // Hack: trick Babel/TypeScript into allowing this before super.
-      if (false) { super(); }
-      let thisFn = (() => { return this; }).toString();
-      let thisName = thisFn.match(/return (?:_assertThisInitialized\()*(\w+)\)*;/)[1];
-      eval(`${thisName} = this;`);
-    }
-    this.runTask = this.runTask.bind(this);
     super(props);
+    this.runTask = this.runTask.bind(this);
     this.state = {
       error: null,
       errorInfo: null

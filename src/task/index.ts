@@ -84,19 +84,12 @@ class ParcelTaskRenderer extends Component {
     };
   }
   constructor(props){
-    {
-      // Hack: trick Babel/TypeScript into allowing this before super.
-      if (false) { super(); }
-      let thisFn = (() => { return this; }).toString();
-      let thisName = thisFn.match(/return (?:_assertThisInitialized\()*(\w+)\)*;/)[1];
-      eval(`${thisName} = this;`);
-    }
+    super(props);
     this.recordSize = this.recordSize.bind(this);
     this.startBundler = this.startBundler.bind(this);
     this.onBundlingStarted = this.onBundlingStarted.bind(this);
     this.handleBundleError = this.handleBundleError.bind(this);
     this.onBundlingFinished = this.onBundlingFinished.bind(this);
-    super(props);
     this.bundler = null;
     this.state = {
       code: null,
@@ -254,18 +247,11 @@ ParcelTaskRenderer.initClass();
 
 class WebpackTaskRenderer extends Component {
   constructor(props){
-    {
-      // Hack: trick Babel/TypeScript into allowing this before super.
-      if (false) { super(); }
-      let thisFn = (() => { return this; }).toString();
-      let thisName = thisFn.match(/return (?:_assertThisInitialized\()*(\w+)\)*;/)[1];
-      eval(`${thisName} = this;`);
-    }
+    super(props);
     this.recordSize = this.recordSize.bind(this);
     this.handleBundleError = this.handleBundleError.bind(this);
     this.startBundler = this.startBundler.bind(this);
     this.onBundlingFinished = this.onBundlingFinished.bind(this);
-    super(props);
     this.bundler = null;
     this.state = {
       code: null,
