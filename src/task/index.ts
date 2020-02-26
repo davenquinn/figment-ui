@@ -20,8 +20,9 @@ import Bundler from 'parcel-bundler';
 import path from 'path';
 import decache from 'decache';
 import fs from 'fs';
-import requireStack from 'require-stack';
 import webpack from 'webpack';
+import nodeExternals from 'webpack-node-externals';
+
 
 const createBundler = function(file, opts){
   // // Create the Parcel bundler
@@ -245,6 +246,7 @@ class ParcelTaskRenderer extends Component {
 }
 ParcelTaskRenderer.initClass();
 
+
 class WebpackTaskRenderer extends Component {
   constructor(props){
     super(props);
@@ -307,18 +309,23 @@ class WebpackTaskRenderer extends Component {
   startBundler() {
     let cfg;
     const {webpackConfig, task} = this.props;
-    if (path.isAbsolute(webpackConfig)) {
-      cfg = __non_webpack_require__(webpackConfig);
-    } else {
-      cfg = requireInDir(webpackConfig);
-    }
+    //process.chdir(path.dirname(webpackConfig))
+
+    cfg = __non_webpack_require__(webpackConfig);
 
     cfg.entry = task.code;
     const codeDir = path.dirname(task.code);
+
+    cfg.node = {
+      __filename: true,
+      __dirname: true,
+      process: true
+    }
+
     cfg.output = {
       filename: '[name].js',
       libraryTarget: 'commonjs2',
-      path: path.join(codeDir, '.cache', 'webpack')
+      path: path.join(codeDir, '.cache', 'webpack'),
     };
     cfg.target = 'electron-renderer';
 
@@ -355,25 +362,10 @@ class WebpackTaskRenderer extends Component {
     const bundleName = res.compilation.assets['main.js'].existsAt;
 
     console.log(`Requiring compiled code from '${bundleName}'`);
-
-    // Reset require paths for imported module
-    // https://tech.wayfair.com/2018/06/custom-module-loading-in-a-node-js-environment/
-    const fn = path.basename(bundleName);
     const dn = path.dirname(bundleName);
 
     decache(bundleName);
-    const oldPaths = [...global.require.main.paths];
-    // Add new paths to require
-    const dirnamePaths = [];
-    let _dir = dn;
-    while (_dir !== "/") {
-      dirnamePaths.push(path.join(_dir, "node_modules"));
-      _dir = path.resolve(path.join(_dir, ".."));
-    }
-    // Monkey-patch the global require
-    global.require.main.paths = [dn, ...dirnamePaths, ...oldPaths];
     const code = __non_webpack_require__(bundleName);
-    global.require.main.paths = oldPaths;
     return this.setState({code, errors: null});
   }
 
