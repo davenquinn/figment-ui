@@ -23,6 +23,7 @@
     "@babel/polyfill": "^7.4.4",
     "@blueprintjs/core": "^3.17.1",
     "@macrostrat/hyper": "^1.1.0",
+    "@types/react": "^16.9.23",
     "bluebird": "^3.4.6",
     "check-prop-types": "^1.1.2",
     "classnames": "^2.2.6",
@@ -40,7 +41,8 @@
     "react-dom": "^16.8.6",
     "react-spinners": "^0.6.1",
     "require-stack": "^1.0.2",
-    "run-electron": "^1.0.0"
+    "run-electron": "^1.0.0",
+    "webpack-merge": "^4.2.2"
   },
   "devDependencies": {
     "@babel/core": "^7.4.5",

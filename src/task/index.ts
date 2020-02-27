@@ -21,7 +21,18 @@ import path from 'path';
 import decache from 'decache';
 import fs from 'fs';
 import webpack from 'webpack';
-import nodeExternals from 'webpack-node-externals';
+import merge from 'webpack-merge';
+
+interface Task {
+  outfile: string,
+  code: string,
+  hash: string,
+  multiPage: boolean,
+  opts: {
+    dpi: number,
+    webpackConfig?: string
+  }
+}
 
 
 const createBundler = function(file, opts){
@@ -246,8 +257,18 @@ class ParcelTaskRenderer extends Component {
 }
 ParcelTaskRenderer.initClass();
 
+type TaskRendererProps = {
+  task: Task
+}
 
-class WebpackTaskRenderer extends Component {
+type TaskRendererState = {
+  code: string,
+  styles: string,
+  errors: object[],
+  size: {width: number, height: number}
+}
+
+class WebpackTaskRenderer extends Component<TaskRendererProps, TaskRendererState> {
   constructor(props){
     super(props);
     this.recordSize = this.recordSize.bind(this);
@@ -307,29 +328,36 @@ class WebpackTaskRenderer extends Component {
   }
 
   startBundler() {
-    let cfg;
     const {webpackConfig, task} = this.props;
     //process.chdir(path.dirname(webpackConfig))
-
-    cfg = __non_webpack_require__(webpackConfig);
-
-    cfg.entry = task.code;
+    const userConfig = __non_webpack_require__(webpackConfig);
     const codeDir = path.dirname(task.code);
+    const cacheDir = path.join(codeDir, '.cache')
+    const outputDir = path.dirname(task.outfile)
 
-    cfg.node = {
-      __filename: true,
-      __dirname: true,
-      process: true
+    const baseConfig = {
+      target: 'electron-renderer',
+      node: {
+        __filename: true,
+        __dirname: true,
+        process: true
+      },
+      output: {
+        filename: '[name].js',
+        libraryTarget: 'commonjs2',
+        path: path.join(cacheDir, 'webpack'),
+      },
+      watchOptions: {
+        ignored: [/node_modules/, cacheDir, outputDir]
+      }
     }
 
-    cfg.output = {
-      filename: '[name].js',
-      libraryTarget: 'commonjs2',
-      path: path.join(codeDir, '.cache', 'webpack'),
-    };
-    cfg.target = 'electron-renderer';
+    let cfg = merge(baseConfig, userConfig)
+    cfg.entry = task.code;
 
     console.clear();
+    console.log("Starting bundler")
+
     console.log(cfg);
     this.webpack = webpack(cfg);
     const onBundle = (err, res)=> {
@@ -388,8 +416,6 @@ class TaskRenderer extends Component {
     let {webpackConfig} = this.props.task.opts;
     if (webpackConfig != null) {
       webpackConfig = path.resolve(path.join(entryDir, webpackConfig));
-      //if fs.existsSync(webpackConfig)
-      console.log("Bundling with webpack");
       return h(WebpackTaskRenderer, {webpackConfig, ...this.props});
     }
     return h(ParcelTaskRenderer, this.props);
