@@ -272,7 +272,6 @@ type TaskRendererState = {
 class WebpackTaskRenderer extends Component<TaskRendererProps, TaskRendererState> {
   constructor(props){
     super(props);
-    this.recordSize = this.recordSize.bind(this);
     this.handleBundleError = this.handleBundleError.bind(this);
     this.startBundler = this.startBundler.bind(this);
     this.onBundlingFinished = this.onBundlingFinished.bind(this);
@@ -293,20 +292,13 @@ class WebpackTaskRenderer extends Component<TaskRendererProps, TaskRendererState
   render() {
     const {task, zoomLevel, marginTop} = this.props;
     const {opts} = task;
-    let {multiPage} = opts;
+    let {multiPage, scaleFactor} = opts;
     if (multiPage == null) { multiPage = false; }
 
     const {code, styles, errors, size} = this.state;
-    let width = null;
-    if (size != null) {
-      ({
-        width
-      } = size);
-    }
 
-    if ((task == null)) {
-      return null;
-    }
+    if (task == null) return null;
+
     if (errors != null) {
       return h("div.errors", [errors[0]].map(error => h(BundlerError, {error})));
     }
@@ -319,8 +311,8 @@ class WebpackTaskRenderer extends Component<TaskRendererProps, TaskRendererState
         ])
       ]);
     }
-    return h(FigureContainer, {marginTop, zoomLevel, multiPage, width},  [
-      h(TaskElement, {code, recordSize: this.recordSize, opts})
+    return h(FigureContainer, {marginTop, zoomLevel, multiPage, scaleFactor, ...size},  [
+      h(TaskElement, {code, recordSize: this.recordSize.bind(this), opts})
     ]);
   }
 
@@ -375,9 +367,7 @@ class WebpackTaskRenderer extends Component<TaskRendererProps, TaskRendererState
   }
 
   onBundlingFinished(res){
-    if (this.state.errors != null) {
-      return;
-    }
+
     if (res.compilation.errors.length > 0) {
       this.setState({errors: res.compilation.errors});
       return;

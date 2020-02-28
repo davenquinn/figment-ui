@@ -39,6 +39,7 @@
     "ps-node": "^0.1.6",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
+    "react-electron-web-view": "^2.0.1",
     "react-spinners": "^0.6.1",
     "require-stack": "^1.0.2",
     "run-electron": "^1.0.0",

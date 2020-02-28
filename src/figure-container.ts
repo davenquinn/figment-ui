@@ -7,7 +7,6 @@
 import h from '~/hyper';
 import {Component} from 'react';
 import T from 'prop-types';
-import {TaskRenderer, TaskShape} from './task';
 import {MarginType} from '~/types';
 import classNames from 'classnames';
 import {AppStateContext} from './state-manager';
@@ -28,29 +27,34 @@ class FigureContainer extends Component {
     };
   }
   render() {
-    const {zoomLevel, task, marginTop,
-     multiPage, scaleFactor, width} = this.props;
-    const {isPrinting} = false // this.context;
+    const {zoomLevel, marginTop, multiPage, width, height} = this.props;
+    const {isPrinting} = this.context;
     // We shouldn't have this nested structure, it's confusing
 
-    const height = multiPage ? null : "100vh";
+    let paddingTop = marginTop
+    let factor = zoomLevel
+    if (isPrinting) {
+      factor *= 20
+      paddingTop = 0
+    }
 
     let transform = null
-    if (zoomLevel != 1 && !isPrinting) {
-      transform = `scale(${zoomLevel})`
+    if (factor != 1) {
+      transform = `scale(${factor})`
     }
 
-    const z = ((zoomLevel === 1) || isPrinting) ? null : `scale(${zoomLevel})`;
-    const style = {transform, width};
-
-    const className = classNames({'is-printing': isPrinting});
-    let padding = 20;
-    if (isPrinting) {
-      padding = 0;
+    const size = {
+      width: width*factor,
+      height: height*factor
     }
 
-    return h('div.figure-container-outer', {style: {height, paddingTop: marginTop}, className}, [
-      h('div.figure-container', {className, style: {padding, width: width+(2*padding)}}, [
+    let style = {transform, width, height};
+
+    const className = classNames({'is-printing': isPrinting, 'multi-page': multiPage});
+
+
+    return h('div.figure-container-outer', {style: {paddingTop}, className}, [
+      h('div.figure-container', {className, style: size}, [
         h('div.figure-container-inner', {
           className,
           style

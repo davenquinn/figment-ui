@@ -54,8 +54,8 @@ class AppMain extends Component {
   }
 
   render() {
-    const {toolbarEnabled} = this.context;
-    const className = classNames({'toolbar-disabled': !toolbarEnabled});
+    const {toolbarEnabled, isPrinting} = this.context;
+    const className = classNames({'toolbar-disabled': !toolbarEnabled, 'is-printing': isPrinting});
 
     return h('div.app-main', {className}, [
       h(UIControls),

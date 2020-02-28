@@ -94,15 +94,18 @@ class TaskElement extends Component {
 
   computeWidth() {
     const el = findDOMNode(this);
-    if ((el == null)) { return; }
-    if ((el.firstChild == null)) { return; }
-    const rect = el.firstChild.getBoundingClientRect();
+    //if ((el == null)) { return; }
+    //if ((el.firstChild == null)) { return; }
+    const rect = el.getBoundingClientRect();
+    console.log("Recording size ", rect)
     return this.props.recordSize(rect);
   }
 
   componentDidMount() {
     this.runTask();
-    return this.computeWidth();
+    const el = findDOMNode(this);
+    new ResizeObserver(this.computeWidth.bind(this)).observe(el)
+    this.computeWidth();
   }
 
   componentDidUpdate(prevProps){

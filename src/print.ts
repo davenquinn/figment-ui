@@ -40,6 +40,8 @@ const printToPDF = async (webview, opts) => {
   let {pageSize, width, height, scaleFactor} = opts;
   console.log({width, height, scaleFactor, pageSize})
 
+  scaleFactor = 20
+
   if (pageSize == null) { pageSize = {
     height: pixelsToMicrons(height*scaleFactor),
     width: pixelsToMicrons(width*scaleFactor)
