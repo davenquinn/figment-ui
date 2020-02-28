@@ -143,6 +143,7 @@ class ParcelTaskRenderer extends Component {
   }
 
   recordSize({width, height}){
+    console.log(`Figure size: ${width}x${height}`)
     return this.setState({size: {width, height}});
   }
 
@@ -223,7 +224,7 @@ class ParcelTaskRenderer extends Component {
     const dn = path.dirname(bundle.name);
 
     decache(bundle.name);
-    const oldPaths = [...global.require.main.paths];
+    //const oldPaths = [...global.require.main.paths];
     // Add new paths to require
     const dirnamePaths = [];
     let _dir = dn;
@@ -232,9 +233,9 @@ class ParcelTaskRenderer extends Component {
       _dir = path.resolve(path.join(_dir, ".."));
     }
     // Monkey-patch the global require
-    global.require.main.paths = [dn, ...dirnamePaths, ...oldPaths];
+    //global.require.main.paths = [dn, ...dirnamePaths, ...oldPaths];
     const code = __non_webpack_require__(`${bundle.name}`);
-    global.require.main.paths = oldPaths;
+    //global.require.main.paths = oldPaths;
     return this.setState({code, styles, error: null});
   }
 
@@ -285,6 +286,7 @@ class WebpackTaskRenderer extends Component<TaskRendererProps, TaskRendererState
   }
 
   recordSize({width, height}){
+    console.log(`Figure size: ${width}x${height}`)
     return this.setState({size: {width, height}});
   }
 
@@ -329,6 +331,7 @@ class WebpackTaskRenderer extends Component<TaskRendererProps, TaskRendererState
 
   startBundler() {
     const {webpackConfig, task} = this.props;
+    console.log(webpackConfig)
     //process.chdir(path.dirname(webpackConfig))
     const userConfig = __non_webpack_require__(webpackConfig);
     const codeDir = path.dirname(task.code);
@@ -415,7 +418,6 @@ class TaskRenderer extends Component {
     const entryDir = path.dirname(entryFile);
     let {webpackConfig} = this.props.task.opts;
     if (webpackConfig != null) {
-      webpackConfig = path.resolve(path.join(entryDir, webpackConfig));
       return h(WebpackTaskRenderer, {webpackConfig, ...this.props});
     }
     return h(ParcelTaskRenderer, this.props);

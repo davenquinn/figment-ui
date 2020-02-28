@@ -30,16 +30,18 @@ class FigureContainer extends Component {
   render() {
     const {zoomLevel, task, marginTop,
      multiPage, scaleFactor, width} = this.props;
-    const {isPrinting} = this.context;
+    const {isPrinting} = false // this.context;
     // We shouldn't have this nested structure, it's confusing
 
     const height = multiPage ? null : "100vh";
 
+    let transform = null
+    if (zoomLevel != 1 && !isPrinting) {
+      transform = `scale(${zoomLevel})`
+    }
+
     const z = ((zoomLevel === 1) || isPrinting) ? null : `scale(${zoomLevel})`;
-    const style = {
-      transform: z,
-      width
-    };
+    const style = {transform, width};
 
     const className = classNames({'is-printing': isPrinting});
     let padding = 20;

@@ -30,7 +30,7 @@ const sleep = data => new Promise(function(resolve, reject){
 
 const pixelsToMicrons = px => Math.ceil((px/96.0)*25400);
 
-const printToPDF = (webview, opts) => new Promise(function(resolve, reject){
+const printToPDF = async (webview, opts) => {
   /*
   Print the webview to the callback
   */
@@ -38,6 +38,8 @@ const printToPDF = (webview, opts) => new Promise(function(resolve, reject){
   // containing height and width in microns.
   // (https://electronjs.org/docs/api/web-contents)
   let {pageSize, width, height, scaleFactor} = opts;
+  console.log({width, height, scaleFactor, pageSize})
+
   if (pageSize == null) { pageSize = {
     height: pixelsToMicrons(height*scaleFactor),
     width: pixelsToMicrons(width*scaleFactor)
@@ -50,12 +52,10 @@ const printToPDF = (webview, opts) => new Promise(function(resolve, reject){
   };
 
   const {webContents: wc} = remote.getCurrentWindow();
-
-  return wc.printToPDF(opts, (e,data)=> {
-    if (e != null) { reject(e); }
-    return resolve(data);
-  });
-});
+  console.log("Got Electron web contents")
+  // printToPDF now returns a promise.
+  return wc.printToPDF(opts);
+};
 
 const printToImage = (webview, opts) => new Promise(function(resolve, reject){
   /*
@@ -119,6 +119,7 @@ const printFigureArea = async function(task){
     opts.pageSize = pageSize;
     buf = await printToPDF(wc, opts);
   }
+  console.log("Done printing");
 
   fs.writeFileSync(outfile, buf);
   console.log("Finished task");

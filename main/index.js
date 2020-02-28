@@ -84,7 +84,6 @@ const quitApp = function() {
 // Set global variables for bundler
 
 function createWindow() {
-  installExtension(REACT_DEVELOPER_TOOLS, argv['reinstall-devtools']);
 
   const cb = (request, callback) => {
     const url = request.url.substr(6);
@@ -110,6 +109,10 @@ function createWindow() {
   const url = "file://"+path.join(parentDir, 'lib', 'index.html');
   win.loadURL(url);
   shortcuts(win);
+
+  // Should do this at an interval
+  console.log("Installing React dev toos")
+  installExtension(REACT_DEVELOPER_TOOLS, argv['reinstall-devtools']);
 
   ipcMain.on('update-state', (event, res)=>{
     global.appState = res;

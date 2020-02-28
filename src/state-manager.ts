@@ -205,11 +205,10 @@ class AppStateManager extends Component {
     this.setState({isPrinting: true});
     try {
       await printFigureArea(task);
-    } catch (error1) {
-      const err = error1;
+    } catch (err) {
       console.error(err);
     }
-    return this.setState({isPrinting: false});
+    this.setState({isPrinting: false});
   };
 }
 
