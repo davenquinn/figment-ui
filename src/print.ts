@@ -13,6 +13,7 @@ import styles from './main.styl';
 import {assertShape} from '~/types';
 import {TaskShape} from './task/types';
 import {AppToaster} from '~/toaster';
+import {rasterizeSVG} from './rasterize-svg';
 
 const options = remote.getGlobal('options' || {});
 if (options.dpi == null) { options.dpi = 96; }
@@ -40,7 +41,7 @@ const printToPDF = async (webview, opts) => {
   let {pageSize, width, height, scaleFactor} = opts;
   console.log({width, height, scaleFactor, pageSize})
 
-  scaleFactor = 20
+  scaleFactor = 1 // 20
 
   if (pageSize == null) { pageSize = {
     height: pixelsToMicrons(height*scaleFactor),
@@ -59,9 +60,10 @@ const printToPDF = async (webview, opts) => {
   return wc.printToPDF(opts);
 };
 
-const printToImage = (webview, opts) => new Promise(function(resolve, reject){
+const printToImage = async (webview, opts)=>{
   /*
   Print the webview to the callback
+  NOTE: this currently only captures the currently visible area
   */
   if (opts.format == null) { opts.format = 'png'; }
   if (opts.scaleFactor == null) { opts.scaleFactor = 1.8; }
@@ -69,21 +71,18 @@ const printToImage = (webview, opts) => new Promise(function(resolve, reject){
   let {width,height} = opts;
   width*=opts.scaleFactor;
   height*=opts.scaleFactor;
+  console.log(width,height)
   const rect = {x:0,y:30,width,height};
   console.log(rect);
-  return webview.capturePage(rect, function(image){
-    let d;
-    if (typeof e !== 'undefined' && e !== null) { reject(e); }
-    if (['jpeg','jpg'].includes(opts.format)) {
-      d = image.toJPEG(rect, opts.quality);
-    } else {
-      d = image.toPNG(opts.scaleFactor);
-    }
-    return resolve(d);
-  });
-});
+  const image = await webview.capturePage(rect)
+  if (['jpeg','jpg'].includes(opts.format)) {
+    return image.toJPEG(rect, opts.quality);
+  } else {
+    return image.toPNG(opts.scaleFactor);
+  }
+};
 
-const printFigureArea = async function(task){
+const printFigureArea = async (task: Task)=>{
   /*
    * Function to print webpage
    */
@@ -92,11 +91,21 @@ const printFigureArea = async function(task){
   assertShape(task, TaskShape);
 
   console.log(task);
-  let opts = task.opts || {};
+  let opts = task.opts ?? {};
   let {scaleFactor} = opts;
   if (scaleFactor == null) { scaleFactor = 1; }
 
   const el = document.querySelector(`.${styles['element-container']}`);
+
+  // Rasterize svgs optionally
+  if (opts.rasterize ?? true) {
+    const svgElements = el.querySelectorAll('pattern>g')
+
+    for await (const svg of svgElements) {
+      await rasterizeSVG(svg)
+    }
+    console.log(`${svgElements.length} elements rasterized.`)
+  }
 
   const {width, height} = el.getBoundingClientRect();
 
