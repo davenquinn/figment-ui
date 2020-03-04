@@ -12,35 +12,27 @@ const rasterizeSVG = async (node: HTMLElement, opts={})=>{
    * Cuts file sizes and abstracts away bugs
    * with Chrome printing of SVG subtleties
    */
-  let height, width;
   const ratio = opts.ratio ?? 4.167; // Web -> 300 dpi print
   const canvas = document.createElement('canvas');
   const ctx = canvas.getContext('2d');
-  if (opts.width != null) {
-    ({width, height} = opts);
-  } else {
-    ({width, height} = node.getBoundingClientRect());
-  }
+  const {width, height} = node.getBoundingClientRect();
   const newSize = {width: width*ratio, height: height*ratio};
 
   canvas.height = newSize.height;
   canvas.width = newSize.width;
 
-  const svg = document.createElement("svg")
-  svg.append(node)
-
   const doctype = `<?xml version="1.0" standalone="no"?> \
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">`;
 
   // serialize our SVG XML to a string.
-  const source = (new XMLSerializer()).serializeToString(svg);
+  const source = (new XMLSerializer()).serializeToString(node);
 
-  svg.remove()
 
   // create a file blob of our SVG.
   const blob = new Blob([ doctype + source], { type: 'image/svg+xml;charset=utf-8' });
   const url = URL.createObjectURL(blob);
   const img = new Image();
+  
   return await new Promise((resolve, reject)=>{
     img.onload = function() {
       try {

@@ -22,7 +22,8 @@ const show = argv.show || !headless;
 // Set directory to reload if not given
 
 // Disable hardware acceleration (for SVG rendering bugs??)
-app.disableHardwareAcceleration();
+app.commandLine.appendSwitch("--force-gpu-rasterization")
+//app.disableHardwareAcceleration();
 
 let args = argv._;
 let specMode = argv['spec'];
