@@ -21,9 +21,20 @@ const { headless } = argv;
 const show = argv.show || !headless;
 // Set directory to reload if not given
 
-const args = argv._;
+// Disable hardware acceleration (for SVG rendering bugs??)
+app.commandLine.appendSwitch("--force-gpu-rasterization")
+//app.disableHardwareAcceleration();
+
+let args = argv._;
+let specMode = argv['spec'];
+
+if (args.length == 0) {
+  specMode = true;
+  args = [path.resolve(__dirname, '..', 'test', 'example-spec.js')]
+}
+
 global.args = args;
-global.specMode = argv['spec-mode'];
+//global.specMode = argv['spec-mode'];
 global.workingDirectory = process.cwd();
 
 global.bundlerScript = path.resolve(__dirname, '..', 'bundler', 'dev-bundler.js');
@@ -47,7 +58,7 @@ global.appState = {
   zoomLevel: 1
 };
 
-if (argv['spec']) {
+if (specMode) {
   // Create list of task-runner files to import
   // Each argument should be a javascript or coffeescript
   // file exporting a renderer object
@@ -56,8 +67,8 @@ if (argv['spec']) {
   options.specs = args.map(d=> path.resolve(d));
 } else {
   [inFile, outFile] = Array.from(args);
-  options.infile = path.resolve(inFile);
-  options.outfile = path.resolve(outFile);
+  options.infile = path.resolve(inFile || '.');
+  options.outfile = path.resolve(outFile || '.');
 }
 
 /* Setup IPC */
@@ -77,7 +88,6 @@ const quitApp = function() {
 // Set global variables for bundler
 
 function createWindow() {
-  installExtension(REACT_DEVELOPER_TOOLS, argv['reinstall-devtools']);
 
   const cb = (request, callback) => {
     const url = request.url.substr(6);
@@ -100,9 +110,13 @@ function createWindow() {
   });
 
   const parentDir = path.resolve(path.join(__dirname,'..'));
-  const url = "file://"+path.join(parentDir,'lib', 'index.html');
+  const url = "file://"+path.join(parentDir, 'lib', 'index.html');
   win.loadURL(url);
   shortcuts(win);
+
+  // Should do this at an interval
+  console.log("Installing React dev toos")
+  installExtension(REACT_DEVELOPER_TOOLS, argv['reinstall-devtools']);
 
   ipcMain.on('update-state', (event, res)=>{
     global.appState = res;

@@ -18,6 +18,6 @@ const options = {
   scopeHoist: false
 };
 
-const bundler = new Bundler(["src/index.html", "src/index.coffee"], options);
+const bundler = new Bundler(["src/index.html", "src/index.ts"], options);
 
 bundler.bundle().catch(err => console.error(err))

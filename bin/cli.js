@@ -6,7 +6,7 @@ const {spawn} = require('child_process');
 const path = require('path');
 const electronRunner = require.resolve('run-electron/cli.js');
 
-const mainFile = require.resolve("../main/cli.js");
+const mainFile = require.resolve("../main/index.js");
 const args = [mainFile, ...process.argv.slice(2)];
 
 if (args[1] == "install") {
