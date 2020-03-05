@@ -7,6 +7,7 @@
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
 import React, {Component, isValidElement} from 'react';
+import {resolve} from 'path'
 import h from '~/hyper';
 import {BundlerError} from './error';
 import {findDOMNode, render} from 'react-dom';
@@ -64,11 +65,12 @@ class TaskElement extends Component {
     // if (isValidElement(code)) {
     //   return h(Webview);
     // }
-    return h(Webview);
+    return h(Webview, {src: "file://"+resolve(__dirname, "webview-index.html"), width: 500, height: 300});
   }
 
   runTask() {
     let {code, opts, callback} = this.props;
+    return
     if (code == null) { return; }
     if (this.state.error != null) { return; }
     console.log(code);
@@ -80,6 +82,7 @@ class TaskElement extends Component {
     if (callback == null) { callback = function() {}; }
 
     const el = findDOMNode(this);
+
     try {
       return code(el, opts, callback);
     } catch (err) {
