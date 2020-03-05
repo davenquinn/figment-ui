@@ -97,6 +97,8 @@ class TaskElement extends Component {
     //if ((el == null)) { return; }
     //if ((el.firstChild == null)) { return; }
     const rect = el.getBoundingClientRect();
+    // Hack to fix bug where "resize" to zero happens occasionally when window is out of view
+    if (rect.width <= 40) return
     console.log("Recording size ", rect)
     return this.props.recordSize(rect);
   }

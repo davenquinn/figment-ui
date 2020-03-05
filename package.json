@@ -41,6 +41,7 @@
     "react-dom": "^16.8.6",
     "react-electron-web-view": "^2.0.1",
     "react-spinners": "^0.6.1",
+    "react-split-pane": "^0.1.89",
     "require-stack": "^1.0.2",
     "run-electron": "^1.0.0",
     "webpack-merge": "^4.2.2"

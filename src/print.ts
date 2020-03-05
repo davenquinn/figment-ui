@@ -41,7 +41,7 @@ const printToPDF = async (webview, opts) => {
   let {pageSize, width, height, scaleFactor} = opts;
   console.log({width, height, scaleFactor, pageSize})
 
-  scaleFactor = 10
+  scaleFactor = 5
   if (pageSize == null) { pageSize = {
     height: pixelsToMicrons(height*scaleFactor),
     width: pixelsToMicrons(width*scaleFactor)
@@ -95,13 +95,6 @@ const printFigureArea = async (task: Task)=>{
   if (scaleFactor == null) { scaleFactor = 1; }
 
   const el = document.querySelector(`.${styles['element-container']}`);
-
-  // for (const svg of el.querySelectorAll('svg')) {
-  //   if (!svg.hasAttribute('viewBox')) {
-  //     const rect = svg.getBoundingClientRect
-  //     svg.setAttribute("viewBox", `0 0 ${rect.width} ${rect.height}`)
-  //   }
-  // }
 
   // Rasterize svgs optionally
   if (opts.rasterize ?? false) {

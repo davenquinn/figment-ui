@@ -34,7 +34,7 @@ class FigureContainer extends Component {
     let paddingTop = marginTop
     let factor = zoomLevel
     if (isPrinting) {
-      factor = 10
+      factor = 5
       paddingTop = 0
     }
 
