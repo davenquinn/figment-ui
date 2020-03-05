@@ -11,6 +11,7 @@ import h from '~/hyper';
 import {BundlerError} from './error';
 import {findDOMNode, render} from 'react-dom';
 import {unwrapESModule} from '~/util';
+import Webview from 'react-electron-web-view';
 
 const isReactComponent = function(fn){
   if (typeof fn !== 'function') { return false; }
@@ -60,16 +61,10 @@ class TaskElement extends Component {
       //console.log error, errorInfo
       return h(BundlerError, {error, details: errorInfo});
     }
-    if (isValidElement(code)) {
-      return h('div.element-container', [code]);
-    }
-    if (isReactComponent(code)) {
-      // We must have a React component
-      return h('div.element-container', [
-        h(code, opts)
-      ]);
-    }
-    return h('div.element-container');
+    // if (isValidElement(code)) {
+    //   return h(Webview);
+    // }
+    return h(Webview);
   }
 
   runTask() {
