@@ -88,13 +88,11 @@ global.requireInDir = function(file, extraPaths=[]){
 };
 
 class ParcelTaskRenderer extends Component {
-  static initClass() {
-    this.propTypes = {
-      task: TaskShape,
-      marginTop: MarginType,
-      zoomLevel: T.number
-    };
-  }
+  static propTypes = {
+    task: TaskShape,
+    marginTop: MarginType,
+    zoomLevel: T.number
+  };
   constructor(props){
     super(props);
     this.recordSize = this.recordSize.bind(this);
@@ -116,17 +114,10 @@ class ParcelTaskRenderer extends Component {
     let {multiPage} = opts;
     if (multiPage == null) { multiPage = false; }
 
-    const {code, styles, error, size} = this.state;
-    let width = null;
-    if (size != null) {
-      ({
-        width
-      } = size);
-    }
+    const {code, styles, error} = this.state;
+    const size = this.state.size ?? {}
 
-    if ((task == null)) {
-      return null;
-    }
+    if (task == null) return null;
     if (error != null) {
       return h(BundlerError, {error});
     }
@@ -136,7 +127,7 @@ class ParcelTaskRenderer extends Component {
         h('p', "Digesting your code")
       ]);
     }
-    return h(FigureContainer, {marginTop, zoomLevel, multiPage, width},  [
+    return h(FigureContainer, {marginTop, zoomLevel, multiPage, ...size},  [
       h(TaskStylesheet, {styles}),
       h(TaskElement, {code, recordSize: this.recordSize, opts})
     ]);
@@ -256,7 +247,6 @@ class ParcelTaskRenderer extends Component {
     return this.bundler.stop();
   }
 }
-ParcelTaskRenderer.initClass();
 
 type TaskRendererProps = {
   task: Task

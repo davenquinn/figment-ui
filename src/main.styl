@@ -15,7 +15,6 @@ html, body, .figure-container-outer
   padding 0px 0px
   height 100vh
   width 100vw
-  margin: 20px
   &.is-printing
     margin: 0px
     margin-top 0px
@@ -52,6 +51,11 @@ html, body, .figure-container-outer
     padding 0
     position relative
     min-width inherit
+    overflow auto
+    height max-content
+    .element-container
+      padding 0
+
   margin 0px
   overflow: scroll
   .error-overlay
@@ -62,7 +66,7 @@ html, body, .figure-container-outer
   width max-content
   height max-content
   overflow auto
-  box-sizing: content-box;
+  box-sizing: border-box;
   padding 20px
 
 *
