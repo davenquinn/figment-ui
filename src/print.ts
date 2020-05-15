@@ -65,14 +65,13 @@ const printToImage = async (webview, opts)=>{
   width*=opts.scaleFactor;
   height*=opts.scaleFactor;
   console.log(width,height)
-  const rect = {x:0,y:30,width,height};
-  console.log(rect);
-  const image = await webview.capturePage(rect)
-  if (['jpeg','jpg'].includes(opts.format)) {
-    return image.toJPEG(rect, opts.quality);
-  } else {
-    return image.toPNG(opts.scaleFactor);
-  }
+  //const rect = {x:0,y:30,width,height};
+  return new Promise((resolve, reject)=>{
+    ipcRenderer.send('render-image', opts.format);
+    ipcRenderer.once('render-image-done', (event, success)=>{
+      success ? resolve() : reject()
+    })
+  })
 };
 
 const printFigureArea = async (task: Task)=>{
@@ -116,16 +115,17 @@ const printFigureArea = async (task: Task)=>{
 
   if (['.jpg','.jpeg','.png'].includes(ext)) {
     opts.format = ext.slice(1);
-    buf = await printToImage(wc, opts);
+    // We have to use electron-capture on the main process
+    await printToImage(wc, opts);
   } else {
     // Set pageSize from task
     const {pageSize} = task.opts;
     opts.pageSize = pageSize;
     buf = await printToPDF(wc, opts);
+    fs.writeFileSync(outfile, buf);
   }
   console.log("Done printing");
 
-  fs.writeFileSync(outfile, buf);
   console.log("Finished task");
   return AppToaster.show({message: "Printed figure!", intent: 'primary', icon: 'print', timeout: 4000});
 };

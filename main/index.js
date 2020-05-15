@@ -101,11 +101,15 @@ function createWindow() {
          : "Creating headless renderer"
   );
 
+  const preload = require.resolve('electron-capture/src/preload.js');
+  console.log(preload)
+
   let win = new BrowserWindow({show,
     titleBarStyle: 'hiddenInset',
     webPreferences: {
       nodeIntegration: true,
-      webSecurity: false
+      webSecurity: false,
+      preload
     }
   });
 
@@ -133,6 +137,16 @@ function createWindow() {
   ipcMain.on('bundle-log', (event, line)=>{
     process.stdout.write(line);
   })
+
+  ipcMain.on('print-image', (event, filename)=>{
+    console.log(filename);
+    win.captureFullPage(function(imageStream){
+      // return an image Stream
+      imageStream.pipe(fs.createWriteStream(filename))
+      ipcMain.send("print-image-done", true);
+    })
+  });
+
   win.on('closed', ()=> win = null);
 };
 
