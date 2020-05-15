@@ -1,9 +1,3 @@
-/*
- * decaffeinate suggestions:
- * DS102: Remove unnecessary code created because of implicit returns
- * DS207: Consider shorter variations of null checks
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
- */
 const Promise = require('bluebird');
 const fs = require('fs');
 const {remote, ipcRenderer} = require('electron');
@@ -14,6 +8,7 @@ import {assertShape} from '~/types';
 import {TaskShape} from './task/types';
 import {AppToaster} from '~/toaster';
 import {rasterizeSVG} from './rasterize-svg';
+import domToImage from 'dom-to-image';
 
 const options = remote.getGlobal('options' || {});
 if (options.dpi == null) { options.dpi = 96; }
@@ -59,7 +54,7 @@ const printToPDF = async (webview, opts) => {
   return wc.printToPDF(opts);
 };
 
-const printToImage = async (webview, opts)=>{
+const printToImage = async (webview, node, opts)=>{
   /*
   Print the webview to the callback
   NOTE: this currently only captures the currently visible area
@@ -73,12 +68,7 @@ const printToImage = async (webview, opts)=>{
   console.log(width,height)
   const rect = {x:0,y:30,width,height};
   console.log(rect);
-  const image = await webview.capturePage(rect)
-  if (['jpeg','jpg'].includes(opts.format)) {
-    return image.toJPEG(rect, opts.quality);
-  } else {
-    return image.toPNG(opts.scaleFactor);
-  }
+  return domToImage.toBlob(node)
 };
 
 const printFigureArea = async (task: Task)=>{
@@ -122,7 +112,8 @@ const printFigureArea = async (task: Task)=>{
 
   if (['.jpg','.jpeg','.png'].includes(ext)) {
     opts.format = ext.slice(1);
-    buf = await printToImage(wc, opts);
+    let blob = await printToImage(wc, el, opts);
+    buf = Buffer.from(new Uint8Array(blob))
   } else {
     // Set pageSize from task
     const {pageSize} = task.opts;

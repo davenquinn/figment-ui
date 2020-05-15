@@ -29,6 +29,7 @@
     "classnames": "^2.2.6",
     "decache": "^4.5.1",
     "devtools-detect": "^3.0.0",
+    "dom-to-image": "^2.6.0",
     "electron": "^8.0.1",
     "electron-devtools-installer": "^2.2.4",
     "electron-localshortcut": "^1.0.0",
