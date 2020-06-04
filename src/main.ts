@@ -35,9 +35,7 @@ const NoTaskError = () => h('div.error-overlay.no-task', [
 ]);
 
 class AppMain extends Component {
-  static initClass() {
-    this.contextType = AppStateContext;
-  }
+  static contextType = AppStateContext;
   renderMain() {
     const {taskLists, selectedTask, zoomLevel, toolbarEnabled, error} = this.context;
     const marginTop = toolbarEnabled ? "38px" : null;
@@ -63,7 +61,6 @@ class AppMain extends Component {
     ]);
   }
 }
-AppMain.initClass();
 
 const App = () => h(AppStateManager, null, h(AppMain));
 

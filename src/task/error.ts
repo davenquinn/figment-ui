@@ -1,9 +1,3 @@
-/*
- * decaffeinate suggestions:
- * DS102: Remove unnecessary code created because of implicit returns
- * DS207: Consider shorter variations of null checks
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
- */
 import h from '~/hyper';
 import {Callout, Intent} from '@blueprintjs/core';
 
@@ -42,14 +36,10 @@ const ErrorTitle = function(props){
 
 
 const Error = function(props){
-  let componentStack;
   const {error, origin, details} = props;
   const {fileName, location} = error;
-  if (details != null) {
-    ({componentStack} = details);
-  } else {
-    componentStack = null;
-  }
+
+  const componentStack = details?.componentStack
 
   return h(Callout, {
     className: 'error',
