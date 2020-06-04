@@ -30,7 +30,7 @@
     "decache": "^4.5.1",
     "devtools-detect": "^3.0.0",
     "electron": "^9.0.2",
-    "electron-devtools-installer": "^2.2.4",
+    "electron-devtools-installer": "^3.0.0",
     "electron-localshortcut": "^1.0.0",
     "immutability-helper": "^3.0.0",
     "loglevel": "^1.4.1",
