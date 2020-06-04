@@ -22,7 +22,7 @@ const sharedStart = function(array) {
 
 const TaskListItem = (props)=> {
   const {selectTask} = useContext(AppStateContext)
-  const {task, displayName} = this.props;
+  const {task, displayName} = props;
   return h('li', null,
     h('a', {
       href: `#${task.hash}`,

@@ -12,20 +12,20 @@ import classNames from 'classnames';
 import {AppStateContext} from './state-manager';
 
 class FigureContainer extends Component {
-  static initClass() {
-    this.contextType = AppStateContext;
-    this.defaultProps = {
-      zoomLevel: 1,
-      marginTop: 0,
-      scaleFactor: 1
-    };
-    this.propTypes = {
-      marginTop: MarginType,
-      multiPage: T.bool.isRequired,
-      scaleFactor: T.number,
-      width: T.number
-    };
-  }
+  static contextType = AppStateContext;
+  static defaultProps = {
+    zoomLevel: 1,
+    marginTop: 0,
+    scaleFactor: 1,
+    width: 50,
+    height: 50
+  };
+  static propTypes = {
+    marginTop: MarginType,
+    multiPage: T.bool.isRequired,
+    scaleFactor: T.number,
+    width: T.number
+  };
   render() {
     const {zoomLevel, marginTop, multiPage, width, height} = this.props;
     const {isPrinting} = this.context;
@@ -63,6 +63,5 @@ class FigureContainer extends Component {
     ]);
   }
 }
-FigureContainer.initClass();
 
 export {FigureContainer};
