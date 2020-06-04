@@ -36,14 +36,10 @@ const ErrorTitle = function(props){
 
 
 const Error = function(props){
-  let componentStack;
   const {error, origin, details} = props;
   const {fileName, location} = error;
-  if (details != null) {
-    ({componentStack} = details);
-  } else {
-    componentStack = null;
-  }
+
+  const componentStack = details?.componentStack
 
   return h(Callout, {
     className: 'error',
