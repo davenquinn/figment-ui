@@ -1,12 +1,4 @@
-/*
- * decaffeinate suggestions:
- * DS001: Remove Babel/TypeScript constructor workaround
- * DS102: Remove unnecessary code created because of implicit returns
- * DS206: Consider reworking classes to avoid initClass
- * DS207: Consider shorter variations of null checks
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
- */
-import {Component} from 'react';
+import {useContext} from 'react';
 import {AppStateContext} from '../state-manager';
 import {hyperStyled} from '@macrostrat/hyper';
 import styles from './styles.styl';
@@ -28,28 +20,17 @@ const sharedStart = function(array) {
   return a1.substring(0, i);
 };
 
-class TaskListItem extends Component {
-  constructor(...args) {
-    super(...args);
-    this.onClick = this.onClick.bind(this);
-  }
-
-  static contextType = AppStateContext;
-
-  onClick() {
-    const {task} = this.props;
-    return this.context.selectTask(task);
-  }
-  render() {
-    const {task, displayName} = this.props;
-    return h('li', null, (
-      h('a', {
-        href: `#${task.hash}`,
-        onClick: this.onClick
-      }, displayName)
-    )
-    );
-  }
+const TaskListItem = (props)=> {
+  const {selectTask} = useContext(AppStateContext)
+  const {task, displayName} = this.props;
+  return h('li', null,
+    h('a', {
+      href: `#${task.hash}`,
+      onClick() {
+        selectTask(task)
+      }
+    }, displayName)
+  )
 }
 
 const TaskListSection = function(props){
@@ -75,7 +56,6 @@ const TaskListSection = function(props){
 };
 
 
-const TaskList = ({runners}) => h('div', runners.map(d => h(TaskListSection, d))
-);
+const TaskList = ({runners}) => h('div', runners.map(d => h(TaskListSection, d)));
 
 export {TaskList, TaskListItem};
