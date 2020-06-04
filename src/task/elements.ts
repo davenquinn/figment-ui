@@ -23,13 +23,11 @@ const isReactComponent = function(fn){
 };
 
 class TaskElement extends Component {
-  static initClass() {
-    this.defaultProps = {
-      code: null,
-      opts: {},
-      callback: null
-    };
-  }
+  static defaultProps = {
+    code: null,
+    opts: {},
+    callback: null
+  };
   constructor(props){
     super(props);
     this.runTask = this.runTask.bind(this);
@@ -117,7 +115,7 @@ class TaskElement extends Component {
     return this.computeWidth();
   }
 }
-TaskElement.initClass();
+
 
 class TaskStylesheet extends Component {
   render() {
