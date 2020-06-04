@@ -1,17 +1,8 @@
-/*
- * decaffeinate suggestions:
- * DS001: Remove Babel/TypeScript constructor workaround
- * DS101: Remove unnecessary use of Array.from
- * DS102: Remove unnecessary code created because of implicit returns
- * DS207: Consider shorter variations of null checks
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
- */
 import {Component, createContext} from 'react';
 import h from '~/hyper';
 import update from 'immutability-helper';
 import {remote, ipcRenderer} from 'electron';
-import Promise from 'bluebird';
-const {spawn} = require('child_process');
+import {spawn} from 'child_process';
 import {parse} from 'path';
 import 'devtools-detect';
 import {printFigureArea} from './print';
@@ -54,6 +45,7 @@ class AppStateManager extends Component {
       ...options,
       ...appState
     };
+
     this.defineTasks(options);
   }
 
@@ -86,45 +78,43 @@ class AppStateManager extends Component {
   __createSpec(options){
     // These should really be applied separately to each part
     const {multiPage, pageSize} = this.state;
-    const spec = new Visualizer();
-    spec.task(options.outfile, options.infile, {
-      multiPage, pageSize
-    });
-    return Promise.resolve([spec]);
+    const spec = new Figment();
+    spec.task(options.outfile, options.infile, {multiPage, pageSize});
+    return [spec];
   }
 
-  __getSpecs(options){
+  async __getSpecs(options) {
     const {specs} = options;
     // If we are in spec mode
-    if ((specs == null)) {
+    if (specs == null) {
       return this.__createSpec(options);
     }
-    return Promise.map(specs, function(d){
+    let results = [];
+    for (const spec of specs) {
       try {
         // Require using ESM module
-        const res = __non_webpack_require__(d);
+        const res = __non_webpack_require__(spec);
         return Promise.resolve(res)
           .then(function(v){
             console.log(v)
-            v.name = d;
+            v.name = spec;
             return v;
         });
       } catch (err) {
         return Promise.reject(err);
       }
-    });
+    }
   }
 
 
-  defineTasks = async options=> {
-    let res;
+  async defineTasks(options) {
     try {
-      res = await this.__getSpecs(options);
+      let res = await this.__getSpecs(options);
+      this.updateState({taskLists: {$set: res}});
     } catch (error) {
       const err = error;
       this.updateState({error: {$set: err}});
     }
-    return this.updateState({taskLists: {$set: res}});
   };
 
   openEditor() {
@@ -144,32 +134,27 @@ class AppStateManager extends Component {
   }
 
   render() {
-    const methods = (() => { let openEditor, selectTask, toggleDevTools;
-    return ({toggleDevTools, openEditor, selectTask} = this); })();
-    const selectedTask = this.selectedTask();
     const value = {
       update: this.updateState,
       printFigureArea: this.printFigureArea,
       hasTaskList: this.shouldListTasks(),
       nameForTask,
-      ...methods,
-      ...this.state,
-      selectedTask
+      openEditor: this.openEditor,
+      selectTask: this.selectTask,
+      toggleDevTools: this.toggleDevTools,
+      selectedTask: this.selectedTask(),
+      ...this.state
     };
 
     return h(AppStateContext.Provider, {value}, this.props.children);
   }
 
   updateState(spec){
-    const newState = update(this.state,spec);
+    const newState = update(this.state, spec);
     this.setState(newState);
     // forward state to main process
-    const appState = (function() { let devToolsEnabled, selectedTaskHash, toolbarEnabled, zoomLevel;
-    return ({
-      toolbarEnabled,
-      selectedTaskHash,
-      devToolsEnabled,
-      zoomLevel } = newState); })();
+    const {devToolsEnabled, selectedTaskHash, toolbarEnabled, zoomLevel} = newState
+    const appState = {devToolsEnabled, selectedTaskHash, toolbarEnabled, zoomLevel};
     return ipcRenderer.send('update-state', appState);
   }
 

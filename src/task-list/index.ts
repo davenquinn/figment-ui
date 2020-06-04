@@ -34,9 +34,8 @@ class TaskListItem extends Component {
     this.onClick = this.onClick.bind(this);
   }
 
-  static initClass() {
-    this.contextType = AppStateContext;
-  }
+  static contextType = AppStateContext;
+
   onClick() {
     const {task} = this.props;
     return this.context.selectTask(task);
@@ -52,7 +51,6 @@ class TaskListItem extends Component {
     );
   }
 }
-TaskListItem.initClass();
 
 const TaskListSection = function(props){
   let {tasks, name} = props;

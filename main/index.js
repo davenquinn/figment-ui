@@ -67,6 +67,7 @@ if (specMode) {
   options.specs = args.map(d=> path.resolve(d));
 } else {
   [inFile, outFile] = Array.from(args);
+  console.log(`Bundling ${inFile} -> ${outFile}`)
   options.infile = path.resolve(inFile || '.');
   options.outfile = path.resolve(outFile || '.');
 }
