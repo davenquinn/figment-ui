@@ -94,16 +94,13 @@ class AppStateManager extends Component {
       try {
         // Require using ESM module
         const res = __non_webpack_require__(spec);
-        return Promise.resolve(res)
-          .then(function(v){
-            console.log(v)
-            v.name = spec;
-            return v;
-        });
+        res.name = spec;
+        results.push(res);
       } catch (err) {
-        return Promise.reject(err);
+        results.push(err);
       }
     }
+    return results;
   }
 
 
