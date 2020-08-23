@@ -65,7 +65,6 @@ class Figment {
       //f = require fn
       //f(el, cb)
 
-    console.log(this.options);
     // Apply build directory
     if (fn != null) {
       if (!path.isAbsolute(fn)) {
@@ -79,14 +78,18 @@ class Figment {
           .update(fn)
           .digest('hex');
 
-    this.tasks.push({
+    let task = {
       outfile: fn,
       code: func,
       helpers: this.options.helpers,
       hash: h,
       multiPage: opts.multiPage || false,
       opts
-    });
+    }
+
+    console.log(task, this.options);
+
+    this.tasks.push(task);
     return this;
   }
 }
