@@ -8,8 +8,7 @@ const Promise = require("bluebird")
 const fs = require("fs")
 const { remote, ipcRenderer } = require("electron")
 const { createHash } = require("crypto")
-const path = require("path")
-import { TaskShape } from "./task/types"
+import path from "path"
 
 const options = remote.getGlobal("options" || {})
 if (options.dpi == null) {
@@ -50,9 +49,7 @@ class Figment {
     Add a task
     */
     let func
-    if (opts.dpi == null) {
-      opts.dpi = 300
-    }
+    opts.dpi = opts.dpi ?? 300
 
     // Check if we've got a function or string
     if (typeof funcOrString === "function") {

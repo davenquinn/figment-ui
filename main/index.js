@@ -122,10 +122,6 @@ function createWindow() {
   win.loadURL(url)
   shortcuts(win)
 
-  // Should do this at an interval
-  console.log("Installing React dev toos")
-  installExtension(REACT_DEVELOPER_TOOLS, argv["reinstall-devtools"])
-
   ipcMain.on("update-state", (event, res) => {
     global.appState = res
   })
@@ -146,7 +142,10 @@ function createWindow() {
   win.on("closed", () => (win = null))
 }
 
-app.on("ready", () => {
+app.whenReady().then(() => {
+  installExtension(REACT_DEVELOPER_TOOLS)
+    .then((name) => console.log(`Added Extension:  ${name}`))
+    .catch((err) => console.log("An error occurred: ", err))
   createWindow()
 })
 

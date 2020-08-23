@@ -23,9 +23,7 @@ const sharedStart = function (array) {
 const TaskListItem = (props) => {
   const { selectTask } = useContext(AppStateContext)
   const { task, displayName } = props
-  return h(
-    "li",
-    null,
+  return h("li", [
     h(
       "a",
       {
@@ -35,8 +33,8 @@ const TaskListItem = (props) => {
         },
       },
       displayName
-    )
-  )
+    ),
+  ])
 }
 
 const TaskListSection = function (props) {

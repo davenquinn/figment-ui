@@ -14,6 +14,7 @@
     "figment": "bin/cli.js"
   },
   "scripts": {
+    "test": "./run-tests",
     "dev": "webpack --watch",
     "build": "webpack",
     "prepare": "patch-package; npm run build",
@@ -22,7 +23,7 @@
   "dependencies": {
     "@babel/polyfill": "^7.4.4",
     "@blueprintjs/core": "^3.17.1",
-    "@macrostrat/hyper": "^1.1.0",
+    "@macrostrat/hyper": "^1.2.10",
     "@types/react": "^16.9.23",
     "bluebird": "^3.4.6",
     "check-prop-types": "^1.1.2",
@@ -30,7 +31,7 @@
     "decache": "^4.5.1",
     "devtools-detect": "^3.0.0",
     "electron": "^9.0.2",
-    "electron-devtools-installer": "^3.0.0",
+    "electron-devtools-installer": "^3.1.1",
     "electron-localshortcut": "^1.0.0",
     "immutability-helper": "^3.0.0",
     "loglevel": "^1.4.1",

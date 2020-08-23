@@ -11,7 +11,18 @@ import Figment from "./index"
 // For backwards compatibility
 global.Printer = Figment
 
-const AppStateContext = createContext({})
+interface AppStateCtx {
+  update: Function
+  printFigureArea: Function
+  hasTaskList: boolean
+  nameForTask: string
+  openEditor: Function
+  selectTask: Function
+  toggleDevTools: Function
+  selectedTask: any
+}
+
+const AppStateContext = createContext<AppStateCtx>({})
 
 const nameForTask = function (task) {
   let { name, outfile } = task
@@ -126,11 +137,8 @@ class AppStateManager extends Component {
   }
 
   selectTask(task) {
-    let hash = null
-    if (task != null) {
-      ;({ hash } = task)
-    }
-    return this.updateState({ selectedTaskHash: { $set: hash } })
+    console.log(`Selecting task ${task.hash}`)
+    return this.updateState({ selectedTaskHash: { $set: task?.hash } })
   }
 
   render() {
