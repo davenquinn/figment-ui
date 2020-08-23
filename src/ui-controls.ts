@@ -7,34 +7,21 @@ import classNames from "classnames"
 const ToolButton = (props) =>
   h(Button, { small: true, minimal: true, ...props })
 
-class DevToolsButton extends Component {
-  static initClass() {
-    this.contextType = AppStateContext
-  }
-  render() {
-    const onClick = this.context.toggleDevTools
-    const disabled = this.context.devToolsEnabled
-    return h(ToolButton, { onClick, disabled, rightIcon: "code" }, "DevTools")
-  }
+function DevToolsButton() {
+  const ctx = useContext(AppStateContext)
+  const onClick = ctx.toggleDevTools
+  const disabled = ctx.devToolsEnabled
+  return h(ToolButton, { onClick, disabled, rightIcon: "code" }, "DevTools")
 }
-DevToolsButton.initClass()
 
-class BackButton extends Component {
-  static initClass() {
-    this.contextType = AppStateContext
+function BackButton() {
+  const ctx = useContext(AppStateContext)
+  if (ctx.selectedTask == null && ctx.hasTaskList) {
+    return null
   }
-  render() {
-    if (this.context.selectedTask == null) {
-      return null
-    }
-    if (!this.context.hasTaskList) {
-      return null
-    }
-    const onClick = () => this.context.selectTask(null)
-    return h(ToolButton, { icon: "caret-left", onClick }, "Back to list")
-  }
+  const onClick = () => ctx.selectTask(null)
+  return h(ToolButton, { icon: "caret-left", onClick }, "Back to list")
 }
-BackButton.initClass()
 
 class PrintButton extends Component {
   static initClass() {

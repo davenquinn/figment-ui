@@ -32,7 +32,12 @@ const nameForTask = function (task) {
   return name.replace(/[-_]/g, " ")
 }
 
-class AppStateManager extends Component {
+interface State {
+  selectedTaskHash: string | null
+  devToolsEnabled: boolean
+}
+
+class AppStateManager extends Component<{}, State> {
   constructor(props) {
     super(props)
     this.shouldListTasks = this.shouldListTasks.bind(this)
@@ -137,11 +142,14 @@ class AppStateManager extends Component {
   }
 
   selectTask(task) {
-    console.log(`Selecting task ${task.hash}`)
+    console.log(`Selecting task ${task?.hash}`)
     return this.updateState({ selectedTaskHash: { $set: task?.hash } })
   }
 
   render() {
+    const { selectedTaskHash, ...rest } = this.state
+    console.log("Creating new context")
+
     const value = {
       update: this.updateState,
       printFigureArea: this.printFigureArea,
@@ -150,8 +158,8 @@ class AppStateManager extends Component {
       openEditor: this.openEditor,
       selectTask: this.selectTask,
       toggleDevTools: this.toggleDevTools,
+      ...rest,
       selectedTask: this.selectedTask(),
-      ...this.state,
     }
 
     return h(AppStateContext.Provider, { value }, this.props.children)
