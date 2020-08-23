@@ -1,6 +1,6 @@
-import {hyperStyled} from '@macrostrat/hyper';
-import styles from '~/main.styl';
+import { hyperStyled } from "@macrostrat/hyper"
+import styles from "~/main.styl"
 
-const h = hyperStyled(styles);
+const h = hyperStyled(styles)
 
-export default h;
+export default h

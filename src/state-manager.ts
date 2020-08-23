@@ -1,41 +1,41 @@
-import {Component, createContext} from 'react';
-import h from '~/hyper';
-import update from 'immutability-helper';
-import {remote, ipcRenderer} from 'electron';
-import {spawn} from 'child_process';
-import {parse} from 'path';
-import 'devtools-detect';
-import {printFigureArea} from './print';
-import Figment from "./index";
+import { Component, createContext } from "react"
+import h from "~/hyper"
+import update from "immutability-helper"
+import { remote, ipcRenderer } from "electron"
+import { spawn } from "child_process"
+import { parse } from "path"
+import "devtools-detect"
+import { printFigureArea } from "./print"
+import Figment from "./index"
 
 // For backwards compatibility
-global.Printer = Figment;
+global.Printer = Figment
 
-const AppStateContext = createContext({});
+const AppStateContext = createContext({})
 
-const nameForTask = function(task){
-  let {name, outfile} = task;
-  if ((name == null)) {
-    ({name} = parse(outfile));
+const nameForTask = function (task) {
+  let { name, outfile } = task
+  if (name == null) {
+    ;({ name } = parse(outfile))
   }
-  return name.replace(/[-_]/g," ");
-};
+  return name.replace(/[-_]/g, " ")
+}
 
 class AppStateManager extends Component {
-  constructor(props){
-    super(props);
-    this.shouldListTasks = this.shouldListTasks.bind(this);
-    this.selectedTask = this.selectedTask.bind(this);
-    this.__createSpec = this.__createSpec.bind(this);
-    this.__getSpecs = this.__getSpecs.bind(this);
-    this.openEditor = this.openEditor.bind(this);
-    this.selectTask = this.selectTask.bind(this);
-    this.updateState = this.updateState.bind(this);
-    this.toggleDevTools = this.toggleDevTools.bind(this);
-    this.componentDidMount = this.componentDidMount.bind(this);
+  constructor(props) {
+    super(props)
+    this.shouldListTasks = this.shouldListTasks.bind(this)
+    this.selectedTask = this.selectedTask.bind(this)
+    this.__createSpec = this.__createSpec.bind(this)
+    this.__getSpecs = this.__getSpecs.bind(this)
+    this.openEditor = this.openEditor.bind(this)
+    this.selectTask = this.selectTask.bind(this)
+    this.updateState = this.updateState.bind(this)
+    this.toggleDevTools = this.toggleDevTools.bind(this)
+    this.componentDidMount = this.componentDidMount.bind(this)
 
-    const options = remote.getGlobal('options');
-    const appState = remote.getGlobal('appState');
+    const options = remote.getGlobal("options")
+    const appState = remote.getGlobal("appState")
 
     this.state = {
       taskLists: null,
@@ -43,91 +43,94 @@ class AppStateManager extends Component {
       isPrinting: false,
       error: null,
       ...options,
-      ...appState
-    };
+      ...appState,
+    }
 
-    this.defineTasks(options);
+    this.defineTasks(options)
   }
 
   shouldListTasks() {
-    const {taskLists} = this.state;
-    if (taskLists == null) { return false; }
-    if (taskLists.length === 1) {
-      return taskLists[0].tasks.length !== 1;
+    const { taskLists } = this.state
+    if (taskLists == null) {
+      return false
     }
-    return true;
+    if (taskLists.length === 1) {
+      return taskLists[0].tasks.length !== 1
+    }
+    return true
   }
 
   selectedTask() {
-    const {selectedTaskHash, taskLists} = this.state;
-    if (taskLists == null) { return null; }
+    const { selectedTaskHash, taskLists } = this.state
+    if (taskLists == null) {
+      return null
+    }
     if (!this.shouldListTasks()) {
-      return taskLists[0].tasks[0];
+      return taskLists[0].tasks[0]
     }
 
     for (let taskList of Array.from(taskLists)) {
       for (let task of Array.from(taskList.tasks)) {
         if (task.hash === selectedTaskHash) {
-          return task;
+          return task
         }
       }
     }
-    return null;
+    return null
   }
 
-  __createSpec(options){
+  __createSpec(options) {
     // These should really be applied separately to each part
-    const {multiPage, pageSize} = this.state;
-    const spec = new Figment();
-    spec.task(options.outfile, options.infile, {multiPage, pageSize});
-    return [spec];
+    const { multiPage, pageSize } = this.state
+    const spec = new Figment()
+    spec.task(options.outfile, options.infile, { multiPage, pageSize })
+    return [spec]
   }
 
   async __getSpecs(options) {
-    const {specs} = options;
+    const { specs } = options
     // If we are in spec mode
     if (specs == null) {
-      return this.__createSpec(options);
+      return this.__createSpec(options)
     }
-    let results = [];
+    let results = []
     for (const spec of specs) {
       try {
         // Require using ESM module
-        const res = __non_webpack_require__(spec);
-        res.name = spec;
-        results.push(res);
+        const res = __non_webpack_require__(spec)
+        res.name = spec
+        results.push(res)
       } catch (err) {
-        results.push(err);
+        results.push(err)
       }
     }
-    return results;
+    return results
   }
-
 
   async defineTasks(options) {
     try {
-      let res = await this.__getSpecs(options);
-      this.updateState({taskLists: {$set: res}});
+      let res = await this.__getSpecs(options)
+      this.updateState({ taskLists: { $set: res } })
     } catch (error) {
-      const err = error;
-      this.updateState({error: {$set: err}});
+      const err = error
+      this.updateState({ error: { $set: err } })
     }
-  };
-
-  openEditor() {
-    const task = this.selectedTask();
-    if (task == null) { return; }
-    return spawn(process.env.EDITOR, [task.code], {detached: true});
   }
 
-  selectTask(task){
-    let hash = null;
-    if (task != null) {
-      ({
-        hash
-      } = task);
+  openEditor() {
+    const task = this.selectedTask()
+    if (task == null) {
+      return
     }
-    return this.updateState({selectedTaskHash: {$set: hash}});
+    return spawn(process.env.EDITOR, [task.code], { detached: true })
+  }
+
+  selectTask(task) {
+    let hash = null
+    if (task != null) {
+      ;({ hash } = task)
+    }
+    return this.updateState({ selectedTaskHash: { $set: hash } })
   }
 
   render() {
@@ -140,58 +143,68 @@ class AppStateManager extends Component {
       selectTask: this.selectTask,
       toggleDevTools: this.toggleDevTools,
       selectedTask: this.selectedTask(),
-      ...this.state
-    };
+      ...this.state,
+    }
 
-    return h(AppStateContext.Provider, {value}, this.props.children);
+    return h(AppStateContext.Provider, { value }, this.props.children)
   }
 
-  updateState(spec){
-    const newState = update(this.state, spec);
-    this.setState(newState);
+  updateState(spec) {
+    const newState = update(this.state, spec)
+    this.setState(newState)
     // forward state to main process
-    const {devToolsEnabled, selectedTaskHash, toolbarEnabled, zoomLevel} = newState
-    const appState = {devToolsEnabled, selectedTaskHash, toolbarEnabled, zoomLevel};
-    return ipcRenderer.send('update-state', appState);
+    const {
+      devToolsEnabled,
+      selectedTaskHash,
+      toolbarEnabled,
+      zoomLevel,
+    } = newState
+    const appState = {
+      devToolsEnabled,
+      selectedTaskHash,
+      toolbarEnabled,
+      zoomLevel,
+    }
+    return ipcRenderer.send("update-state", appState)
   }
 
   toggleDevTools() {
-    this.updateState({devToolsEnabled: {$set: true}});
-    ipcRenderer.send('dev-tools');
-    const win = remote.getCurrentWindow();
-    return win.openDevTools();
+    this.updateState({ devToolsEnabled: { $set: true } })
+    ipcRenderer.send("dev-tools")
+    const win = remote.getCurrentWindow()
+    return win.openDevTools()
   }
 
   componentDidMount() {
-    ipcRenderer.on('show-toolbar', (event, toolbarEnabled)=> {
-      return this.updateState({toolbarEnabled: {$set: toolbarEnabled}});
-  });
+    ipcRenderer.on("show-toolbar", (event, toolbarEnabled) => {
+      return this.updateState({ toolbarEnabled: { $set: toolbarEnabled } })
+    })
 
-    ipcRenderer.on('zoom', (event, zoom)=> {
-      return this.updateState({zoomLevel: {$set: zoom}});
-  });
+    ipcRenderer.on("zoom", (event, zoom) => {
+      return this.updateState({ zoomLevel: { $set: zoom } })
+    })
 
-    ipcRenderer.on('update-state', (event, state)=> {
-      console.log("Updating state from main process");
-      return this.setState({...state});
-  });
+    ipcRenderer.on("update-state", (event, state) => {
+      console.log("Updating state from main process")
+      return this.setState({ ...state })
+    })
 
-    return window.addEventListener('devtoolschange', event=> {
-      const {isOpen} = event.detail;
-      return this.updateState({devToolsEnabled: {$set: isOpen}});
-  });
+    return window.addEventListener("devtoolschange", (event) => {
+      const { isOpen } = event.detail
+      return this.updateState({ devToolsEnabled: { $set: isOpen } })
+    })
   }
 
   printFigureArea = async () => {
-    const task = this.selectedTask();
-    this.setState({isPrinting: true});
+    const task = this.selectedTask()
+    this.setState({ isPrinting: true })
     try {
-      await printFigureArea(task);
+      await printFigureArea(task)
     } catch (err) {
-      console.error(err);
+      console.error(err)
     }
-    this.setState({isPrinting: false});
-  };
+    this.setState({ isPrinting: false })
+  }
 }
 
-export {AppStateContext, AppStateManager};
+export { AppStateContext, AppStateManager }

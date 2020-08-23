@@ -1,7 +1,7 @@
-import T from 'prop-types';
+import T from "prop-types"
 
 const TaskShape = T.shape({
-  multiPage: T.bool.isRequired
-});
+  multiPage: T.bool.isRequired,
+})
 
-export {TaskShape};
+export { TaskShape }
