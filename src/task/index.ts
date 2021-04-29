@@ -162,7 +162,7 @@ class ParcelTaskRenderer extends Component {
     }
 
     this.bundler = createBundler(codeFile, { outDir, cacheDir })
-    console.log(`Running bundler process with PID ${this.bundler.pid}`)
+    console.log(`Bundling code file ${codeFile} with PID ${this.bundler.pid}`)
     this.bundler.bundle().catch((e) => console.error(e))
 
     this.bundler.on("buildStart", (bundle) => {
