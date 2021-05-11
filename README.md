@@ -31,11 +31,11 @@ a UI for figure development and user-controlled rendering to PDF.
 ## Examples
 
 ![Model tracers](showcase/model-timeline.png)
-*Model tracers for the western North American mantle lithosphere: results of finite-element modeling in [FiPy](https://www.ctcms.nist.gov/fipy/), cached in PostgreSQL,
-and rendered using [D3](https://d3js.org) and **Figment** — [Quinn et al., 2018](https://dx.doi.org/10.1029/2017GC007260), Figure 20.*
+_Model tracers for the western North American mantle lithosphere: results of finite-element modeling in [FiPy](https://www.ctcms.nist.gov/fipy/), cached in PostgreSQL,
+and rendered using [D3](https://d3js.org) and **Figment** — [Quinn et al., 2018](https://dx.doi.org/10.1029/2017GC007260), Figure 20._
 
 ![Model time slices](showcase/model-time-slices.png)
-*Time slices for the same mantle lithosphere model, rendered in HTML and SVG using **Figment**. This would have been time-consuming to produce in Adobe Illustrator... — [Quinn et al., 2018](https://dx.doi.org/10.1029/2017GC007260), Figure 21.*
+_Time slices for the same mantle lithosphere model, rendered in HTML and SVG using **Figment**. This would have been time-consuming to produce in Adobe Illustrator... — [Quinn et al., 2018](https://dx.doi.org/10.1029/2017GC007260), Figure 21._
 
 ## Motivation
 
@@ -54,7 +54,7 @@ such as [D3](https://d3js.org).
 As the web's technical stack has matured,
 more traditional tools for data visualization
 have stagnated somewhat: for instance, the venerable
-*Adobe Illustrator* provides basically no capabilities for
+_Adobe Illustrator_ provides basically no capabilities for
 data-driven or programmatically-generated graphics. Meanwhile,
 software toolkits commonly used for data analysis (e.g.
 Matlab, Python's Matplotlib, and R) excel at generating straightforward graphics but have few tools for complex or customized
@@ -87,7 +87,7 @@ HTML or SVG representation.
 
 Using the [Electron](https://electronjs.org) rendering engine, **Figment**
 ditches the client/server model entirely, allowing web visualizations to be
-built *locally*. Although visualization code runs in the browser environment, it
+built _locally_. Although visualization code runs in the browser environment, it
 is executed with the full power and system access of the
 [NodeJS](https://nodejs.org) runtime. Thus, visualizations can rely on local
 resources such as modeling pipelines, database connections, and files that are
@@ -107,7 +107,7 @@ into figure generation.
 
 The basic form of **Figment** first arose in 2015, out of a desire to use
 [D3](https://d3js.org) and [Coffeescript](https://coffeescript.org/) to produce
-scientific figures for my PhD thesis. The original package, named *PDF Printer*, transformed Coffeescript to Javascript, separated out CSS stylesheets,
+scientific figures for my PhD thesis. The original package, named _PDF Printer_, transformed Coffeescript to Javascript, separated out CSS stylesheets,
 and used [Electron's `printToPDF` function](https://electronjs.org/docs/api/web-contents#contentsprinttopdfoptions-callback)
 to extract a PDF copy of the result. A basic file watcher allowed iteration on figure design.
 Since Javascript toolchains are varied and rapidly changing,
@@ -130,21 +130,21 @@ The `<entry>` argument represents a file path to the code responsible for genera
 a graphic. `<output.pdf>` is the intended destination for the compiled PDF.
 
 **Note:** Experimental support for JPEG and PNG outputs is in development.
-  HTML output could potentially be supported as well.
+HTML output could potentially be supported as well.
 
 ## CLI options
 
 `--spec`: Use a specification file instead of a single entry/output file pair.
-  The calling signature then becomes `figment --spec <specfile>`.
+The calling signature then becomes `figment --spec <specfile>`.
 
 `--headless`: Render graphics automatically (in sequence if in spec mode) and quit. **Currently disabled.**
 
 `--page-size`: Page size is usually set using the DPI and size of the container element, but
-  a [standard page size string](https://electronjs.org/docs/api/web-contents#contentsprinttopdfoptions-callback)
-  can be set if desired.
+a [standard page size string](https://electronjs.org/docs/api/web-contents#contentsprinttopdfoptions-callback)
+can be set if desired.
 
 `--multi-page`: Experimental multi-page support, for building reports and documents.
-  Similar to [`electron-pdf`](https://github.com/fraserxu/electron-pdf).
+Similar to [`electron-pdf`](https://github.com/fraserxu/electron-pdf).
 
 `--reinstall-devtools`: Reinstall the React DevTools extension.
 
@@ -176,13 +176,13 @@ with the signature below.
 ```js
 import * as d3 from "d3"
 
-export default function createFigure(el, opts, cb){
+export default function createFigure(el, opts, cb) {
   d3.select(el)
     .append("div")
-    .style("width", 300)  // For control of output PDF size, explicitly set the
+    .style("width", 300) // For control of output PDF size, explicitly set the
     .style("height", 300) // size of the container element in javascript or CSS.
-    .text("Significant results detected");
-  cb();
+    .text("Significant results detected")
+  cb()
 }
 ```
 
@@ -202,22 +202,24 @@ or `.propTypes = {...}` on the component — there doesn't appear to be a foolpr
 general way to differentiate between a functional component and a normal function.
 
 ```js
-import {createElement} from 'react';
+import { createElement } from "react"
 
-let createFigure = (props)=>{
-  return <div className="figure">
-           <h1>I am a fancy graphic</h1>
-         </div>
+let createFigure = (props) => {
+  return (
+    <div className="figure">
+      <h1>I am a fancy graphic</h1>
+    </div>
+  )
 }
 
 /*
 At least one of the below must be set for the React component
 to be properly rendered
 */
-createFigure.isReactComponent = true;
-createFigure.propTypes = {};
+createFigure.isReactComponent = true
+createFigure.propTypes = {}
 
-export default createFigure;
+export default createFigure
 ```
 
 ## Spec mode
@@ -232,21 +234,26 @@ passed into entrypoints using the options file. **Note:**
 ES6 semantics are not currently supported for the spec file, but this is planned.
 
 ```js
-const {Visualizer} = require('figment-ui');
+const { Visualizer } = require("figment-ui")
 
-const v = new Visualizer({buildDir: __dirname+"/output"});
+const v = new Visualizer({ buildDir: __dirname + "/output" })
 
-v.task(`roi-plots/test-dips.pdf`, './test-dips/index.coffee');
+v.task(`roi-plots/test-dips.pdf`, "./test-dips/index.coffee")
 
 // Tasks can be generated from lists, etc.
-const types = ['no-error', 'weighted', 'monte-carlo',
-               'monte-carlo-3s', 'monte-carlo-5s'];
+const types = [
+  "no-error",
+  "weighted",
+  "monte-carlo",
+  "monte-carlo-3s",
+  "monte-carlo-5s",
+]
 for (let type of types) {
   v.task(
     `roi-plots/attitudes-${type}.pdf`, // output filename
-    './roi-plots/index.coffee', // filename for rendering endpoint
-    {type} // pass options into component
-  );
+    "./roi-plots/index.coffee", // filename for rendering endpoint
+    { type } // pass options into component
+  )
 }
 
 module.exports = v
@@ -276,9 +283,9 @@ module.exports = v
 
 #### Publications using this pipeline
 
-- **DP Quinn** and **BL Ehlmann**, *A PCA-based framework for determining remotely-sensed geological surface orientations and their statistical quality* (2019), Earth and Space Science, doi: [10.1029/2018EA000416](https://dx.doi.org/10.1029/2018EA000416).
-- **DP Quinn** and **BL Ehlmann**, *The deposition and alteration history of the northeast Syrtis layered sulfates* (2019), Journal of Geophysical Research–Planets, doi: [10.1029/2018JE005706](https://dx.doi.org/10.1029/2018JE005706).
-- **DP Quinn**, **JS Saleeby**, **MN Ducea**, **P Luffi**, and **PD Asimow**, *Late-Cretaceous construction of the mantle lithosphere beneath the central California coast revealed by Crystal Knob xenoliths* (2018), Geochemistry, Geophysics, Geosystems, 19, doi: [10.1029/2017GC007260](https://dx.doi.org/10.1029/2017GC007260).
+- **DP Quinn** and **BL Ehlmann**, _A PCA-based framework for determining remotely-sensed geological surface orientations and their statistical quality_ (2019), Earth and Space Science, doi: [10.1029/2018EA000416](https://dx.doi.org/10.1029/2018EA000416).
+- **DP Quinn** and **BL Ehlmann**, _The deposition and alteration history of the northeast Syrtis layered sulfates_ (2019), Journal of Geophysical Research–Planets, doi: [10.1029/2018JE005706](https://dx.doi.org/10.1029/2018JE005706).
+- **DP Quinn**, **JS Saleeby**, **MN Ducea**, **P Luffi**, and **PD Asimow**, _Late-Cretaceous construction of the mantle lithosphere beneath the central California coast revealed by Crystal Knob xenoliths_ (2018), Geochemistry, Geophysics, Geosystems, 19, doi: [10.1029/2017GC007260](https://dx.doi.org/10.1029/2017GC007260).
 
 ## Development
 
@@ -290,24 +297,31 @@ contains Coffeescript code and Stylus stylesheets for the renderer process.
 This code is compiled to Javascript with Parcel using `npm run build`;
 `npm run dev` watches and recompiles on demand.
 
+## Changelog
+
+`v0.2.0`: 2021-05-10
+
+- Support Webpack for configuration alongside Parcel, using the `webpackConfig` configuration option.
+- Switch codebase to TypeScript from Coffeescript
+
 ## TODO
 
 - [ ] Support non-Javascript **Parcel** entrypoints
-- [ ] Support more formats *(PNG and JPEG support are half-baked but important)*.
-- [ ] Allow spec files to be written using ES6 javascript
+- [ ] Support more formats _(PNG and JPEG support are half-baked but important)_.
+- [x] Allow spec files to be written using ES6 javascript
 - [ ] Potentially create a YAML or JSON format for spec files?
 - [ ] Improve pathname resolution for renderer code (`__dirname` currently points
-  to the Parcel build directory)
+      to the Parcel build directory)
 - [ ] Allow options to be controlled at runtime for React components
 - [ ] Re-enable headless graphics generation (requires more thought on when
-  React components are "done" rendering)
+      React components are "done" rendering)
 - [ ] Create a prepackaged binaray distribution.
 - [ ] Change "Print" button to "Render"; might be less confusing.
-- [x] ~~Create a dependency on `electron-pdf`?~~ *The parts of [`electron-pdf`](https://github.com/fraserxu/electron-pdf) that are valuable in this context are straightforward using just Electron.*
+- [x] ~~Create a dependency on `electron-pdf`?~~ _The parts of [`electron-pdf`](https://github.com/fraserxu/electron-pdf) that are valuable in this context are straightforward using just Electron._
 - [x] ~~Make helpers definable in CLI.~~
-  *Now that we are using Parcel, all usable filetypes are bundled by default.*
-- [x] ~~Remove `coffeescript` and `stylus` defaults.~~ *Outmoded by Parcel.*
-- [x] ~~Allow testing on multiple figures at once.~~ *Spec mode covers this.*
+      _Now that we are using Parcel, all usable filetypes are bundled by default._
+- [x] ~~Remove `coffeescript` and `stylus` defaults.~~ _Outmoded by Parcel._
+- [x] ~~Allow testing on multiple figures at once.~~ _Spec mode covers this._
 
 ## Credits
 
