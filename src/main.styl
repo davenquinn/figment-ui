@@ -4,30 +4,68 @@ we can get Parcel to do global styles
 */
 
 html, body, .figure-container-outer
+  --background: white
+  --background-1: #aaa
+  --background-2: #ccc
+  --background-3: #eee
+  --foreground-dim: #444
+  --foreground-color: black
+  --accent: dodgerblue
+  --accent-light: lighten(dodgerblue, 80%)
+
+@media (prefers-color-scheme: dark)
+  html, body, .figure-container-outer
+    $dark-base=#121416
+    $dark-fg=#aab7be
+    --background-color: $dark-base
+    --background-1: lighten($dark-base, 10%)
+    --background-2: lighten($dark-base, 20%)
+    --background-3: lighten($dark-base, 30%)
+    --foreground-dim: darken($dark-fg, 40%)
+    --foreground-color: $dark-fg
+    --accent: darken(dodgerblue, 40%)
+    --accent-light: darken(dodgerblue, 40%)
+
+*
+  color var(--foreground-color)
+
+html, body, .figure-container-outer
   margin: 0px
-  width: 100%
-  background-color: white
+  background-color: var(--background-color)
   position relative
+  width max-content
+  height max-content
+  -webkit-print-color-adjust: exact;
+
 
 .figure-container-outer
   padding 0px 0px
   height 100vh
   width 100vw
   &.is-printing
+    margin: 0px
     margin-top 0px
     padding-top 0px
+    height: max-content
+    width: max-content
+  &.multi-page
+    height: max-content
 
 .app-main
   display flex
   flex-direction column
   height 100vh
   width 100vw
+  &.is-printing
+    height max-content
+    width max-content
 
 .figure-container-inner
   display: block
   margin 0
+  width: max-content
+  height: max-content
   transform-origin 0px 0px
-  overflow auto
 
 .figure-container
   position absolute
@@ -35,18 +73,29 @@ html, body, .figure-container-outer
   left 0
   right 0
   top 38px
-  padding 20px
-  min-width 100vw
   &.is-printing
     top 0
     padding 0
     position relative
     min-width inherit
+    overflow auto
+    height max-content
+    .element-container
+      padding 0
+
   margin 0px
   overflow: scroll
+  scroll-behavior: smooth
   .error-overlay
     margin-top 0
     padding 0
+
+.element-container
+  width max-content
+  height max-content
+  overflow auto
+  box-sizing: border-box;
+  padding 20px
 
 *
   box-sizing border-box
@@ -103,7 +152,7 @@ button_margin = 6px
   padding-top 2em
   text-align center
   max-width 6em
-  color #aaa
+  color var(--background-1)
   p
     margin-top 2em
 
@@ -136,17 +185,17 @@ button_margin = 6px
     font-weight: 400
   h1
     font-weight: 500
-    color #aaa
+    color var(--background-1)
     font-size: 14px
     flex 1
     margin-bottom 0
     margin-top 0
     a
-      color: #444
+      color: var(--foreground-dim)
       &:hover
-        color: black
-  background-color: #eee
-  border-bottom: 1px solid #ccc
+        color: var(--foreground-color)
+  background-color: var(--background-3)
+  border-bottom: 1px solid var(--background-2)
 
   button:focus
     outline: none
@@ -164,10 +213,6 @@ button_margin = 6px
       display block
       margin-right: button_margin
     margin-right: button_margin*-1
-
-.element-container
-  width 100%
-  overflow auto
 
 .error
   .origin
@@ -195,6 +240,7 @@ button_margin = 6px
   top 0px
   width 20em
   padding 12px
+  z-index: 8000
   &>:first-child
     margin-top 0
   &>*
