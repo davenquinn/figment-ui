@@ -299,6 +299,11 @@ This code is compiled to Javascript with Parcel using `npm run build`;
 
 ## Changelog
 
+`v0.3.0`: 2021-06-08
+
+- Upgrade Electron to v13
+- Dark mode support that allows configuration
+
 `v0.2.0`: 2021-05-10
 
 - Support Webpack for configuration alongside Parcel, using the `webpackConfig` configuration option.
