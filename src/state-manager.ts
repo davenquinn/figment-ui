@@ -7,7 +7,7 @@ import { parse } from "path"
 import "devtools-detect"
 import { printFigureArea } from "./print"
 import Figment from "./index"
-import { DarkModeProvider } from "@macrostrat/ui-components"
+import { DarkModeProvider } from "@macrostrat/ui-components/lib/cjs/dark-mode"
 
 // For backwards compatibility
 global.Printer = Figment

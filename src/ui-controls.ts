@@ -3,7 +3,7 @@ import { Component, useContext } from "react"
 import { AppStateContext } from "./state-manager"
 import h from "~/hyper"
 import classNames from "classnames"
-import { DarkModeButton } from "@macrostrat/ui-components"
+import { DarkModeButton } from "@macrostrat/ui-components/lib/cjs/dark-mode"
 
 const ToolButton = (props) =>
   h(Button, { small: true, minimal: true, ...props })
