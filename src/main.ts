@@ -2,7 +2,7 @@ import "@babel/polyfill"
 import { FocusStyleManager } from "@blueprintjs/core"
 FocusStyleManager.onlyShowFocusOnTabs()
 
-import { Component } from "react"
+import { Component, useContext } from "react"
 import { render } from "react-dom"
 import h from "~/hyper"
 import { UIControls } from "./ui-controls"
@@ -28,38 +28,29 @@ const NoTaskError = () =>
     ]),
   ])
 
-class AppMain extends Component {
-  static contextType = AppStateContext
-  renderMain() {
-    const {
-      taskLists,
-      selectedTask,
-      zoomLevel,
-      toolbarEnabled,
-      error,
-    } = this.context
-    const marginTop = toolbarEnabled ? "38px" : null
-    if (error != null) {
-      return h(BundlerError, { error })
-    }
-    if (selectedTask != null) {
-      return h(TaskRenderer, { task: selectedTask, zoomLevel, marginTop })
-    }
-    if (taskLists != null) {
-      return h(TaskList, { runners: taskLists })
-    }
-    return h(NoTaskError)
+function TaskBody() {
+  const { taskLists, selectedTask, zoomLevel, toolbarEnabled, error } =
+    useContext(AppStateContext)
+  const marginTop = toolbarEnabled ? "38px" : null
+  if (error != null) {
+    return h(BundlerError, { error })
   }
-
-  render() {
-    const { toolbarEnabled, isPrinting } = this.context
-    const className = classNames({
-      "toolbar-disabled": !toolbarEnabled,
-      "is-printing": isPrinting,
-    })
-
-    return h("div.app-main", { className }, [h(UIControls), this.renderMain()])
+  if (selectedTask != null) {
+    return h(TaskRenderer, { task: selectedTask, zoomLevel, marginTop })
   }
+  if (taskLists != null) {
+    return h(TaskList, { runners: taskLists })
+  }
+  return h(NoTaskError)
+}
+
+function AppMain() {
+  const { toolbarEnabled, isPrinting } = useContext(AppStateContext)
+  const className = classNames({
+    "toolbar-disabled": !toolbarEnabled,
+    "is-printing": isPrinting,
+  })
+  return h("div.app-main", { className }, [h(UIControls), h(TaskBody)])
 }
 
 const App = () => h(AppStateManager, null, h(AppMain))
