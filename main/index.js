@@ -25,7 +25,7 @@ const show = argv.show || !headless
 // Set directory to reload if not given
 
 // Disable hardware acceleration (for SVG rendering bugs??)
-app.commandLine.appendSwitch("--force-gpu-rasterization")
+//app.commandLine.appendSwitch("--force-gpu-rasterization")
 //app.disableHardwareAcceleration();
 
 let args = argv._
@@ -114,6 +114,8 @@ function createWindow() {
     webPreferences: {
       nodeIntegration: true,
       webSecurity: false,
+      enableRemoteModule: true,
+      contextIsolation: false,
     },
   })
 
@@ -143,7 +145,10 @@ function createWindow() {
 }
 
 app.whenReady().then(() => {
-  installExtension(REACT_DEVELOPER_TOOLS)
+  installExtension(REACT_DEVELOPER_TOOLS, {
+    loadExtensionOptions: { allowFileAccess: true },
+    forceDownload: false,
+  })
     .then((name) => console.log(`Added Extension:  ${name}`))
     .catch((err) => console.log("An error occurred: ", err))
   createWindow()

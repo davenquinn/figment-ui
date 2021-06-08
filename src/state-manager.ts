@@ -7,6 +7,7 @@ import { parse } from "path"
 import "devtools-detect"
 import { printFigureArea } from "./print"
 import Figment from "./index"
+import { DarkModeProvider } from "@macrostrat/ui-components"
 
 // For backwards compatibility
 global.Printer = Figment
@@ -37,7 +38,7 @@ interface State {
   devToolsEnabled: boolean
 }
 
-class AppStateManager extends Component<{}, State> {
+class _AppStateManager extends Component<{}, State> {
   constructor(props) {
     super(props)
     this.shouldListTasks = this.shouldListTasks.bind(this)
@@ -169,12 +170,8 @@ class AppStateManager extends Component<{}, State> {
     const newState = update(this.state, spec)
     this.setState(newState)
     // forward state to main process
-    const {
-      devToolsEnabled,
-      selectedTaskHash,
-      toolbarEnabled,
-      zoomLevel,
-    } = newState
+    const { devToolsEnabled, selectedTaskHash, toolbarEnabled, zoomLevel } =
+      newState
     const appState = {
       devToolsEnabled,
       selectedTaskHash,
@@ -221,6 +218,10 @@ class AppStateManager extends Component<{}, State> {
     }
     this.setState({ isPrinting: false })
   }
+}
+
+function AppStateManager(props) {
+  return h(DarkModeProvider, {}, h(_AppStateManager, props))
 }
 
 export { AppStateContext, AppStateManager }

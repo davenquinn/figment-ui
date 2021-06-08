@@ -3,7 +3,7 @@ For some annoying reason this appears to be the only way
 we can get Parcel to do global styles
 */
 
-html, body, .figure-container-outer
+light-mode()
   --background: white
   --background-1: #aaa
   --background-2: #ccc
@@ -13,23 +13,33 @@ html, body, .figure-container-outer
   --accent: dodgerblue
   --accent-light: lighten(dodgerblue, 80%)
 
-@media (prefers-color-scheme: dark)
-  html, body, .figure-container-outer
-    $dark-base=#121416
-    $dark-fg=#aab7be
-    --background-color: $dark-base
-    --background-1: lighten($dark-base, 10%)
-    --background-2: lighten($dark-base, 20%)
-    --background-3: lighten($dark-base, 30%)
-    --foreground-dim: darken($dark-fg, 40%)
-    --foreground-color: $dark-fg
-    --accent: darken(dodgerblue, 40%)
-    --accent-light: darken(dodgerblue, 40%)
+dark-mode()
+  $dark-base=#121416
+  $dark-fg=#aab7be
+  --background-color: $dark-base
+  --background-1: lighten($dark-base, 10%)
+  --background-2: lighten($dark-base, 20%)
+  --background-3: lighten($dark-base, 30%)
+  --foreground-dim: darken($dark-fg, 40%)
+  --foreground-color: $dark-fg
+  --accent: darken(dodgerblue, 40%)
+  --accent-light: darken(dodgerblue, 40%)
+
+:root
+  light-mode()
+
+:global
+  body.bp3-dark
+    dark-mode()
+    .figure-container-outer
+      dark-mode()
+      &.is-printing
+        light-mode()
 
 *
   color var(--foreground-color)
 
-html, body, .figure-container-outer
+body, .figure-container-outer
   margin: 0px
   background-color: var(--background-color)
   position relative

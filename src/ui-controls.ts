@@ -3,6 +3,7 @@ import { Component, useContext } from "react"
 import { AppStateContext } from "./state-manager"
 import h from "~/hyper"
 import classNames from "classnames"
+import { DarkModeButton } from "@macrostrat/ui-components"
 
 const ToolButton = (props) =>
   h(Button, { small: true, minimal: true, ...props })
@@ -102,33 +103,29 @@ const ToolbarToggleButton = function (props) {
 const MinimalUIControls = () =>
   h("div.ui-controls-hidden", [h(ToolbarToggleButton, { small: false })])
 
-class UIControls extends Component {
-  static initClass() {
-    this.contextType = AppStateContext
+function UIControls() {
+  const { hasTaskList, selectedTask, toolbarEnabled } =
+    useContext(AppStateContext)
+  if (!toolbarEnabled) {
+    return h(MinimalUIControls)
   }
-  render() {
-    const { hasTaskList, selectedTask, toolbarEnabled } = this.context
-    if (!toolbarEnabled) {
-      return h(MinimalUIControls)
-    }
 
-    const fullscreen = window.screenY === 0 && window.screenTop === 0
-    const className = classNames({ fullscreen })
+  const fullscreen = window.screenY === 0 && window.screenTop === 0
+  const className = classNames({ fullscreen })
 
-    return h("div.ui-controls", { className }, [
-      h("div.left-buttons", [h(BackButton), h(CurrentTaskName)]),
-      h("div.right-buttons", [
-        h(DevToolsButton),
-        h.if(selectedTask != null)([
-          //h ReloadButton
-          h(PrintButton),
-        ]),
-        h("span.separator"),
-        h(ToolbarToggleButton),
+  return h("div.ui-controls", { className }, [
+    h("div.left-buttons", [h(BackButton), h(CurrentTaskName)]),
+    h("div.right-buttons", [
+      h(DevToolsButton),
+      h.if(selectedTask != null)([
+        //h ReloadButton
+        h(PrintButton),
       ]),
-    ])
-  }
+      h("span.separator"),
+      h(DarkModeButton, { minimal: true }),
+      h(ToolbarToggleButton),
+    ]),
+  ])
 }
-UIControls.initClass()
 
 export { UIControls }
