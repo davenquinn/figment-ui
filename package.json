@@ -1,6 +1,6 @@
 {
   "name": "figment-ui",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "Javascript visualizations for the print medium.",
   "main": "lib/index.js",
   "author": "Daven Quinn",

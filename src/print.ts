@@ -42,10 +42,15 @@ const printToPDF = async (webview, opts) => {
   // pageSize can be A3, A4, A5, Legal, Letter, Tabloid or an Object
   // containing height and width in microns.
   // (https://electronjs.org/docs/api/web-contents)
-  let { pageSize, width, height, scaleFactor } = opts
+  let { pageSize, width, height, scaleFactor = 5 } = opts
+
+  if (typeof pageSize === "string") {
+    console.log("Forcing scale factor to 1")
+    scaleFactor = 1
+  }
+
   console.log({ width, height, scaleFactor, pageSize })
 
-  scaleFactor = 5
   if (pageSize == null) {
     pageSize = {
       height: pixelsToMicrons(height * scaleFactor),
